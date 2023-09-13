@@ -24,7 +24,6 @@ public class CozinhaController {
     }
 
     @GetMapping
-    @ResponseBody
     public List<Cozinha> listar() {
         return cozinhaRepository.findAll() ;
     }
