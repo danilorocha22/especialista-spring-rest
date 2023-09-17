@@ -1,5 +1,6 @@
 package com.dan.esr.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,8 +21,19 @@ public class Estado implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private String nome;
+    private String sigla;
 
     @Column(nullable = false)
-    private String sigla;
+    private String nome;
+
+    @JsonIgnore
+    @Transient
+    private Regiao regiao;
+
+    static class Regiao {
+        public int id;
+        public String sigla;
+        public String nome;
+    }
+
 }
