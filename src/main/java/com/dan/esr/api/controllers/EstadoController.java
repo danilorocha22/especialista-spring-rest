@@ -1,7 +1,7 @@
 package com.dan.esr.api.controllers;
 
 import com.dan.esr.domain.entities.Estado;
-import com.dan.esr.domain.services.EstadoService;
+import com.dan.esr.domain.services.ListaEstadoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +15,13 @@ import java.util.List;
 @RequestMapping("/estados")
 public class EstadoController {
 
-    private EstadoService estadoService;
+    private ListaEstadoService estadoService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     private List<Estado> listar() {
-        System.out.println(this.estadoService.estados());
-        return estadoService.estados();
+        List<Estado> estados = estadoService.estados();
+        System.out.println("Quantidade Estados "+ estados.size());
+        return estados;
     }
 
 }

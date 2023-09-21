@@ -1,6 +1,7 @@
 package com.dan.esr.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.persistence.*;
@@ -18,6 +19,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "cozinhas")
 public class Cozinha implements Serializable {
@@ -29,7 +31,7 @@ public class Cozinha implements Serializable {
     private Long id;
 
     //@JsonIgnore
-    @JsonProperty("titulo")
+    @JsonProperty("tipo")
     @Column(nullable = false)
     private String nome;
 

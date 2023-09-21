@@ -1,7 +1,6 @@
 package com.dan.esr.domain.services;
 
 import com.dan.esr.domain.entities.Estado;
-import com.dan.esr.domain.repositories.EstadoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,9 +14,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
-@AllArgsConstructor
 @Service
-public class EstadoService {
+public class ListaEstadoService {
 
     public List<Estado> estados() {
         HttpClient client = HttpClient.newHttpClient();

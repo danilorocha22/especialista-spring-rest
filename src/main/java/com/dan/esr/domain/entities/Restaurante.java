@@ -1,5 +1,6 @@
 package com.dan.esr.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "restaurantes")
 public class Restaurante implements Serializable {
@@ -31,8 +33,8 @@ public class Restaurante implements Serializable {
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "cozinha_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
 
     @Embedded
