@@ -11,8 +11,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +54,22 @@ public class CadastroRestauranteService {
             throw new EntidadeNaoEncontradaException(String.format(
                     "Não foi possível encontrar o restaurante de ID %s", id));
         }
+    }
+
+    public List<Restaurante> buscarRestaurantesPorTaxa(BigDecimal taxaInicial, BigDecimal taxaFinal) {
+        if (Objects.isNull(taxaInicial) || Objects.isNull(taxaFinal)) {
+            throw new EntidadeNaoEncontradaException(String.format(
+                    "Não foi possível realizar a pesquisa com as taxas informadas: Taxa Inicial: %s; Taxa Final %s",
+                    taxaInicial, taxaFinal
+            ));
+        }
+
+        List<Restaurante> restaurantes = restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
+        if (restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format(
+                    "Não foi possível encontrar restaurantes com as taxas informadas: " +
+                            "Taxa Inicial %s; Taxa Final %s", taxaInicial, taxaFinal));
+        return restaurantes;
     }
 
     private Restaurante adicionar(Restaurante restaurante) {

@@ -2,6 +2,7 @@ package com.dan.esr.api.controllers;
 
 import com.dan.esr.api.models.CozinhasXML;
 import com.dan.esr.domain.entities.Cozinha;
+import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.EntidadeComAtributoNuloException;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
@@ -13,10 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.web.servlet.function.ServerResponse.status;
@@ -31,18 +29,39 @@ public class CozinhaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Cozinha> buscarPorId(@PathVariable Long id) {
-        Optional<Cozinha> optionalCozinha = cozinhaRepository.findById(id);
-        return optionalCozinha.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return cozinhaRepository.findById(id)
+                .map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/por-nome")
     public ResponseEntity<List<?>> buscarPorNome(String nome) {
         try {
-            return ResponseEntity.ok(cozinhaService.buscarPorNome(nome));
+            return ResponseEntity.ok(cozinhaService.buscarTodasPorNome(nome));
         } catch (EntidadeNaoEncontradaException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(List.of(String.format("Não existe cozinha cadastrada com nome: '%s'", nome)));
+                    .body(List.of(String.format("Não existem cozinhas cadastradas com nome: '%s'", nome)));
         }
+    }
+
+    @GetMapping("/unica-por-nome")
+    public ResponseEntity<?> buscarUnicaPorNome(String nome) {
+        try {
+            Optional<Cozinha> optionalCozinha = cozinhaService.buscarUnicaPorNome(nome);
+
+            if (optionalCozinha.isEmpty())
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format(
+                        "Não existe cozinha cadastrada com nome: %s", nome));
+
+            return ResponseEntity.ok(optionalCozinha.get());
+
+        } catch (EntidadeNaoEncontradaException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/existe")
+    public boolean existe(String nome) {
+        return cozinhaRepository.existsByNome(nome);
     }
 
     @ResponseStatus(HttpStatus.OK) //retorna 200

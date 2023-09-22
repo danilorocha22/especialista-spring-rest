@@ -7,7 +7,6 @@ import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,13 +22,21 @@ public class CadastroCozinhaService {
 
     private final CozinhaRepository cozinhaRepository;
 
-    public List<?> buscarPorNome(String nome) {
-         List<?> lista = cozinhaRepository.nome(nome);
+    public List<Cozinha> buscarTodasPorNome(String nome) {
+         List<Cozinha> lista = cozinhaRepository.findCozinhasByNomeContains(nome);
 
          if (lista.isEmpty())
              throw new EntidadeNaoEncontradaException(String.format("Não existe cozinha cadastrada com nome: %s", nome));
 
         return lista;
+    }
+
+    public Optional<Cozinha> buscarUnicaPorNome(String nome) {
+        Cozinha cozinha = cozinhaRepository.findByNome(nome).orElseThrow(() ->
+                new EntidadeNaoEncontradaException(String.format(
+                        "Não existe cozinha cadastrada com nome: %s", nome)));
+
+        return Optional.of(cozinha);
     }
 
     public Cozinha adicionarOuAtualizar(Cozinha cozinha) {
