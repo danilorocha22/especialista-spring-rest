@@ -64,6 +64,12 @@ public class CozinhaController {
         return cozinhaRepository.existsByNome(nome);
     }
 
+    @GetMapping("/primeiro")
+    public ResponseEntity<Cozinha> cozinhaPrimeiro() {
+        return cozinhaRepository.buscarPrimeiro().map(ResponseEntity::ok)
+                .orElseGet(()-> ResponseEntity.notFound().build());
+    }
+
     @ResponseStatus(HttpStatus.OK) //retorna 200
     @GetMapping
     public List<Cozinha> listar() {

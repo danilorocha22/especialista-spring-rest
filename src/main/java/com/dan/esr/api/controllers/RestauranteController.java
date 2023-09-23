@@ -90,6 +90,12 @@ public class RestauranteController {
         return ResponseEntity.ok(restauranteRepository.findComFreteGratis(nome));
     }
 
+    @GetMapping("/primeiro")
+    public ResponseEntity<Restaurante> restaurantePrimeiro() {
+        return restauranteRepository.buscarPrimeiro().map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping
     public List<Restaurante> listar() {
         return restauranteRepository.findAll();
