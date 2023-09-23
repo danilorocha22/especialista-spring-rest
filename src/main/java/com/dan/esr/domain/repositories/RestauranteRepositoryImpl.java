@@ -4,11 +4,15 @@ import com.dan.esr.domain.entities.Restaurante;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,8 +22,35 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
     @PersistenceContext
     private EntityManager entityManager;
 
-    //Consulta dinâmica
+    //Consulta dinâmica com API Criteria
     @Override
+    public List<Restaurante> find(String nome, BigDecimal freteInicial, BigDecimal freteFinal) {
+        var criteria = getBuilder().createQuery(Restaurante.class);
+        var root = criteria.from(Restaurante.class);
+        var parametros = definirParametros(nome, freteInicial, freteFinal, root);
+        criteria.where(parametros.toArray(new Predicate[0]));
+        var query = entityManager.createQuery(criteria);
+        return query.getResultList();
+    }
+
+    private CriteriaBuilder getBuilder() {
+        return entityManager.getCriteriaBuilder();
+    }
+
+    private ArrayList<Predicate> definirParametros(
+            String nome, BigDecimal freteInicial, BigDecimal freteFinal, Root<?> root) {
+        return new ArrayList<>() {{
+            if (StringUtils.hasText(nome))
+                add(getBuilder().like(root.get("nome"), "%" + nome + "%"));
+            if (Objects.nonNull(freteInicial))
+                add(getBuilder().greaterThanOrEqualTo(root.get("taxaFrete"), freteInicial));
+            if (Objects.nonNull(freteFinal))
+                add(getBuilder().lessThanOrEqualTo(root.get("taxaFrete"), freteFinal));
+        }};
+    }
+
+    //Consulta dinâmica com JPQL
+    /*@Override
     public List<Restaurante> find(String nome, BigDecimal freteInicial, BigDecimal freteFinal) {
         var jpql = new StringBuilder();
         var parametros = new HashMap<String, Object>();
@@ -44,10 +75,10 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
         TypedQuery<Restaurante> typedQuery = entityManager.createQuery(jpql.toString(), Restaurante.class);
         parametros.forEach(typedQuery::setParameter);
         return typedQuery.getResultList();
-    }
+    }*/
 
 
-    //Consulta não dinâmica
+    //Consulta não dinâmica com JPQL
     /*@Override
     public List<Restaurante> find(String nome, BigDecimal freteInicial, BigDecimal freteFinal) {
 
