@@ -5,10 +5,10 @@ insert into restaurantes(nome, taxa_frete, cozinha_id) values('Toca do Sabor', 5
 insert into restaurantes(nome, taxa_frete, cozinha_id) values('Toca do Camarão', 7, 2);
 insert into restaurantes(nome, taxa_frete, cozinha_id) values('Tia Sônia Restaurantes', 0, 2);
 
-insert into formas_de_pagamentos(descricao) values('Dinheiro');
-insert into formas_de_pagamentos(descricao) values('Pix');
-insert into formas_de_pagamentos(descricao) values('Débito');
-insert into formas_de_pagamentos(descricao) values('Crédito');
+insert into formas_de_pagamento(descricao) values('Dinheiro');
+insert into formas_de_pagamento(descricao) values('Pix');
+insert into formas_de_pagamento(descricao) values('Débito');
+insert into formas_de_pagamento(descricao) values('Crédito');
 
 insert into permissoes(nome, descricao) values('Desenvolvedor', 'Pode fazer tudo');
 insert into permissoes(nome, descricao) values('Gestor', 'Pode fazer quase tudo');
@@ -22,3 +22,5 @@ insert into cidades(nome, estado_id) values('Itaguatins', 1);
 insert into cidades(nome, estado_id) values('Palmas', 1);
 insert into cidades(nome, estado_id) values('Imperatriz', 2);
 insert into cidades(nome, estado_id) values('Goiânia', 1);
+
+insert into restaurante_formas_de_pagamento(restaurante_id, formas_de_pagamento_id) values(1,1), (1,2), (1,3), (2,3),(3,2), (3,3);

@@ -10,6 +10,8 @@ import lombok.ToString;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -36,6 +38,14 @@ public class Restaurante implements Serializable {
     @ManyToOne
     @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;
+
+    @ManyToMany
+    @JoinTable(
+            name = "restaurante_formas_de_pagamento",
+            joinColumns = @JoinColumn(name = "restaurante_id"),
+            inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id"))
+    @ToString.Exclude
+    private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
 
     @Embedded
     private Endereco endereco;
