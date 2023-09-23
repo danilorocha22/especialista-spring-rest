@@ -12,6 +12,8 @@ import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @JsonRootName(value = "cozinha")
@@ -34,6 +36,11 @@ public class Cozinha implements Serializable {
     @JsonProperty("tipo")
     @Column(nullable = false)
     private String nome;
+
+    @OneToMany(mappedBy = "cozinha",fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JsonIgnore
+    private List<Restaurante> restaurantes = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
