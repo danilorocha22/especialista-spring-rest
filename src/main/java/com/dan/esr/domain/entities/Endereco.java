@@ -1,14 +1,15 @@
 package com.dan.esr.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
+@JsonInclude(Include.NON_NULL)
 @Embeddable
 public class Endereco {
 

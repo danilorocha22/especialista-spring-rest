@@ -2,6 +2,7 @@ package com.dan.esr.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(Include.NON_NULL)
 @Entity
 @Table(name = "restaurantes")
 public class Restaurante implements Serializable {
@@ -41,6 +42,10 @@ public class Restaurante implements Serializable {
     private Cozinha cozinha;
 
     @JsonIgnore
+    @Embedded
+    private Endereco endereco;
+
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "restaurante_formas_de_pagamento",
@@ -49,8 +54,7 @@ public class Restaurante implements Serializable {
     @ToString.Exclude
     private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
 
-    @Embedded
-    private Endereco endereco;
+
 
     @Override
     public boolean equals(Object o) {
