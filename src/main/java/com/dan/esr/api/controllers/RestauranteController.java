@@ -7,9 +7,7 @@ import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import com.dan.esr.domain.services.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ReflectionUtils;
@@ -17,7 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import static com.dan.esr.infrastructure.spec.RestauranteSpecs.comFreteGratis;
+import static com.dan.esr.infrastructure.spec.RestauranteSpecs.comNomeSemelhante;
 
 @RequiredArgsConstructor
 @RestController
@@ -79,6 +83,11 @@ public class RestauranteController {
     @GetMapping("/count-por-cozinha")
     public int quantidadePorCozinha(Long cozinhaId) {
         return restauranteRepository.countByCozinhaId(cozinhaId);
+    }
+
+    @GetMapping("/com-frete-gratis")
+    public ResponseEntity<List<Restaurante>> buscarComFreteGratis(String nome) {
+        return ResponseEntity.ok(restauranteRepository.findComFreteGratis(nome));
     }
 
     @GetMapping

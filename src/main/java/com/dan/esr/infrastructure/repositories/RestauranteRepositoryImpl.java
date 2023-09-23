@@ -1,13 +1,15 @@
-package com.dan.esr.domain.repositories;
+package com.dan.esr.infrastructure.repositories;
 
 import com.dan.esr.domain.entities.Restaurante;
+import com.dan.esr.domain.repositories.RestauranteRepository;
+import com.dan.esr.domain.repositories.RestauranteRepositoryQueries;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -16,11 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.dan.esr.infrastructure.spec.RestauranteSpecs.comFreteGratis;
+import static com.dan.esr.infrastructure.spec.RestauranteSpecs.comNomeSemelhante;
+
 @Repository
 public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired @Lazy
+    private RestauranteRepository restauranteRepository;
 
     //Consulta dinâmica com API Criteria
     @Override
@@ -31,6 +39,11 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
         criteria.where(parametros.toArray(new Predicate[0]));
         var query = entityManager.createQuery(criteria);
         return query.getResultList();
+    }
+
+    @Override
+    public List<Restaurante> findComFreteGratis(String nome) {
+        return restauranteRepository.findAll(comFreteGratis().and(comNomeSemelhante(nome)));
     }
 
     private CriteriaBuilder getBuilder() {

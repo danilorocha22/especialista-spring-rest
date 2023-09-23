@@ -2,8 +2,8 @@ insert into cozinhas(nome) values('Paraense');
 insert into cozinhas(nome) values('Baiana');
 
 insert into restaurantes(nome, taxa_frete, cozinha_id) values('Toca do Sabor', 5, 1);
-insert into restaurantes(nome, taxa_frete, cozinha_id) values('Quitanda do Camarão', 7, 2);
-insert into restaurantes(nome, taxa_frete, cozinha_id) values('Tia Sônia Restaurantes', 10, 2);
+insert into restaurantes(nome, taxa_frete, cozinha_id) values('Toca do Camarão', 7, 2);
+insert into restaurantes(nome, taxa_frete, cozinha_id) values('Tia Sônia Restaurantes', 0, 2);
 
 insert into formas_de_pagamentos(descricao) values('Dinheiro');
 insert into formas_de_pagamentos(descricao) values('Pix');
