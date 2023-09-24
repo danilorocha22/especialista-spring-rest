@@ -1,6 +1,7 @@
 package com.dan.esr.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.persistence.*;
@@ -40,8 +41,11 @@ public class Restaurante implements Serializable {
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
-    @ManyToOne
+    //@JsonIgnore //ignora o objeto na serialização do json
+    //@JsonIgnoreProperties("hibernateLazyInitializer") //ignora o atributo na serialização do json
+    @ManyToOne//(fetch = FetchType.LAZY) //para evitar vários selects foi criado uma consulta jpql com join em cozinha
     @JoinColumn(name = "cozinha_id", nullable = false)
+    @ToString.Exclude
     private Cozinha cozinha;
 
     @JsonIgnore
@@ -58,7 +62,7 @@ public class Restaurante implements Serializable {
     @Column(nullable = false, columnDefinition = "datetime")
     private LocalDateTime dataAtualizacao;
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "restaurantes_formas_de_pagamento",
