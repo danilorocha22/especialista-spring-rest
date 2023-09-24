@@ -14,9 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -68,6 +66,11 @@ public class Restaurante implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id"))
     @ToString.Exclude
     private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
+
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
+    private List<Produto> produtos = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
