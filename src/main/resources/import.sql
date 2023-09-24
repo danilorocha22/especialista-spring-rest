@@ -27,7 +27,7 @@ insert into formas_de_pagamento(descricao) values('Crédito');
 insert into permissoes(nome, descricao) values('CONSULTAR_COZINHAS', 'Permite consultar cozinhas');
 insert into permissoes(nome, descricao) values('EDITAR_COZINHAS', 'Permite editar cozinhas');
 
-insert into restaurante_formas_de_pagamento(restaurante_id, formas_de_pagamento_id) values(1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3), (4, 1), (4, 2), (5, 1), (5, 2), (6, 3);
+insert into restaurantes_formas_de_pagamento(restaurante_id, formas_de_pagamento_id) values(1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3), (4, 1), (4, 2), (5, 1), (5, 2), (6, 3);
 
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Porco com molho agridoce', 'Deliciosa carne suína ao molho especial', 78.90, 1, 1);
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Camarão tailandês', '16 camarões grandes ao molho picante', 110, 1, 1);
