@@ -8,11 +8,11 @@ insert into estados(nome, sigla) values('Goiás', 'GO');
 insert into cidades(nome, estado_id) values('Itaguatins', 1);
 insert into cidades(nome, estado_id) values('Palmas', 1);
 insert into cidades(nome, estado_id) values('Imperatriz', 2);
-insert into cidades(nome, estado_id) values('Goiânia', 1);
+insert into cidades(nome, estado_id) values('Goiânia', 3);
 
-insert into restaurantes (id, nome, taxa_frete, cozinha_id, endereco_cidade_id, endereco_estado_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values (1, 'Toca do Sabor', 10, 1, 1, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
-insert into restaurantes (id, nome, taxa_frete, cozinha_id) values (2, 'Toca do Camarão', 9.50, 1);
-insert into restaurantes (id, nome, taxa_frete, cozinha_id) values (3, 'Tia Sônia Restaurante', 15, 2);
+insert into restaurantes (id, nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao, endereco_cidade_id, endereco_estado_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values (1, 'Toca do Sabor', 10, 1, utc_timestamp, utc_timestamp, 1, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
+insert into restaurantes (id, nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao) values (2, 'Toca do Camarão', 9.50, 1, utc_timestamp, utc_timestamp);
+insert into restaurantes (id, nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao) values (3, 'Tia Sônia Restaurante', 15, 2, utc_timestamp, utc_timestamp);
 
 insert into formas_de_pagamento(descricao) values('Dinheiro');
 insert into formas_de_pagamento(descricao) values('Pix');
