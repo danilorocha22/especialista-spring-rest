@@ -8,10 +8,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +51,16 @@ public class Restaurante implements Serializable {
     private Endereco endereco;
 
     @JsonIgnore
+    @CreationTimestamp //Instancia a data uma única vez, na primeira vez de salvar no banco
+    @Column(nullable = false, columnDefinition = "datetime")
+    private LocalDateTime dataCadastro;
+
+    @JsonIgnore
+    @UpdateTimestamp //Instancia uma nova data, sempre que for atualizado
+    @Column(nullable = false, columnDefinition = "datetime")
+    private LocalDateTime dataAtualizacao;
+
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "restaurante_formas_de_pagamento",
@@ -53,8 +68,6 @@ public class Restaurante implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id"))
     @ToString.Exclude
     private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
-
-
 
     @Override
     public boolean equals(Object o) {
