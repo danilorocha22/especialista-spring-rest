@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.mapping.ToOne;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -28,7 +29,7 @@ public class Cidade implements Serializable {
     @Column(nullable = false)
     private String nome;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "estado_id")
     private Estado estado;
 
