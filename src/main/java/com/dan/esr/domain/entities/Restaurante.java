@@ -61,7 +61,7 @@ public class Restaurante implements Serializable {
     @JsonIgnore
     @ManyToMany
     @JoinTable(
-            name = "restaurante_formas_de_pagamento",
+            name = "restaurantes_formas_de_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id"))
     @ToString.Exclude
