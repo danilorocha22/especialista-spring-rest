@@ -1,5 +1,6 @@
 package com.dan.esr.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,8 @@ import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -16,7 +19,7 @@ import java.util.Objects;
 @Table(name = "grupos")
 public class Grupo implements Serializable {
     @Serial
-    private static final long  serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +27,15 @@ public class Grupo implements Serializable {
 
     @Column(nullable = false)
     private String nome;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "grupos_permissoes",
+            joinColumns = @JoinColumn(name = "grupo_id"),
+            inverseJoinColumns = @JoinColumn(name = "permissao_id"))
+    @ToString.Exclude
+    private List<Permissao> permissoes = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
