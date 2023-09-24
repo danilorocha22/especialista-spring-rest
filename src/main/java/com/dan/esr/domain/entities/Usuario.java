@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -36,6 +38,14 @@ public class Usuario implements Serializable {
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime dataCadastro;
+
+    @ManyToMany
+    @JoinTable(
+            name = "usuarios_grupos",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "grupo_id"))
+    @ToString.Exclude
+    private List<Grupo> grupos = new ArrayList<>();
 
 
     @Override
