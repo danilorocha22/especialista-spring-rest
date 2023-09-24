@@ -8,13 +8,14 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "permissoes")
 public class Permissao implements Serializable {
     @Serial
     private static final  long serialVersionUID = 1L;
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
