@@ -20,9 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.dan.esr.infrastructure.spec.RestauranteSpecs.comFreteGratis;
-import static com.dan.esr.infrastructure.spec.RestauranteSpecs.comNomeSemelhante;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/restaurantes")
