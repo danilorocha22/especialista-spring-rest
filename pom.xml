@@ -85,6 +85,13 @@
             <artifactId>junit-platform-commons</artifactId>
         </dependency>
 
+        <!--Uma API alternativa para filtragem de dados com Spring MVC e Spring Data JPA-->
+        <dependency>
+            <groupId>net.kaczmarzyk</groupId>
+            <artifactId>specification-arg-resolver</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>
