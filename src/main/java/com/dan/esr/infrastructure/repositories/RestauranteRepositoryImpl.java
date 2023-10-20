@@ -27,7 +27,8 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired @Lazy
+    @Lazy //Resolve o problema da dependência circular
+    @Autowired
     private RestauranteRepository restauranteRepository;
 
     //Consulta dinâmica com API Criteria
