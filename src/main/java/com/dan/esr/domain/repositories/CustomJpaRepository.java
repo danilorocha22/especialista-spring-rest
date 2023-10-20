@@ -5,6 +5,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.Optional;
 
+//Esta anotação informa ao Spring para não estanciá-la
 @NoRepositoryBean
 public interface CustomJpaRepository<T, ID> extends JpaRepository<T, ID> {
 
