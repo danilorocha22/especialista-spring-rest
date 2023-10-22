@@ -1,18 +1,47 @@
-insert into cozinhas(nome) values('Paraense');
-insert into cozinhas(nome) values('Baiana');
-insert into cozinhas(nome) values('Tocantinense');
-insert into cozinhas(nome) values('Maranhense');
+## Arquivo de callback
+## Após o Flyway finalizaras migrations, este arquivo será executado
+set foreign_key_checks = 0;
 
-insert into estados(nome, sigla) values('Tocantins', 'TO');
-insert into estados(nome, sigla) values('Maranhão', 'MA');
-insert into estados(nome, sigla) values('Goiás', 'GO');
+delete from cidades;
+delete from cozinhas;
+delete from estados;
+delete from formas_de_pagamento;
+delete from grupos;
+delete from grupos_permissoes;
+delete from permissoes;
+delete from produtos;
+delete from restaurantes;
+delete from restaurantes_formas_de_pagamento;
+delete from usuarios;
+delete from usuarios_grupos;
+
+set foreign_key_checks = 1;
+
+alter table cidades auto_increment = 1;
+alter table cozinhas auto_increment = 1;
+alter table estados auto_increment = 1;
+alter table formas_de_pagamento auto_increment = 1;
+alter table grupos auto_increment = 1;
+alter table permissoes auto_increment = 1;
+alter table produtos auto_increment = 1;
+alter table restaurantes auto_increment = 1;
+alter table usuarios auto_increment = 1;
+
+insert into estados(nome) values('TO');
+insert into estados(nome) values('MA');
+insert into estados(nome) values('GO');
 
 insert into cidades(nome, estado_id) values('Itaguatins', 1);
 insert into cidades(nome, estado_id) values('Palmas', 1);
 insert into cidades(nome, estado_id) values('Imperatriz', 2);
 insert into cidades(nome, estado_id) values('Goiânia', 3);
 
-insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao, endereco_cidade_id, endereco_estado_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values('Toca do Sabor', 10, 1, utc_timestamp, utc_timestamp, 1, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
+insert ignore into cozinhas(nome) values('Brasileira');
+insert ignore into cozinhas(nome) values('Tailandesa');
+insert ignore into cozinhas(nome) values('Indiana');
+insert ignore into cozinhas(nome) values('Argentina');
+
+insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao, endereco_cidade_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values('Toca do Sabor', 10, 1, utc_timestamp, utc_timestamp, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
 insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao) values('Toca do Camarão', 9.50, 1, utc_timestamp, utc_timestamp);
 insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao) values('Tia Sônia Restaurante', 15, 2, utc_timestamp, utc_timestamp);
 insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao) values('Java Steakhouse', 12, 3, utc_timestamp, utc_timestamp);
@@ -38,3 +67,4 @@ insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Bife
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('T-Bone', 'Corte muito saboroso, com um osso em formato de T, sendo de um lado o contrafilé e do outro o filé mignon', 89, 1, 4);
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Sanduíche X-Tudo', 'Sandubão com muito queijo, hamburger bovino, bacon, ovo, salada e maionese', 19, 1, 5);
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Espetinho de Cupim', 'Acompanha farinha, mandioca e vinagrete', 8, 1, 6);
+
