@@ -29,8 +29,8 @@ public class Endereco {
     @JoinColumn(name = "endereco_cidade_id")
     private Cidade cidade;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+   /* @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_estado_id")
-    private Estado uf;
+    private Estado uf;*/
 
 }
