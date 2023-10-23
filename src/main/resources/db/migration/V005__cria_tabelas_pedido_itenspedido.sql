@@ -2,7 +2,7 @@ create table itens_pedido
 (
     preco_total decimal(10, 2) not null,
     preco_unit  decimal(10, 2) not null,
-    quantidade  integer        not null,
+    quantidade  smallint       not null,
     id          bigint         not null auto_increment,
     pedido_id   bigint         not null,
     produto_id  bigint         not null,
@@ -32,13 +32,16 @@ create table pedidos
     primary key (id)
 ) engine = InnoDB;
 
+alter table itens_pedido
+    add constraint uk_item_pedido_produto unique (pedido_id, produto_id);
 
 alter table itens_pedido
     add constraint fk_item_pedido_pedido foreign key (pedido_id) references pedidos (id);
 alter table itens_pedido
     add constraint fk_item_pedido_produto foreign key (produto_id) references produtos (id);
+
 alter table pedidos
-    add constraint fk_endereco_cidade foreign key (endereco_cidade_id) references cidades (id);
+    add constraint fk_pedido_endereco_cidade foreign key (endereco_cidade_id) references cidades (id);
 alter table pedidos
     add constraint fk_pedido_formas_pagamento foreign key (formas_pagamento_id) references formas_de_pagamento (id);
 alter table pedidos
