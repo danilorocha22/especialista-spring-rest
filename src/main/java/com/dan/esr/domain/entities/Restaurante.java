@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,7 +19,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 @Entity
 @Table(name = "restaurantes")
@@ -43,7 +41,8 @@ public class Restaurante implements Serializable {
     //@JsonIgnore //ignora o objeto na serialização do json
     //@JsonIgnoreProperties("hibernateLazyInitializer") //ignora o atributo na serialização do json
     @ManyToOne//(fetch = FetchType.LAZY) //para evitar vários selects foi criado uma consulta jpql com join em cozinha
-    @JoinColumn(name = "cozinha_id", nullable = false)
+    @JoinColumn(name = "cozinha_id", nullable = false, foreignKey =
+    @ForeignKey(name = "fk_restaurante_cozinha"), referencedColumnName = "id")
     @ToString.Exclude
     private Cozinha cozinha;
 
@@ -65,8 +64,10 @@ public class Restaurante implements Serializable {
     @ManyToMany
     @JoinTable(
             name = "restaurantes_formas_de_pagamento",
-            joinColumns = @JoinColumn(name = "restaurante_id"),
-            inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id"))
+            joinColumns = @JoinColumn(name = "restaurante_id", foreignKey =
+            @ForeignKey(name = "fk_restaurante_formas_pagamento_restaurante"), referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id", foreignKey =
+            @ForeignKey(name = "fk_restaurante_formas_pagamento_formas_pagamento"), referencedColumnName = "id"))
     @ToString.Exclude
     private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
 

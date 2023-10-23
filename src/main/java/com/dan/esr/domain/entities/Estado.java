@@ -1,11 +1,9 @@
 package com.dan.esr.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,7 +12,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "estados")
 public class Estado implements Serializable {
@@ -25,13 +25,10 @@ public class Estado implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String sigla;
-
-    @Column(nullable = false)
+    @Column(nullable = false, length = 80)
     private String nome;
 
-    @JsonIgnore
+    /*@JsonIgnore
     @Transient
     private Regiao regiao;
 
@@ -39,7 +36,7 @@ public class Estado implements Serializable {
         public int id;
         public String sigla;
         public String nome;
-    }
+    }*/
 
     @Override
     public boolean equals(Object o) {
@@ -52,4 +49,5 @@ public class Estado implements Serializable {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
 }

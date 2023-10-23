@@ -2,9 +2,7 @@ package com.dan.esr.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,6 +13,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "grupos")
 public class Grupo implements Serializable {
@@ -25,15 +25,17 @@ public class Grupo implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String nome;
 
     @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "grupos_permissoes",
-            joinColumns = @JoinColumn(name = "grupo_id"),
-            inverseJoinColumns = @JoinColumn(name = "permissao_id"))
+            joinColumns = @JoinColumn(name = "grupo_id", foreignKey =
+            @ForeignKey(name = "fk_grupo_permissoes_grupo"), referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "permissao_id", foreignKey =
+            @ForeignKey(name = "fk_grupo_permissoes_permissoes"), referencedColumnName = "id"))
     @ToString.Exclude
     private List<Permissao> permissoes = new ArrayList<>();
 

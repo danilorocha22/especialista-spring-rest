@@ -2,10 +2,7 @@ package com.dan.esr.domain.entities;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.mapping.ToOne;
 
 import java.io.Serial;
@@ -15,7 +12,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "cidades")
 public class Cidade implements Serializable {
@@ -26,11 +24,12 @@ public class Cidade implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 80)
     private String nome;
 
     @ManyToOne
-    @JoinColumn(name = "estado_id")
+    @JoinColumn(name = "estado_id", nullable = false, foreignKey =
+    @ForeignKey(name = "fk_cidade_estado"), referencedColumnName = "id")
     private Estado estado;
 
     @Override

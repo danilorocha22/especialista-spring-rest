@@ -42,8 +42,10 @@ public class Usuario implements Serializable {
     @ManyToMany
     @JoinTable(
             name = "usuarios_grupos",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "grupo_id"))
+            joinColumns = @JoinColumn(name = "usuario_id", foreignKey =
+            @ForeignKey(name = "fk_usuario_grupo_usuario"), referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "grupo_id", foreignKey =
+            @ForeignKey(name = "fk_usuario_grupo_grupo"), referencedColumnName = "id"))
     @ToString.Exclude
     private List<Grupo> grupos = new ArrayList<>();
 

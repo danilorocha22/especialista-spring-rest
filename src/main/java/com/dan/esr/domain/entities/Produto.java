@@ -1,9 +1,7 @@
 package com.dan.esr.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,6 +11,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "produtos")
 public class Produto implements Serializable {
@@ -23,7 +23,7 @@ public class Produto implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,  length = 20)
     private String nome;
 
     @Column(nullable = false)
@@ -36,7 +36,8 @@ public class Produto implements Serializable {
     private boolean ativo;
 
     @ManyToOne
-    @JoinColumn(name = "restaurante_id", nullable = false)
+    @JoinColumn(name = "restaurante_id", nullable = false, foreignKey =
+    @ForeignKey(name = "fk_produto_restaurante"), referencedColumnName = "id")
     private Restaurante restaurante;
 
     @Override

@@ -15,15 +15,15 @@ public class Permissao implements Serializable {
     @Serial
     private static final  long serialVersionUID = 1L;
 
-    @EqualsAndHashCode.Include
     @Id
+    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String nome;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 80)
     private String descricao;
 
 }
