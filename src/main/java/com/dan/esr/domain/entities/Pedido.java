@@ -43,15 +43,12 @@ public class Pedido implements Serializable {
     @Column(name = "data_criacao", columnDefinition = "datetime", nullable = false)
     private LocalDateTime dataCriacao;
 
-    @CreationTimestamp
     @Column(name = "data_confirmacao", columnDefinition = "datetime")
     private LocalDateTime dataConfirmacao;
 
-    @CreationTimestamp
     @Column(name = "data_cancelamento", columnDefinition = "datetime")
     private LocalDateTime dataCancelamento;
 
-    @CreationTimestamp
     @Column(name = "data_entrega", columnDefinition = "datetime")
     private LocalDateTime dataEntrega;
 
@@ -73,12 +70,12 @@ public class Pedido implements Serializable {
     @ForeignKey(name = "fk_pedido_restaurante"), referencedColumnName = "id")
     private Restaurante restaurante;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "formas_pagamento_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_pedido_formas_pagamento"), referencedColumnName = "id")
     private FormasDePagamento formasDePagamento;
 
-    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pedido")
     @ToString.Exclude
     private List<ItemPedido> itensPedidos = new ArrayList<>();
 
@@ -101,7 +98,8 @@ public class Pedido implements Serializable {
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Entity
-    @Table(name = "itens_pedido")
+    @Table(name = "itens_pedido", uniqueConstraints =
+            {@UniqueConstraint(columnNames = {"pedido_id", "produto_id"}, name = "uk_item_pedido_produto")})
     public static class ItemPedido implements Serializable {
         @Serial
         private static final long serialVersionUID = 1L;
@@ -110,8 +108,8 @@ public class Pedido implements Serializable {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @Column(nullable = false)
-        private Integer quantidade;
+        @Column(nullable = false, length = 6)
+        private short quantidade;
 
         @Column(name = "preco_unit", nullable = false, precision = 10, scale = 2)
         private BigDecimal precoUnitario;
