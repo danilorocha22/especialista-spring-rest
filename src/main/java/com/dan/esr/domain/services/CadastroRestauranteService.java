@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,16 +22,29 @@ import java.util.logging.Logger;
 @Service
 public class CadastroRestauranteService {
     private static final Logger logger = Logger.getLogger(String.valueOf(CadastroRestauranteService.class));
+    public static final String MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME = "Restaurante não encontrado com nome: %s";
+    public static final String MSG_RESTAURANTE_NAO_ENCONTRADO_COM_ID = "Restaurante não encontrado com ID %s";
+    public static final String MSG_RESTAURANTE_NAO_ENCONTRADO_PELO_FRETE = "Restaurante não localizado com as " +
+            "taxas informadas: Taxa Inicial: %s; Taxa Final %s";
+
+    public static final String MSG_RESTAURANTE_ESTA_EM_USO_COM_OUTRA_ENTIDADE = "Restaurante com ID %s, está em uso com " +
+            "outra entidade e não pode ser excluído";
 
     private final RestauranteRepository restauranteRepository;
 
     private final CozinhaRepository cozinhaRepository;
 
+    public Restaurante buscarPorId(Long id) {
+        Objects.requireNonNull(id, "ID é obrigatório");
+        return this.restauranteRepository.findById(id).orElseThrow(() ->
+                new EntidadeNaoEncontradaException(String.format(
+                        MSG_RESTAURANTE_NAO_ENCONTRADO_COM_ID, id)));
+    }
 
-    public Restaurante adicionarOuAtualizar(Restaurante restaurante) {
+    public Restaurante salvarOuAtualizar(Restaurante restaurante) {
         // cria um novo registro
         if (Objects.isNull(restaurante.getId())) {
-            return adicionar(restaurante);
+            return salvar(restaurante);
         }
 
         // atualiza um registro
@@ -38,41 +52,27 @@ public class CadastroRestauranteService {
     }
 
     public void remover(Long id) {
-        Restaurante restaurante = restauranteRepository.findById(id).orElse(null);
+        Restaurante restaurante = this.buscarPorId(id);
         try {
-            restauranteRepository.delete(Objects.requireNonNull(restaurante));
-            logger.log(Level.INFO, "Restaurante removido com sucesso: {0}", restaurante.getNome());
-
+            this.restauranteRepository.delete(restaurante);
         } catch (DataIntegrityViolationException e) {
-            logger.log(Level.SEVERE,
-                    "Não é possível remover o restaurante com ID {0}, pois pois relacionamento com outra entidade.", id);
-            throw new EntidadeEmUsoException(String.format(
-                    "Não é possível remover o restaurante com ID %s, pois possui relacionamento com outra entidade.", id));
-
-        } catch (NullPointerException e) {
-            logger.log(Level.SEVERE, "Não foi possível encontrar o restaurante de ID: {0}", id);
-            throw new EntidadeNaoEncontradaException(String.format(
-                    "Não foi possível encontrar o restaurante de ID %s", id));
+            throw new EntidadeEmUsoException(String.format(MSG_RESTAURANTE_ESTA_EM_USO_COM_OUTRA_ENTIDADE, id));
         }
     }
 
     public List<Restaurante> buscarRestaurantesPorTaxa(BigDecimal taxaInicial, BigDecimal taxaFinal) {
-        if (Objects.isNull(taxaInicial) || Objects.isNull(taxaFinal)) {
-            throw new EntidadeNaoEncontradaException(String.format(
-                    "Não foi possível realizar a pesquisa com as taxas informadas: Taxa Inicial: %s; Taxa Final %s",
-                    taxaInicial, taxaFinal
-            ));
-        }
+        Objects.requireNonNull(taxaInicial, "Taxa Inicial é obrigatório");
+        Objects.requireNonNull(taxaFinal, "Taxa Final é obrigatório");
+        List<Restaurante> restaurantes = this.restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
 
-        List<Restaurante> restaurantes = restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
-        if (restaurantes.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format(
-                    "Não foi possível encontrar restaurantes com as taxas informadas: " +
-                            "Taxa Inicial %s; Taxa Final %s", taxaInicial, taxaFinal));
+        if (restaurantes.isEmpty()) throw new EntidadeNaoEncontradaException(
+                String.format(MSG_RESTAURANTE_NAO_ENCONTRADO_PELO_FRETE, taxaInicial, taxaFinal)
+        );
+
         return restaurantes;
     }
 
-    private Restaurante adicionar(Restaurante restaurante) {
+    private Restaurante salvar(Restaurante restaurante) {
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinha = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new EntidadeNaoEncontradaException(
                 String.format("Não existe cozinha cadastrada com ID %s", cozinhaId)

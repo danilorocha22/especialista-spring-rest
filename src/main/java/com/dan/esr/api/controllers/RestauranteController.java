@@ -29,21 +29,20 @@ public class RestauranteController {
     private final CadastroRestauranteService restauranteService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        Optional<Restaurante> optionalRestaurante = restauranteRepository.findById(id);
-        return (optionalRestaurante.isPresent()) ? ResponseEntity.ok(optionalRestaurante.get()) :
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format(
-                        "Não existe restaurante cadastrado com ID %s", id));
+    public Restaurante buscarPorId(@PathVariable Long id) {
+        return this.restauranteService.buscarPorId(id);
     }
 
     @GetMapping("/por-taxa")
-    public ResponseEntity<List<?>> buscarPorTaxa(BigDecimal taxaInicial, BigDecimal taxaFinal) {
-        try {
+    public List<Restaurante> buscarPorTaxa(BigDecimal taxaInicial, BigDecimal taxaFinal) {
+        return this.restauranteService.buscarRestaurantesPorTaxa(taxaInicial, taxaFinal);
+
+        /*try {
             List<Restaurante> restaurantes = restauranteService.buscarRestaurantesPorTaxa(taxaInicial, taxaFinal);
             return ResponseEntity.ok(restaurantes);
         } catch (EntidadeNaoEncontradaException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of(e.getMessage()));
-        }
+        }*/
     }
 
     @GetMapping("/por-nome-e-cozinha")
@@ -101,7 +100,7 @@ public class RestauranteController {
     @PostMapping
     public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante) {
         try {
-            Restaurante registro = restauranteService.adicionarOuAtualizar(restaurante);
+            Restaurante registro = restauranteService.salvarOuAtualizar(restaurante);
             return ResponseEntity.status(HttpStatus.CREATED).body(registro);
 
         } catch (EntidadeNaoEncontradaException e) {
@@ -124,7 +123,7 @@ public class RestauranteController {
 
         try {
             restaurante.setId(id);
-            return ResponseEntity.ok(restauranteService.adicionarOuAtualizar(restaurante));
+            return ResponseEntity.ok(restauranteService.salvarOuAtualizar(restaurante));
         } catch (EntidadeNaoEncontradaException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -144,7 +143,7 @@ public class RestauranteController {
 
         try {
             merge(campos, registro);
-            return ResponseEntity.ok(restauranteService.adicionarOuAtualizar(registro));
+            return ResponseEntity.ok(restauranteService.salvarOuAtualizar(registro));
 
         } catch (EntidadeNaoEncontradaException e) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -160,21 +159,8 @@ public class RestauranteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> remover(@PathVariable Long id) {
-        try {
-            restauranteService.remover(id);
-            return ResponseEntity.status(HttpStatus.OK).body(String.format(
-                    "Restaurante de ID %s removido com sucesso", id));
-
-        } catch (EntidadeEmUsoException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format(
-                    "Não foi possível remover o restaurante de ID %s, pois possui um relacionamento com outra entidade",
-                    id));
-
-        } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format(
-                    "Não existe restaurante cadastrado com ID %s", id));
-        }
+    public void remover(@PathVariable Long id) {
+        this.restauranteService.remover(id);
     }
 
     private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteDestino) {

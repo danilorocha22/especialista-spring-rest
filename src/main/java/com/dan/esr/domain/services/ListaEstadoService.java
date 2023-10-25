@@ -4,7 +4,6 @@ import com.dan.esr.domain.entities.Estado;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,6 +15,8 @@ import java.util.List;
 
 @Service
 public class ListaEstadoService {
+
+    public static final String URL_IBGE_ESTADOS = "https://servicodados.ibge.gov.br/api/v1/localidades/estados";
 
     public List<Estado> estados() {
         HttpClient client = HttpClient.newHttpClient();
@@ -32,7 +33,7 @@ public class ListaEstadoService {
 
     private HttpRequest newRequest() {
         return HttpRequest.newBuilder()
-                .uri(URI.create("https://servicodados.ibge.gov.br/api/v1/localidades/estados"))
+                .uri(URI.create(URL_IBGE_ESTADOS))
                 .GET()
                 .build();
     }
