@@ -2,7 +2,6 @@ package com.dan.esr.api.controllers;
 
 import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.entities.Restaurante;
-import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import com.dan.esr.domain.services.CadastroRestauranteService;
@@ -25,76 +24,57 @@ import java.util.Optional;
 @RequestMapping("/restaurantes")
 public class RestauranteController {
 
-    private final RestauranteRepository restauranteRepository;
+    private final RestauranteRepository restauranteRepo;
     private final CadastroRestauranteService restauranteService;
 
     @GetMapping("/{id}")
     public Restaurante buscarPorId(@PathVariable Long id) {
-        return this.restauranteService.buscarPorId(id);
+            return this.restauranteService.buscarPorId(id);
     }
 
     @GetMapping("/por-taxa")
     public List<Restaurante> buscarPorTaxa(BigDecimal taxaInicial, BigDecimal taxaFinal) {
         return this.restauranteService.buscarRestaurantesPorTaxa(taxaInicial, taxaFinal);
-
-        /*try {
-            List<Restaurante> restaurantes = restauranteService.buscarRestaurantesPorTaxa(taxaInicial, taxaFinal);
-            return ResponseEntity.ok(restaurantes);
-        } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of(e.getMessage()));
-        }*/
     }
 
     @GetMapping("/por-nome-e-cozinha")
-    public ResponseEntity<List<Restaurante>> buscarPorNomeECozinha(String nome, Long cozinhaId) {
-        List<Restaurante> restaurantes = restauranteRepository.consultarPorNomeECozinhaId(nome, cozinhaId);
-        if (restaurantes.isEmpty())
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(restaurantes);
+    public List<Restaurante> buscarPorNomeECozinha(String nome, Long cozinhaId) {
+        return this.restauranteService.consultarPorNomeECozinhaId(nome, cozinhaId);
     }
 
     @GetMapping("/por-nome-e-frete")
-    public ResponseEntity<List<Restaurante>> buscarPorNomeEFrete(String nome, BigDecimal freteInicial,
-                                                                 BigDecimal freteFinal) {
-        List<Restaurante> restaurantes = restauranteRepository.find(nome, freteInicial, freteFinal);
-        if (restaurantes.isEmpty())
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(restaurantes);
+    public List<Restaurante> buscarPorNomeEFrete(String nome, BigDecimal freteInicial, BigDecimal freteFinal) {
+        return this.restauranteService.consultarPorNomeEFrete(nome, freteInicial, freteFinal);
     }
 
     @GetMapping("/primeiro-por-nome")
-    public ResponseEntity<Restaurante> buscarPrimeiroPorNome(String nome) {
-        return restauranteRepository.findFirstRestauranteByNomeContaining(nome)
-                .map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public Restaurante buscarPrimeiroPorNome(String nome) {
+        return this.restauranteService.buscarPrimeiroPorNome(nome);
     }
 
     @GetMapping("/top2-por-nome")
-    public ResponseEntity<List<Restaurante>> buscarTop2PorNome(String nome) {
-        List<Restaurante> restaurantes = restauranteRepository.findTop2ByNomeContaining(nome);
-        if (restaurantes.isEmpty())
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(restaurantes);
+    public List<Restaurante> buscarTop2PorNome(String nome) {
+        return this.restauranteService.buscarTop2PorNome(nome);
     }
 
     @GetMapping("/count-por-cozinha")
     public int quantidadePorCozinha(Long cozinhaId) {
-        return restauranteRepository.countByCozinhaId(cozinhaId);
+        return restauranteRepo.countByCozinhaId(cozinhaId);
     }
 
     @GetMapping("/com-frete-gratis")
-    public ResponseEntity<List<Restaurante>> buscarComFreteGratis(String nome) {
-        return ResponseEntity.ok(restauranteRepository.findComFreteGratis(nome));
+    public List<Restaurante> buscarComFreteGratis(String nome) {
+        return this.restauranteService.buscarComFreteGratis(nome);
     }
 
     @GetMapping("/primeiro")
-    public ResponseEntity<Restaurante> restaurantePrimeiro() {
-        return restauranteRepository.buscarPrimeiro().map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public Restaurante restaurantePrimeiro() {
+        return this.restauranteService.buscarPrimeiroRestaurante();
     }
 
     @GetMapping
     public List<Restaurante> listar() {
-        return restauranteRepository.findAll();
+        return restauranteRepo.findAll();
     }
 
     @PostMapping
@@ -115,7 +95,7 @@ public class RestauranteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Restaurante restaurante) {
-        Optional<Restaurante> optionalRestaurante = restauranteRepository.findById(id);
+        Optional<Restaurante> optionalRestaurante = restauranteRepo.findById(id);
 
         if (optionalRestaurante.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format(
@@ -135,7 +115,7 @@ public class RestauranteController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> atualizarParcial(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
-        Restaurante registro = restauranteRepository.findById(id).orElse(null);
+        Restaurante registro = restauranteRepo.findById(id).orElse(null);
 
         if (Objects.isNull(registro))
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format(

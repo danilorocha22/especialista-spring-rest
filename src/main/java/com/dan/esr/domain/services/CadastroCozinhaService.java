@@ -1,7 +1,7 @@
 package com.dan.esr.domain.services;
 
 import com.dan.esr.domain.entities.Cozinha;
-import com.dan.esr.domain.exceptions.EntidadeComAtributoNuloException;
+import com.dan.esr.domain.exceptions.ParametroInadequadoException;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
@@ -76,7 +76,7 @@ public class CadastroCozinhaService {
 
         } catch (DataIntegrityViolationException e) {
             logger.log(Level.INFO, "Não foi possível salvar a cozinha: {0}", cozinha.getNome());
-            throw new EntidadeComAtributoNuloException(String.format(
+            throw new ParametroInadequadoException(String.format(
                     "Não foi possível salvar a cozinha, verifique: %s", cozinha));
         }
     }
@@ -87,7 +87,7 @@ public class CadastroCozinhaService {
             return cozinhaRepository.saveAndFlush(cozinha);
         } catch (DataIntegrityViolationException e) {
             logger.log(Level.INFO, "Não foi possível atualizar a cozinha: {0}", cozinha.getNome());
-            throw new EntidadeComAtributoNuloException(String.format(
+            throw new ParametroInadequadoException(String.format(
                     "Não foi possível atualizar a cozinha, verifique: %s", cozinha));
         }
     }

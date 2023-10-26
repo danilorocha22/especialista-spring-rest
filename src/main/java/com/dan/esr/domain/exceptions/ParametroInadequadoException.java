@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.Serial;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class EntidadeComAtributoNuloException extends RuntimeException {
+public class ParametroInadequadoException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public EntidadeComAtributoNuloException(String message) {
+    public ParametroInadequadoException(String message) {
         super(message);
     }
 }

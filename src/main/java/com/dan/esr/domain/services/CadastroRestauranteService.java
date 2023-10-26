@@ -22,23 +22,24 @@ import java.util.logging.Logger;
 @Service
 public class CadastroRestauranteService {
     private static final Logger logger = Logger.getLogger(String.valueOf(CadastroRestauranteService.class));
-    public static final String MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME = "Restaurante não encontrado com nome: %s";
-    public static final String MSG_RESTAURANTE_NAO_ENCONTRADO_COM_ID = "Restaurante não encontrado com ID %s";
-    public static final String MSG_RESTAURANTE_NAO_ENCONTRADO_PELO_FRETE = "Restaurante não localizado com as " +
+    private static final String MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME = "Restaurante não encontrado com nome: %s";
+    private static final String MSG_RESTAURANTE_NAO_ENCONTRADO_COM_ID = "Restaurante não encontrado com ID %s";
+    private static final String MSG_RESTAURANTE_NAO_ENCONTRADO_PELO_FRETE = "Restaurante não localizado com as " +
             "taxas informadas: Taxa Inicial: %s; Taxa Final %s";
+    public static final String MSG_PARAMETRO_INADEQUADO = "O parâmetro '%s' é inadequado. Informe um valor numérico";
 
-    public static final String MSG_RESTAURANTE_ESTA_EM_USO_COM_OUTRA_ENTIDADE = "Restaurante com ID %s, está em uso com " +
+    private static final String MSG_RESTAURANTE_ESTA_EM_USO_COM_OUTRA_ENTIDADE = "Restaurante com ID %s, está em uso com " +
             "outra entidade e não pode ser excluído";
 
-    private final RestauranteRepository restauranteRepository;
+    private final RestauranteRepository restauranteRepo;
 
     private final CozinhaRepository cozinhaRepository;
 
     public Restaurante buscarPorId(Long id) {
-        Objects.requireNonNull(id, "ID é obrigatório");
-        return this.restauranteRepository.findById(id).orElseThrow(() ->
-                new EntidadeNaoEncontradaException(String.format(
-                        MSG_RESTAURANTE_NAO_ENCONTRADO_COM_ID, id)));
+        validarCampoObrigatorio(id, "ID");
+        return this.restauranteRepo.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(
+                        String.format(MSG_RESTAURANTE_NAO_ENCONTRADO_COM_ID, id)));
     }
 
     public Restaurante salvarOuAtualizar(Restaurante restaurante) {
@@ -54,22 +55,84 @@ public class CadastroRestauranteService {
     public void remover(Long id) {
         Restaurante restaurante = this.buscarPorId(id);
         try {
-            this.restauranteRepository.delete(restaurante);
+            this.restauranteRepo.delete(restaurante);
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(String.format(MSG_RESTAURANTE_ESTA_EM_USO_COM_OUTRA_ENTIDADE, id));
         }
     }
 
     public List<Restaurante> buscarRestaurantesPorTaxa(BigDecimal taxaInicial, BigDecimal taxaFinal) {
-        Objects.requireNonNull(taxaInicial, "Taxa Inicial é obrigatório");
-        Objects.requireNonNull(taxaFinal, "Taxa Final é obrigatório");
-        List<Restaurante> restaurantes = this.restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
+        validarCampoObrigatorio(taxaInicial, "Taxa Inicial");
+        validarCampoObrigatorio(taxaFinal, "Taxa Final");
+        List<Restaurante> restaurantes = this.restauranteRepo.findByTaxaFreteBetween(taxaInicial, taxaFinal);
 
         if (restaurantes.isEmpty()) throw new EntidadeNaoEncontradaException(
                 String.format(MSG_RESTAURANTE_NAO_ENCONTRADO_PELO_FRETE, taxaInicial, taxaFinal)
         );
 
         return restaurantes;
+    }
+
+    public List<Restaurante> consultarPorNomeECozinhaId(String nome, Long cozinhaId) {
+        validarCampoObrigatorio(nome, "Nome");
+        validarCampoObrigatorio(cozinhaId, "Id da cozinha");
+        List<Restaurante> restaurantes = this.restauranteRepo.consultarPorNomeECozinhaId(nome, cozinhaId);
+
+        if (restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format(
+                    MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME + " ou " + MSG_RESTAURANTE_NAO_ENCONTRADO_COM_ID, nome, cozinhaId
+            ));
+
+        return restaurantes;
+    }
+
+    public List<Restaurante> consultarPorNomeEFrete(String nome, BigDecimal freteInicial, BigDecimal freteFinal) {
+        validarCampoObrigatorio(nome, "Nome");
+        validarCampoObrigatorio(freteInicial, "Frete Inicial");
+        validarCampoObrigatorio(freteFinal, "Frete Final");
+        List<Restaurante> restaurantes = this.restauranteRepo.find(nome, freteInicial, freteFinal);
+
+        if (restaurantes.isEmpty()) {
+            throw new EntidadeNaoEncontradaException(String.format(
+                    MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME, nome
+            ));
+        }
+
+        return restaurantes;
+    }
+
+    public Restaurante buscarPrimeiroPorNome(String nome) {
+        validarCampoObrigatorio(nome, "Nome");
+        return this.restauranteRepo.findFirstRestauranteByNomeContaining(nome)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(
+                        MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME, nome)));
+    }
+
+    public List<Restaurante> buscarTop2PorNome(String nome) {
+        validarCampoObrigatorio(nome, "Nome");
+        List<Restaurante> restaurantes = this.restauranteRepo.findTop2ByNomeContaining(nome);
+
+        if (restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format(
+                    MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME, nome));
+
+        return restaurantes;
+    }
+
+    public List<Restaurante> buscarComFreteGratis(String nome) {
+        validarCampoObrigatorio(nome, "Nome");
+        List<Restaurante> restaurantes = this.restauranteRepo.findComFreteGratis(nome);
+
+        if (restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format(
+                    MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME, nome));
+
+        return restaurantes;
+    }
+
+    public Restaurante buscarPrimeiroRestaurante() {
+        return this.restauranteRepo.buscarPrimeiro()
+                .orElseThrow(()-> new EntidadeNaoEncontradaException("Restaurante não encontrado"));
     }
 
     private Restaurante salvar(Restaurante restaurante) {
@@ -80,11 +143,11 @@ public class CadastroRestauranteService {
 
         restaurante.setCozinha(cozinha);
         logger.log(Level.INFO, "Novo restaurante criado: {0}", restaurante.getNome());
-        return restauranteRepository.save(restaurante);
+        return restauranteRepo.save(restaurante);
     }
 
     private Restaurante atualizar(Restaurante restaurante) {
-        Restaurante restauranteRegistro = restauranteRepository.findById(restaurante.getId()).orElseThrow(() ->
+        Restaurante restauranteRegistro = restauranteRepo.findById(restaurante.getId()).orElseThrow(() ->
                 new EntidadeNaoEncontradaException(String.format("Não existe restaurante cadastrado com ID %s",
                         restaurante.getId())));
 
@@ -95,8 +158,11 @@ public class CadastroRestauranteService {
         BeanUtils.copyProperties(restaurante, restauranteRegistro,
                 "id", "formasDePagamento", "endereco", "dataCadastro", "produtos");
         logger.log(Level.INFO, "Restaurante atualizado: {0}", restaurante.getNome());
-        return restauranteRepository.saveAndFlush(restauranteRegistro);
+        return restauranteRepo.saveAndFlush(restauranteRegistro);
+    }
 
+    private static void validarCampoObrigatorio(Object obj, String msg) {
+        Objects.requireNonNull(obj, msg + " é obrigatório");
     }
 
 }

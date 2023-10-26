@@ -2,7 +2,6 @@ package com.dan.esr.api.controllers;
 
 import com.dan.esr.api.models.CozinhasXML;
 import com.dan.esr.domain.entities.Cozinha;
-import com.dan.esr.domain.exceptions.EntidadeComAtributoNuloException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import com.dan.esr.domain.services.CadastroCozinhaService;
 import lombok.RequiredArgsConstructor;
