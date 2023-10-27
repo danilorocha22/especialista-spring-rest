@@ -25,7 +25,7 @@ public class CozinhaController {
 
     @GetMapping("/{id}")
     public Cozinha buscarPorId(@PathVariable Long id) {
-        return this.cozinhaService.buscarPorId(id);
+        return this.cozinhaService.buscarCozinhaPorId(id);
     }
 
     @GetMapping("/por-nome")
@@ -70,7 +70,7 @@ public class CozinhaController {
     @PutMapping("/{id}")
     public Cozinha atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
         System.out.println("COZINHA "+ cozinha);
-        Cozinha cozinhaRegistro = this.cozinhaService.buscarPorId(id);
+        Cozinha cozinhaRegistro = this.cozinhaService.buscarCozinhaPorId(id);
         BeanUtils.copyProperties(cozinha, cozinhaRegistro, "id");
         return this.cozinhaService.salvarOuAtualizar(cozinhaRegistro);
     }
