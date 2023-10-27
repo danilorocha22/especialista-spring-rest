@@ -23,7 +23,7 @@ public class CadastroCozinhaService {
 
     private final CozinhaRepository cozinhaRepository;
 
-    public Cozinha buscarPorId(Long id) {
+    public Cozinha buscarCozinhaPorId(Long id) {
         Objects.requireNonNull(id, "ID é obrigatório");
         return this.cozinhaRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(
                 String.format(MSG_COZINHA_NAO_ENCONTRADA_COM_ID, id)));
