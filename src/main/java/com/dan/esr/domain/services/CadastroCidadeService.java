@@ -37,11 +37,7 @@ public class CadastroCidadeService {
         Estado estadoRegistro = this.estadoService.buscarEstadoPorId(estadoId);
         cidade.setEstado(estadoRegistro);
 
-        try {
-            return this.cidadeRepo.saveAndFlush(cidade);
-        }catch (DataIntegrityViolationException e) {
-            throw new ParametroInadequadoException(e.getMessage());
-        }
+        return this.cidadeRepo.saveAndFlush(cidade);
     }
 
     public void remover(Long id) {
