@@ -1,6 +1,8 @@
 package com.dan.esr.api.controllers;
 
 import com.dan.esr.domain.entities.Cidade;
+import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
+import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.CidadeRepository;
 import com.dan.esr.domain.services.CadastroCidadeService;
 import com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil;
@@ -36,7 +38,11 @@ public class CidadeController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Cidade salvar(@RequestBody Cidade cidade) {
-        return this.cidadeService.salvar(cidade);
+        try {
+            return this.cidadeService.salvar(cidade);
+        }catch (EntidadeNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
@@ -45,7 +51,11 @@ public class CidadeController {
         Cidade cidadeRegistro = this.cidadeService.buscarCidadePorId(id);
         BeanUtils.copyProperties(cidade, cidadeRegistro, "id");
 
-        return this.cidadeService.salvar(cidadeRegistro);
+        try {
+            return this.cidadeService.salvar(cidadeRegistro);
+        } catch (EntidadeNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
+        }
     }
 
 
