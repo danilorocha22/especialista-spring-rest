@@ -4,6 +4,7 @@ import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
+import com.dan.esr.domain.exceptions.ParametroInadequadoException;
 import com.dan.esr.domain.repositories.CidadeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,7 +15,6 @@ import static com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil.validarCampo
 @AllArgsConstructor
 @Service
 public class CadastroCidadeService {
-
     private static final String MSG_CIDADE_EM_USO = "Cidade com ID %s, está em uso com " +
             "e não pode ser excluído";
     public static final String MSG_CIDADE_NAO_ENCONTRADA_COM_ID = "Cidade não encontrada com ID %s";
@@ -37,7 +37,11 @@ public class CadastroCidadeService {
         Estado estadoRegistro = this.estadoService.buscarEstadoPorId(estadoId);
         cidade.setEstado(estadoRegistro);
 
-        return this.cidadeRepo.saveAndFlush(cidade);
+        try {
+            return this.cidadeRepo.saveAndFlush(cidade);
+        }catch (DataIntegrityViolationException e) {
+            throw new ParametroInadequadoException(e.getMessage());
+        }
     }
 
     public void remover(Long id) {
