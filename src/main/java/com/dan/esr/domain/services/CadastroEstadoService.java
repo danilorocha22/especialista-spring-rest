@@ -16,7 +16,7 @@ public class CadastroEstadoService {
 
     private static final String MSG_ESTADO_EM_USO = "Estado com ID %s, está em uso com " +
             "e não pode ser excluído";
-    public static final String MSG_ESTADO_NAO_ENCONTRADO_COM_ID = "Estado não encontrada com ID %s";
+    public static final String MSG_ESTADO_NAO_ENCONTRADO_COM_ID = "Estado não encontrado com ID %s";
 
     private EstadoRepository estadoRepo;
 
