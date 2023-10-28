@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +19,7 @@ import static org.springframework.web.servlet.function.ServerResponse.status;
 @RequestMapping("/cozinhas")
 public class CozinhaController {
 
-    private final CozinhaRepository cozinhaRepository;
+    private final CozinhaRepository cozinhaRepo;
     private final CadastroCozinhaService cozinhaService;
 
     @GetMapping("/{id}")
@@ -40,25 +39,23 @@ public class CozinhaController {
 
     @GetMapping("/existe")
     public boolean existe(String nome) {
-        return cozinhaRepository.existsByNome(nome);
+        return cozinhaRepo.existsByNome(nome);
     }
 
     @GetMapping("/primeiro")
-    public ResponseEntity<Cozinha> cozinhaPrimeiro() {
-        return cozinhaRepository.buscarPrimeiro().map(ResponseEntity::ok)
-                .orElseGet(()-> ResponseEntity.notFound().build());
+    public Cozinha cozinhaPrimeiro() {
+        return this.cozinhaService.buscarPrimeiro();
     }
 
-    @ResponseStatus(HttpStatus.OK) //retorna 200
+    //@ResponseStatus(HttpStatus.OK) //retorna 200
     @GetMapping
     public List<Cozinha> listar() {
-        return cozinhaRepository.findAll();
+        return this.cozinhaRepo.findAll();
     }
 
-    @ResponseStatus(HttpStatus.OK) //retorna 200
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
     public CozinhasXML listarXml() {
-        return new CozinhasXML(cozinhaRepository.findAll());
+        return new CozinhasXML(cozinhaRepo.findAll());
     }
 
     @ResponseStatus(HttpStatus.CREATED) //retorna 201
