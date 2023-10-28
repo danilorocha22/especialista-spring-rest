@@ -39,6 +39,7 @@ public class CidadeController {
         return this.cidadeService.salvar(cidade);
     }
 
+    @PutMapping("/{id}")
     public Cidade atualizar(@PathVariable Long id, @RequestBody Cidade cidade) {
         validarCampoObrigatorio(cidade, "Cidade");
         Cidade cidadeRegistro = this.cidadeService.buscarCidadePorId(id);
