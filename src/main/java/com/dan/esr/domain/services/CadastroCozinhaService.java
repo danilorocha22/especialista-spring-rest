@@ -5,6 +5,7 @@ import com.dan.esr.domain.exceptions.ParametroInadequadoException;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
+import com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -14,36 +15,44 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil.validarCampoObrigatorio;
+
 @RequiredArgsConstructor
 @Service
 public class CadastroCozinhaService {
     private static final Logger logger = Logger.getLogger(String.valueOf(CadastroCozinhaService.class));
+    public static final String MSG_COZINHA_NAO_ENCONTRADA = "Cozinha não encontrada";
     public static final String MSG_COZINHA_NAO_ENCONTRADA_COM_NOME = "Cozinha não encontrada com nome: %s";
     public static final String MSG_COZINHA_NAO_ENCONTRADA_COM_ID = "Cozinha não encontrada com ID %s";
 
-    private final CozinhaRepository cozinhaRepository;
+    private final CozinhaRepository cozinhaRepo;
 
     public Cozinha buscarCozinhaPorId(Long id) {
-        Objects.requireNonNull(id, "ID é obrigatório");
-        return this.cozinhaRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(
+        validarCampoObrigatorio(id, "ID");
+        return this.cozinhaRepo.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(
                 String.format(MSG_COZINHA_NAO_ENCONTRADA_COM_ID, id)));
     }
 
     public List<Cozinha> buscarTodasPorNome(String nome) {
-        List<Cozinha> lista = this.cozinhaRepository.findCozinhasByNomeContains(nome);
+        validarCampoObrigatorio(nome, "Nome");
+        List<Cozinha> lista = this.cozinhaRepo.findCozinhasByNomeContains(nome);
 
         if (lista.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA_COM_NOME, nome));
+            throw new EntidadeNaoEncontradaException(String.format(
+                    MSG_COZINHA_NAO_ENCONTRADA_COM_NOME, nome));
 
         return lista;
     }
 
     public Cozinha buscarUnicaPorNome(String nome) {
-        return this.cozinhaRepository.findByNome(nome).orElseThrow(() -> new EntidadeNaoEncontradaException(
+        validarCampoObrigatorio(nome, "Nome");
+        return this.cozinhaRepo.findByNome(nome).orElseThrow(() -> new EntidadeNaoEncontradaException(
                 String.format(MSG_COZINHA_NAO_ENCONTRADA_COM_NOME, nome)));
     }
 
     public Cozinha salvarOuAtualizar(Cozinha cozinha) {
+        validarCampoObrigatorio(cozinha, "Cozinha");
+
         //cria um novo registro
         if (Objects.isNull(cozinha.getId()))
             return salvar(cozinha);
@@ -53,10 +62,9 @@ public class CadastroCozinhaService {
     }
 
     public void remover(Long id) {
-        Cozinha registro = cozinhaRepository.findById(id).orElseThrow(() ->
-                new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA_COM_ID, id)));
+        Cozinha cozinhaRegistro = this.buscarCozinhaPorId(id);
         try {
-            cozinhaRepository.delete(registro);
+            this.cozinhaRepo.delete(cozinhaRegistro);
             logger.log(Level.INFO, "Cozinha com ID {0}, removida com sucesso", id);
 
         } catch (DataIntegrityViolationException e) {
@@ -72,7 +80,7 @@ public class CadastroCozinhaService {
     private Cozinha salvar(Cozinha cozinha) {
         try {
             logger.log(Level.INFO, "Nova cozinha criada: {0}", cozinha.getNome());
-            return cozinhaRepository.save(cozinha);
+            return this.cozinhaRepo.save(cozinha);
 
         } catch (DataIntegrityViolationException e) {
             logger.log(Level.INFO, "Não foi possível salvar a cozinha: {0}", cozinha.getNome());
@@ -84,7 +92,7 @@ public class CadastroCozinhaService {
     private Cozinha atualizar(Cozinha cozinha) {
         try {
             logger.log(Level.INFO, "Cozinha atualizada com sucesso: {0}", cozinha.getNome());
-            return cozinhaRepository.saveAndFlush(cozinha);
+            return this.cozinhaRepo.saveAndFlush(cozinha);
         } catch (DataIntegrityViolationException e) {
             logger.log(Level.INFO, "Não foi possível atualizar a cozinha: {0}", cozinha.getNome());
             throw new ParametroInadequadoException(String.format(
@@ -92,5 +100,12 @@ public class CadastroCozinhaService {
         }
     }
 
+    public Cozinha buscarPrimeiro() {
+        return this.cozinhaRepo.buscarPrimeiro()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(
+                        MSG_COZINHA_NAO_ENCONTRADA));
+    }
 
 }
