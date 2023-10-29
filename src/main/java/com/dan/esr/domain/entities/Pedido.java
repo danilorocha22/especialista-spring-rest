@@ -1,6 +1,7 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.domain.entities.enums.StatusPedido;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
@@ -52,8 +53,10 @@ public class Pedido implements Serializable {
     @Column(name = "data_entrega", columnDefinition = "datetime")
     private LocalDateTime dataEntrega;
 
-    @Embedded
-    @Column(nullable = false)
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id", foreignKey =
+    @ForeignKey(name = "fk_pedido_endereco"), referencedColumnName = "id")
     private Endereco endereco;
 
     @Enumerated(EnumType.STRING)

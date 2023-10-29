@@ -1,8 +1,6 @@
 package com.dan.esr.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,19 +24,8 @@ public class Estado implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("sigla")
-    @Column(nullable = false, length = 80)
-    private String nome;
-
-    /*@JsonIgnore
-    @Transient
-    private Regiao regiao;
-
-    static class Regiao {
-        public int id;
-        public String sigla;
-        public String nome;
-    }*/
+    @Column(nullable = false, length = 2)
+    private String sigla;
 
     @Override
     public boolean equals(Object o) {

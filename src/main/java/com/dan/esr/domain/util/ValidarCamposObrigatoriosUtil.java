@@ -1,10 +1,13 @@
 package com.dan.esr.domain.util;
 
-import com.dan.esr.domain.exceptions.ParametroInadequadoException;
+import com.dan.esr.domain.exceptions.NegocioException;
 
 import java.util.Objects;
 
 public final class ValidarCamposObrigatoriosUtil {
+
+    public static final String MSG_PROPRIEDADE_NAO_PODE_SER_NULA = "Não é permitido propriedade nula";
+
 
     private ValidarCamposObrigatoriosUtil(){}
 
@@ -12,7 +15,7 @@ public final class ValidarCamposObrigatoriosUtil {
         try {
             Objects.requireNonNull(obj, msg + " é obrigatório ser informado.");
         }catch (NullPointerException e) {
-            throw new ParametroInadequadoException(e.getMessage());
+            throw new NegocioException(e.getMessage());
         }
     }
 

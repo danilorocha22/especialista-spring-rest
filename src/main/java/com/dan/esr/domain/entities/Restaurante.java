@@ -47,7 +47,9 @@ public class Restaurante implements Serializable {
     private Cozinha cozinha;
 
     @JsonIgnore
-    @Embedded
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id", foreignKey =
+    @ForeignKey(name = "fk_restaurante_endereco"), referencedColumnName = "id")
     private Endereco endereco;
 
     @JsonIgnore

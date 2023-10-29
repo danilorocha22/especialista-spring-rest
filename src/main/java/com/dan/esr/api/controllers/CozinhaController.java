@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.web.servlet.function.ServerResponse.status;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/cozinhas")
@@ -60,13 +58,12 @@ public class CozinhaController {
 
     @ResponseStatus(HttpStatus.CREATED) //retorna 201
     @PostMapping
-    public Cozinha criar(@RequestBody Cozinha cozinha) {
+    public Cozinha salvar(@RequestBody Cozinha cozinha) {
         return this.cozinhaService.salvarOuAtualizar(cozinha);
     }
 
     @PutMapping("/{id}")
     public Cozinha atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
-        System.out.println("COZINHA "+ cozinha);
         Cozinha cozinhaRegistro = this.cozinhaService.buscarCozinhaPorId(id);
         BeanUtils.copyProperties(cozinha, cozinhaRegistro, "id");
         return this.cozinhaService.salvarOuAtualizar(cozinhaRegistro);

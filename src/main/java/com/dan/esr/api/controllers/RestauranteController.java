@@ -1,10 +1,15 @@
 package com.dan.esr.api.controllers;
 
 import com.dan.esr.domain.entities.Restaurante;
+import com.dan.esr.domain.exceptions.CozinhaNaoEncontradaException;
+import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
+import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.RestauranteRepository;
+import com.dan.esr.domain.services.CadastroCozinhaService;
 import com.dan.esr.domain.services.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +27,7 @@ public class RestauranteController {
 
     private final RestauranteRepository restauranteRepo;
     private final CadastroRestauranteService restauranteService;
+    private final CadastroCozinhaService cozinhaService;
 
     @GetMapping("/{id}")
     public Restaurante buscarPorId(@PathVariable Long id) {
@@ -76,15 +82,22 @@ public class RestauranteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Restaurante salvar(@RequestBody Restaurante restaurante) {
-        return this.restauranteService.salvarOuAtualizar(restaurante);
+        try {
+            return this.restauranteService.salvarOuAtualizar(restaurante);
+        }catch (EntidadeNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
     public Restaurante atualizar(@PathVariable Long id, @RequestBody Restaurante restaurante) {
-        Restaurante restauranteRegistro = this.restauranteService.buscarRestaurantePorId(id);
-        restaurante.setId(restauranteRegistro.getId());
+        restaurante.setId(id);
 
-        return this.restauranteService.salvarOuAtualizar(restaurante);
+        try {
+            return this.restauranteService.salvarOuAtualizar(restaurante);
+        } catch (CozinhaNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
+        }
     }
 
     @PatchMapping("/{id}")

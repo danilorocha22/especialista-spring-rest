@@ -1,13 +1,11 @@
 package com.dan.esr.api.controllers;
 
 import com.dan.esr.domain.entities.Cidade;
-import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
+import com.dan.esr.domain.exceptions.EstadoNaoEncontradoException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.CidadeRepository;
 import com.dan.esr.domain.services.CadastroCidadeService;
-import com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.NotFound;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,23 +37,28 @@ public class CidadeController {
     @ResponseStatus(HttpStatus.CREATED)
     public Cidade salvar(@RequestBody Cidade cidade) {
         try {
-            return this.cidadeService.salvar(cidade);
-        }catch (EntidadeNaoEncontradaException e) {
-            throw new NegocioException(e.getMessage());
+            return this.cidadeService.salvarOuAtualizar(cidade);
+        }catch (EstadoNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage(), e);
         }
     }
 
     @PutMapping("/{id}")
     public Cidade atualizar(@PathVariable Long id, @RequestBody Cidade cidade) {
-        validarCampoObrigatorio(cidade, "Cidade");
         Cidade cidadeRegistro = this.cidadeService.buscarCidadePorId(id);
         BeanUtils.copyProperties(cidade, cidadeRegistro, "id");
 
         try {
-            return this.cidadeService.salvar(cidadeRegistro);
-        } catch (EntidadeNaoEncontradaException e) {
-            throw new NegocioException(e.getMessage());
+            return this.cidadeService.salvarOuAtualizar(cidadeRegistro);
+        } catch (EstadoNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage(), e);
         }
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void remover(@PathVariable Long id) {
+        this.cidadeService.remover(id);
     }
 
 

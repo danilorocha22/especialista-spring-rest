@@ -3,7 +3,6 @@ package com.dan.esr.api.controllers;
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.repositories.EstadoRepository;
 import com.dan.esr.domain.services.CadastroEstadoService;
-import com.dan.esr.domain.services.ListaEstadoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -12,14 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil.validarCampoObrigatorio;
-
 @AllArgsConstructor
 @RestController
 @RequestMapping("/estados")
 public class EstadoController {
 
-    //private ListaEstadoService estadoService;
     private CadastroEstadoService cadastroEstado;
     private EstadoRepository estadoRepo;
 
@@ -36,15 +32,20 @@ public class EstadoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Estado salvar(@RequestBody Estado estado) {
-        return this.cadastroEstado.salvar(estado);
+        return this.cadastroEstado.salvarOuAtualizar(estado);
     }
 
+    @PutMapping("/{id}")
     public Estado atualizar(@PathVariable Long id, @RequestBody Estado estado) {
-        validarCampoObrigatorio(estado, "Estado");
         Estado estadoRegistro = this.cadastroEstado.buscarEstadoPorId(id);
         BeanUtils.copyProperties(estado, estadoRegistro, "id");
+        return this.cadastroEstado.salvarOuAtualizar(estadoRegistro);
+    }
 
-        return this.cadastroEstado.salvar(estadoRegistro);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void remover(@PathVariable Long id)   {
+        this.cadastroEstado.remover(id);
     }
 
     /*@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

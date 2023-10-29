@@ -10,6 +10,7 @@ delete from grupos;
 delete from grupos_permissoes;
 delete from permissoes;
 delete from produtos;
+delete from enderecos;
 delete from restaurantes;
 delete from restaurantes_formas_de_pagamento;
 delete from usuarios;
@@ -24,12 +25,13 @@ alter table formas_de_pagamento auto_increment = 1;
 alter table grupos auto_increment = 1;
 alter table permissoes auto_increment = 1;
 alter table produtos auto_increment = 1;
+alter table enderecos auto_increment = 1;
 alter table restaurantes auto_increment = 1;
 alter table usuarios auto_increment = 1;
 
-insert into estados(nome) values('TO');
-insert into estados(nome) values('MA');
-insert into estados(nome) values('GO');
+insert into estados(sigla) values('TO');
+insert into estados(sigla) values('MA');
+insert into estados(sigla) values('GO');
 
 insert into cidades(nome, estado_id) values('Itaguatins', 1);
 insert into cidades(nome, estado_id) values('Palmas', 1);
@@ -41,7 +43,12 @@ insert ignore into cozinhas(nome) values('Tailandesa');
 insert ignore into cozinhas(nome) values('Indiana');
 insert ignore into cozinhas(nome) values('Argentina');
 
-insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao, endereco_cidade_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values('Toca do Sabor', 10, 1, utc_timestamp, utc_timestamp, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
+insert into enderecos(logradouro, numero, bairro, cep, cidade_id) values ('Rua Cel. Augusto Bastos', '1000', 'Centro', '77920-000', 1);
+insert into enderecos(logradouro, numero, bairro, cep, cidade_id) values ('Rua 26, quadra 28', '2000', 'Centro', '77062-060', 2);
+insert into enderecos(logradouro, numero, bairro, cep, cidade_id) values ('Rua Getúlio Vargas', '50', 'Centro', '88999-000', 3);
+insert into enderecos(logradouro, numero, bairro, cep, cidade_id) values ('Rua João Pinheiro', '1000', 'Centro', '22666-000', 4);
+
+insert into restaurantes(nome, taxa_frete, cozinha_id, endereco_id, data_cadastro, data_atualizacao) values('Toca do Sabor', 10, 1, 1, utc_timestamp, utc_timestamp);
 insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao) values('Toca do Camarão', 9.50, 1, utc_timestamp, utc_timestamp);
 insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao) values('Tia Sônia Restaurante', 15, 2, utc_timestamp, utc_timestamp);
 insert into restaurantes(nome, taxa_frete, cozinha_id, data_cadastro, data_atualizacao) values('Java Steakhouse', 12, 3, utc_timestamp, utc_timestamp);
