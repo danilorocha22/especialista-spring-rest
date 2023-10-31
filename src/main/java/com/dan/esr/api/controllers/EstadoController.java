@@ -3,7 +3,7 @@ package com.dan.esr.api.controllers;
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.repositories.EstadoRepository;
 import com.dan.esr.domain.services.CadastroEstadoService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/estados")
 public class EstadoController {
 
-    private CadastroEstadoService cadastroEstado;
-    private EstadoRepository estadoRepo;
+    private final CadastroEstadoService cadastroEstado;
+    private final EstadoRepository estadoRepo;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Estado> listar() {

@@ -20,7 +20,6 @@ public class CadastroCidadeService {
             "e não pode ser excluído";
 
     private final CidadeRepository cidadeRepo;
-
     private final CadastroEstadoService estadoService;
 
     public Cidade buscarCidadePorId(Long id) {
