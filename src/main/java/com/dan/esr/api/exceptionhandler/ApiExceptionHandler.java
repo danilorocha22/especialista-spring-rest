@@ -1,5 +1,6 @@
 package com.dan.esr.api.exceptionhandler;
 
+import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import org.springframework.http.HttpStatus;
@@ -30,5 +31,12 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .body(novoProblema("O tipo de mídia não é aceito"));
     }
+
+    @ExceptionHandler(EntidadeEmUsoException.class)
+    public ResponseEntity<?> tratarEntidadeEmUsoException(EntidadeEmUsoException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(novoProblema(e));
+    }
+
 
 }
