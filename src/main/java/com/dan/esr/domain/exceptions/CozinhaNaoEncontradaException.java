@@ -11,7 +11,7 @@ public class CozinhaNaoEncontradaException extends EntidadeNaoEncontradaExceptio
     }
 
     public CozinhaNaoEncontradaException(Long id) {
-        this(String.format("Cozinha não encontrada com ID %s", id));
+        this(String.format("Não existe cozinha cadastrada com ID %s", id));
     }
 
 }
