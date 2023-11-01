@@ -103,6 +103,13 @@
             <artifactId>flyway-mysql</artifactId>
         </dependency>
 
+        <!--Apache Commons-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+
     </dependencies>
 
 </project>
