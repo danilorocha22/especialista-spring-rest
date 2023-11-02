@@ -62,7 +62,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatusCode status = HttpStatus.BAD_REQUEST;
         Problem problem = createProblemBuilder(ProblemType.ERRO_NA_REQUISICAO, status, ex.getMessage()).build();
 
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(EntidadeEmUsoException.class)
@@ -70,7 +70,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatusCode status = HttpStatus.CONFLICT;
         Problem problem = createProblemBuilder(ProblemType.ENTIDADE_EM_USO, status, ex.getMessage()).build();
 
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), HttpStatus.CONFLICT, request);
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
     @Override
@@ -103,8 +103,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleIgnoredPropertyException(IgnoredPropertyException ex, HttpHeaders headers,
                                                                   HttpStatusCode status, WebRequest request) {
 
-        String detail = String.format("A propriedade '%s', no momento, não está sendo aceita pela entidade " +
-                "%s.", getProperty(ex), getEntity(ex));
+        String detail = String.format("A propriedade '%s', no momento, não é aceita pela entidade %s.",
+                getProperty(ex), getEntity(ex));
 
         Problem problem = createProblemBuilder(ProblemType.PROPRIEDADE_IGNORADA, status, detail).build();
 

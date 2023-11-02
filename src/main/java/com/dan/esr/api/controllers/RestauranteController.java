@@ -7,10 +7,15 @@ import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import com.dan.esr.domain.services.CadastroCozinhaService;
 import com.dan.esr.domain.services.CadastroRestauranteService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,9 +106,11 @@ public class RestauranteController {
     }
 
     @PatchMapping("/{id}")
-    public Restaurante atualizarParcial(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
+    public Restaurante atualizarParcial(@PathVariable Long id,
+                                        @RequestBody Map<String, Object> campos,
+                                        HttpServletRequest request) {
         Restaurante restauranteRegistro = this.restauranteService.buscarRestaurantePorId(id);
-        atualizarCampos(campos, restauranteRegistro);
+        mesclarCampos(campos, restauranteRegistro, request);
 
         return this.restauranteService.salvarOuAtualizar(restauranteRegistro);
     }
@@ -113,9 +120,23 @@ public class RestauranteController {
         this.restauranteService.remover(id);
     }
 
-    private void atualizarCampos(Map<String, Object> dadosOrigem, Restaurante restauranteDestino) {
+    private void mesclarCampos(Map<String, Object> dadosOrigem, Restaurante restauranteDestino,
+                               HttpServletRequest request) {
+
         ObjectMapper objectMapper = new ObjectMapper();
-        Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, true);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+        Restaurante restauranteOrigem;
+
+        try {
+            restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
+
+        } catch (IllegalArgumentException ex) {
+            Throwable rootCause = ExceptionUtils.getRootCause(ex);
+            HttpInputMessage inputMessage = new ServletServerHttpRequest(request);
+
+            throw new HttpMessageNotReadableException(ex.getMessage(), rootCause, inputMessage );
+        }
 
         dadosOrigem.forEach((nomeCampo, valorCampo) -> {
             Field field = ReflectionUtils.findField(Restaurante.class, nomeCampo);
