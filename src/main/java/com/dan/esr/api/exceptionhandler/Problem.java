@@ -1,23 +1,19 @@
 package com.dan.esr.api.exceptionhandler;
 
-import com.dan.esr.domain.exceptions.NegocioException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatusCode;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static com.dan.esr.api.exceptionhandler.ProblemType.FALHA_AO_LER_REQUISICAO;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -53,38 +49,27 @@ public final class Problem {
                 .detail(detail);
     }
 
-    public static String getProperty(InvalidFormatException ex) {
-        List<String> propriedades = new ArrayList<>();
+    public static String getProperty(JsonMappingException ex) {
+        return ex.getPath().stream()
+                .map(Reference::getFieldName)
+                .collect(Collectors.joining("."));
+
+        /*List<String> propriedades = new ArrayList<>();
         StringBuilder propriedade = new StringBuilder();
 
-        for (JsonMappingException.Reference reference : ex.getPath()) {
+        for (Reference reference : ex.getPath()) {
             propriedades.add(reference.getFieldName());
         }
 
-        int i = 0;
-
-        while (propriedades.size() > i) {
-            propriedade.append(propriedades.get(i)).append(".");
-            i++;
+        for (String nome : propriedades) {
+            propriedade.append(nome).append(".");
         }
 
-        return StringUtils.removeEnd(propriedade.toString(), ".");
+        return StringUtils.removeEnd(propriedade.toString(), ".");*/
     }
 
-    public static Optional<String> getPropertyType(InvalidFormatException ex) throws NoSuchFieldException {
-        if (Objects.nonNull(ex)) {
-            int idx = ex.getPath().size() - 1;
-            Class<?> targetClass = ex.getPath().get(idx).getFrom().getClass();
-            String propertyName = ex.getPath().get(idx).getFieldName();
-
-                Field field = targetClass.getDeclaredField(propertyName);
-                Class<?> propertyType = field.getType();
-                return Optional.of(ClassUtils.getShortClassName(propertyType.getName()));
-
-        }
-
-        return Optional.empty();
-
+    public static String getEntity(JsonMappingException ex) {
+        return ex.getPath().get(0).getFrom().getClass().getSimpleName();
     }
 
 
