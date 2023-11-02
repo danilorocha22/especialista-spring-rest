@@ -10,7 +10,8 @@ public enum ProblemType {
     ENTIDADE_EM_USO("Entidade em uso", "/entidade-em-uso"),
     ERRO_NA_REQUISICAO("Erro na requisição", "/erro-na-requisicao"),
     PROPRIEDADE_IGNORADA("Propriedade Ignorada", "/propriedade-ignorada"),
-    PROPRIEDADE_DESCONHECIDA("Propriedade Desconhecida", "/propriedade-desconhecida");
+    PROPRIEDADE_DESCONHECIDA("Propriedade Desconhecida", "/propriedade-desconhecida"),
+    PARAMETRO_INVALIDO("Parâmetro Inválido", "/parametro-invalido");
 
     private final String title;
     private final String uri;
