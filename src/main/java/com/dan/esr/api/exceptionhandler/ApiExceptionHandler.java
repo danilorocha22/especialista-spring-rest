@@ -11,10 +11,10 @@ import lombok.NonNull;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.dan.esr.api.exceptionhandler.Problem.Field.getProblemFields;
 import static com.dan.esr.api.exceptionhandler.Problem.createProblemBuilder;
 import static com.dan.esr.api.exceptionhandler.Problem.novoProblema;
 import static com.dan.esr.api.exceptionhandler.ProblemType.*;
@@ -40,7 +41,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex,
                                                                        WebRequest req) {
         HttpStatusCode status = NOT_FOUND;
-        Problem problem = createProblemBuilder(RECURSO_NAO_ENCONTRADO, status, ex.getMessage()).build();
+        Problem problem = createProblemBuilder(RECURSO_NAO_ENCONTRADO, status, ex.getMessage())
+                .userMessage(ex.getMessage())
+                .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
@@ -49,7 +52,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NegocioException.class)
     public ResponseEntity<Object> handleNegocioException(NegocioException ex, WebRequest req) {
         HttpStatusCode status = BAD_REQUEST;
-        Problem problem = createProblemBuilder(ERRO_NA_REQUISICAO, status, ex.getMessage()).build();
+        Problem problem = createProblemBuilder(ERRO_NA_REQUISICAO, status, ex.getMessage())
+                .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
@@ -58,7 +63,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntidadeEmUsoException.class)
     public ResponseEntity<Object> handleEntidadeEmUsoException(EntidadeEmUsoException ex, WebRequest req) {
         HttpStatusCode status = CONFLICT;
-        Problem problem = createProblemBuilder(ENTIDADE_EM_USO, status, ex.getMessage()).build();
+        Problem problem = createProblemBuilder(ENTIDADE_EM_USO, status, ex.getMessage())
+                .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
@@ -67,7 +74,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handlerException(Exception ex, WebRequest req) {
         HttpStatusCode status = INTERNAL_SERVER_ERROR;
-        Problem problem = createProblemBuilder(ERRO_INTERNO_DO_SISTEMA, status, MSG_ERRO_GENERICA_USUARIO_FINAL).build();
+        Problem problem = createProblemBuilder(ERRO_INTERNO_DO_SISTEMA, status, MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
 
         // Importante colocar o printStackTrace (pelo menos por enquanto, que não estamos
         // fazendo logging) para mostrar a stacktrace no console
@@ -112,6 +120,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleTypeMismatch(ex, headers, status, req);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException ex,
+                                                                  @NonNull HttpHeaders headers,
+                                                                  @NonNull HttpStatusCode status,
+                                                                  @NonNull WebRequest req) {
+
+        String detail = "Um ou mais campos estão inválidos e devem ser informado corretamente.";
+
+        Problem problem = createProblemBuilder(PROPRIEDADE_OBRIGATORIA, status, detail)
+                .userMessage(detail)
+                .fields(getProblemFields(ex))
+                .build();
+
+        return handleExceptionInternal(ex, problem, headers, status, req);
+    }
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(@NonNull NoHandlerFoundException ex, @NonNull HttpHeaders headers,
@@ -142,7 +165,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = String.format(" O parâmetro '%s' com valor '%s', é inválido. Requer um tipo %s.",
                 ex.getPropertyName(), ex.getValue(), Objects.requireNonNull(ex.getRequiredType()).getSimpleName());
 
-        Problem problem = createProblemBuilder(PARAMETRO_INVALIDO, status, detail).build();
+        Problem problem = createProblemBuilder(PARAMETRO_INVALIDO, status, detail)
+                .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
@@ -182,6 +207,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = String.format("A propriedade '%s' não existe na entidade %s.", getProperty(ex), getEntity(ex));
 
         Problem problem = createProblemBuilder(PROPRIEDADE_DESCONHECIDA, status, detail)
+                .userMessage(detail)
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
