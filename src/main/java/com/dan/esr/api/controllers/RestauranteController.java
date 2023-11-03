@@ -34,8 +34,7 @@ public class RestauranteController {
 
     @GetMapping("/{id}")
     public Restaurante buscarPorId(@PathVariable Long id) {
-        throw new IllegalArgumentException("teste");
-
+        return this.restauranteService.buscarRestaurantePorId(id);
     }
 
     @GetMapping("/por-taxa")
