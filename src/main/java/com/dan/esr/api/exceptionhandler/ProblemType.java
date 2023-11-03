@@ -11,6 +11,7 @@ public enum ProblemType {
     ERRO_NA_REQUISICAO("Erro na Requisição", "/erro-na-requisicao"),
     PROPRIEDADE_IGNORADA("Propriedade Ignorada", "/propriedade-ignorada"),
     PROPRIEDADE_DESCONHECIDA("Propriedade Desconhecida", "/propriedade-desconhecida"),
+    PROPRIEDADE_OBRIGATORIA("Propriedade Obrigatória", "/propriedade-obrigatória"),
     PARAMETRO_INVALIDO("Parâmetro Inválido", "/parametro-invalido"),
     ERRO_INTERNO_DO_SISTEMA("Erro do Sistema", "/erro-interno-do-sistema");
 
