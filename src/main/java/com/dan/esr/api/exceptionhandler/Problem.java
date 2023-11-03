@@ -24,6 +24,7 @@ public final class Problem {
     private String type;
     private String title;
     private String detail;
+    private String userMessage;
 
 
     /* Métodos */
@@ -47,29 +48,6 @@ public final class Problem {
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
                 .detail(detail);
-    }
-
-    public static String getProperty(JsonMappingException ex) {
-        return ex.getPath().stream()
-                .map(Reference::getFieldName)
-                .collect(Collectors.joining("."));
-
-        /*List<String> propriedades = new ArrayList<>();
-        StringBuilder propriedade = new StringBuilder();
-
-        for (Reference reference : ex.getPath()) {
-            propriedades.add(reference.getFieldName());
-        }
-
-        for (String nome : propriedades) {
-            propriedade.append(nome).append(".");
-        }
-
-        return StringUtils.removeEnd(propriedade.toString(), ".");*/
-    }
-
-    public static String getEntity(JsonMappingException ex) {
-        return ex.getPath().get(0).getFrom().getClass().getSimpleName();
     }
 
 
