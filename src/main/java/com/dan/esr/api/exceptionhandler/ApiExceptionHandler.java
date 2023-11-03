@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import lombok.NonNull;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Objects;
@@ -26,47 +28,11 @@ import static com.dan.esr.api.exceptionhandler.Problem.*;
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(@NonNull HttpMessageNotReadableException ex,
-                                                                  @NonNull HttpHeaders headers,
-                                                                  @NonNull HttpStatusCode status,
-                                                                  @NonNull WebRequest req) {
-        Throwable cause = ExceptionUtils.getRootCause(ex);
-        String detail = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
-        Problem problem = createProblemBuilder(ProblemType.FALHA_AO_LER_REQUISICAO, status, detail).build();
-
-        return switch (cause.getClass().getSimpleName()) {
-            case ("InvalidFormatException") ->
-                    handleInvalidFormatException((InvalidFormatException) cause, headers, status, req);
-
-            case ("IgnoredPropertyException") ->
-                    handleIgnoredPropertyException((IgnoredPropertyException) cause, headers, status, req);
-
-            case ("UnrecognizedPropertyException") ->
-                    handleUnrecognizedPropertyException((UnrecognizedPropertyException) cause, headers, status, req);
-
-            default -> handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
-        };
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<?> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex,
-                                                                       WebRequest req) {
-        HttpStatusCode status = HttpStatus.BAD_REQUEST;
-
-        String detail = String.format(" O parâmetro '%s' com valor '%s', é inválido. Requer um tipo %s.",
-                        ex.getName(), ex.getValue(), Objects.requireNonNull(ex.getRequiredType()).getSimpleName());
-
-        Problem problem = createProblemBuilder(ProblemType.PARAMETRO_INVALIDO, status, detail).build();
-
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
-    }
-
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<?> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex,
                                                                   WebRequest req) {
         HttpStatusCode status = HttpStatus.NOT_FOUND;
-        Problem problem = createProblemBuilder(ProblemType.ENTIDADE_NAO_ENCONTRADA, status, ex.getMessage()).build();
+        Problem problem = createProblemBuilder(ProblemType.RECURSO_NAO_ENCONTRADO, status, ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
@@ -88,10 +54,50 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(@NonNull Exception ex, Object body,
-                                                             @NonNull HttpHeaders headers,
-                                                             @NonNull HttpStatusCode status,
-                                                             @NonNull WebRequest req) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(@NonNull HttpMessageNotReadableException ex,
+                                                                  @NonNull HttpHeaders headers,
+                                                                  @NonNull HttpStatusCode status,
+                                                                  @NonNull WebRequest req) {
+        Throwable cause = ExceptionUtils.getRootCause(ex);
+
+        return switch (cause.getClass().getSimpleName()) {
+            case ("InvalidFormatException") ->
+                    handleInvalidFormatException((InvalidFormatException) cause, headers, status, req);
+
+            case ("IgnoredPropertyException") ->
+                    handleIgnoredPropertyException((IgnoredPropertyException) cause, headers, status, req);
+
+            case ("UnrecognizedPropertyException") ->
+                    handleUnrecognizedPropertyException((UnrecognizedPropertyException) cause, headers, status, req);
+
+            default -> super.handleHttpMessageNotReadable(ex, headers, status, req);
+        };
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(@NonNull TypeMismatchException ex, @NonNull HttpHeaders headers,
+                                                        @NonNull HttpStatusCode status, @NonNull WebRequest req) {
+
+        if (ex instanceof MethodArgumentTypeMismatchException) {
+            return handleMethodArgumentTypeMismatch(ex, headers, status, req);
+        }
+
+        return super.handleTypeMismatch(ex, headers, status, req);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(@NonNull NoHandlerFoundException ex, @NonNull HttpHeaders headers,
+                                                                   @NonNull HttpStatusCode status, @NonNull WebRequest req) {
+
+        String detail = String.format("O recurso solicitado '%s', não existe", ex.getRequestURL());
+        Problem problem= createProblemBuilder(ProblemType.RECURSO_NAO_ENCONTRADO, status, detail).build();
+
+        return handleExceptionInternal(ex, problem, headers, status, req);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(@NonNull Exception ex, Object body, @NonNull HttpHeaders headers,
+                                                             @NonNull HttpStatusCode status, @NonNull WebRequest req) {
         if (body == null) {
             body = novoProblema(ex, status);
         } else if (body instanceof String) {
@@ -101,6 +107,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(ex, body, headers, status, req);
     }
 
+    private ResponseEntity<Object> handleMethodArgumentTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
+                                                                    HttpStatusCode status, WebRequest req) {
+        String detail = String.format(" O parâmetro '%s' com valor '%s', é inválido. Requer um tipo %s.",
+                ex.getPropertyName(), ex.getValue(), Objects.requireNonNull(ex.getRequiredType()).getSimpleName());
+
+        Problem problem = createProblemBuilder(ProblemType.PARAMETRO_INVALIDO, status, detail).build();
+
+        return handleExceptionInternal(ex, problem, headers, status, req);
+    }
+
     private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers,
                                                                 HttpStatusCode status, WebRequest req) {
         String property = getProperty(ex);
@@ -108,6 +124,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = String.format("A propriedade '%s' recebeu o valor '%s', que é um tipo inválido. Corrija" +
                 " e informe um valor compatível com o tipo %s.", property, ex.getValue(), ex.getTargetType()
                 .getSimpleName());
+
         Problem problem = createProblemBuilder(ProblemType.FALHA_AO_LER_REQUISICAO, status, detail).build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
@@ -118,6 +135,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         String detail = String.format("A propriedade '%s', no momento, não é aceita pela entidade %s.",
                 getProperty(ex), getEntity(ex));
+
         Problem problem = createProblemBuilder(ProblemType.PROPRIEDADE_IGNORADA, status, detail).build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
