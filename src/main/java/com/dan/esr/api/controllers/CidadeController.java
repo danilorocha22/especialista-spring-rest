@@ -3,8 +3,10 @@ package com.dan.esr.api.controllers;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.exceptions.EstadoNaoEncontradoException;
 import com.dan.esr.domain.exceptions.NegocioException;
+import com.dan.esr.domain.exceptions.PropriedadeIlegalException;
 import com.dan.esr.domain.repositories.CidadeRepository;
 import com.dan.esr.domain.services.CadastroCidadeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,7 +36,12 @@ public class CidadeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cidade salvar(@RequestBody Cidade cidade) {
+    public Cidade salvar(@RequestBody @Valid Cidade cidade) {
+        if (Objects.nonNull(cidade.getId())) {
+            throw new PropriedadeIlegalException(String.format(
+                    "A propriedade 'id' com valor '%s' não pode ser informada", cidade.getId()));
+        }
+
         try {
             return this.cidadeService.salvarOuAtualizar(cidade);
         }catch (EstadoNaoEncontradoException e) {
@@ -42,7 +50,7 @@ public class CidadeController {
     }
 
     @PutMapping("/{id}")
-    public Cidade atualizar(@PathVariable Long id, @RequestBody Cidade cidade) {
+    public Cidade atualizar(@PathVariable Long id, @RequestBody @Valid Cidade cidade) {
         Cidade cidadeRegistro = this.cidadeService.buscarCidadePorId(id);
         BeanUtils.copyProperties(cidade, cidadeRegistro, "id");
 

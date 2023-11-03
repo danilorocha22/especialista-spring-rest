@@ -1,9 +1,13 @@
 package com.dan.esr.domain.entities;
 
 
+import com.dan.esr.Groups.EstadoId;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.ConvertGroup;
 import lombok.*;
-import org.hibernate.mapping.ToOne;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -24,9 +28,13 @@ public class Cidade implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(nullable = false, length = 80)
     private String nome;
 
+    @Valid
+    @NotNull
+    @ConvertGroup(to = EstadoId.class)
     @ManyToOne
     @JoinColumn(name = "estado_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_cidade_estado"), referencedColumnName = "id")

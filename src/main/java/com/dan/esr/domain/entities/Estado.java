@@ -1,7 +1,9 @@
 package com.dan.esr.domain.entities;
 
+import com.dan.esr.Groups.EstadoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.io.Serial;
@@ -21,6 +23,7 @@ public class Estado implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @NotNull(groups = EstadoId.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

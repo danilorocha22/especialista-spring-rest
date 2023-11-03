@@ -3,6 +3,7 @@ package com.dan.esr.api.controllers;
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.repositories.EstadoRepository;
 import com.dan.esr.domain.services.CadastroEstadoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,12 @@ public class EstadoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Estado salvar(@RequestBody Estado estado) {
+    public Estado salvar(@RequestBody @Valid Estado estado) {
         return this.cadastroEstado.salvarOuAtualizar(estado);
     }
 
     @PutMapping("/{id}")
-    public Estado atualizar(@PathVariable Long id, @RequestBody Estado estado) {
+    public Estado atualizar(@PathVariable Long id, @Valid @RequestBody Estado estado) {
         Estado estadoRegistro = this.cadastroEstado.buscarEstadoPorId(id);
         BeanUtils.copyProperties(estado, estadoRegistro, "id");
         return this.cadastroEstado.salvarOuAtualizar(estadoRegistro);

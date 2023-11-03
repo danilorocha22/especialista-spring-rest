@@ -74,7 +74,7 @@ public class CozinhaController {
     }
 
     @PutMapping("/{id}")
-    public Cozinha atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
+    public Cozinha atualizar(@PathVariable Long id, @Valid @RequestBody Cozinha cozinha) {
         cozinha.setId(id);
         return this.cozinhaService.salvarOuAtualizar(cozinha);
     }

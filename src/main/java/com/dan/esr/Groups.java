@@ -2,6 +2,13 @@ package com.dan.esr;
 
 public interface Groups {
 
-    interface CozinhaId {}
+    interface CozinhaId {
+    }
+
+    interface EstadoId {
+    }
+
+    interface CidadeId {
+    }
 
 }
