@@ -5,13 +5,14 @@ import lombok.Getter;
 @Getter
 public enum ProblemType {
 
-    FALHA_AO_LER_REQUISICAO("Erro ao tentar ler a requisição", "/erro-ao-tentar-ler-requisicao"),
-    RECURSO_NAO_ENCONTRADO("Recurso não encontrado", "/recurso-nao-encontrado"),
-    ENTIDADE_EM_USO("Entidade em uso", "/entidade-em-uso"),
-    ERRO_NA_REQUISICAO("Erro na requisição", "/erro-na-requisicao"),
+    FALHA_AO_LER_REQUISICAO("Erro ao Ler a Requisição", "/erro-ao-ler-requisicao"),
+    RECURSO_NAO_ENCONTRADO("Recurso não #ncontrado", "/recurso-nao-encontrado"),
+    ENTIDADE_EM_USO("Entidade em Uso", "/entidade-em-uso"),
+    ERRO_NA_REQUISICAO("Erro na Requisição", "/erro-na-requisicao"),
     PROPRIEDADE_IGNORADA("Propriedade Ignorada", "/propriedade-ignorada"),
     PROPRIEDADE_DESCONHECIDA("Propriedade Desconhecida", "/propriedade-desconhecida"),
-    PARAMETRO_INVALIDO("Parâmetro Inválido", "/parametro-invalido");
+    PARAMETRO_INVALIDO("Parâmetro Inválido", "/parametro-invalido"),
+    ERRO_INTERNO_DO_SISTEMA("Erro do Sistema", "/erro-interno-do-sistema");
 
     private final String title;
     private final String uri;

@@ -5,7 +5,6 @@ import com.dan.esr.domain.exceptions.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.RestauranteRepository;
-import com.dan.esr.domain.services.CadastroCozinhaService;
 import com.dan.esr.domain.services.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,11 +31,11 @@ public class RestauranteController {
 
     private final RestauranteRepository restauranteRepo;
     private final CadastroRestauranteService restauranteService;
-    private final CadastroCozinhaService cozinhaService;
 
     @GetMapping("/{id}")
     public Restaurante buscarPorId(@PathVariable Long id) {
-        return this.restauranteService.buscarRestaurantePorId(id);
+        throw new IllegalArgumentException("teste");
+
     }
 
     @GetMapping("/por-taxa")

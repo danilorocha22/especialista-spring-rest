@@ -29,7 +29,7 @@ import static com.dan.esr.api.exceptionhandler.Problem.*;
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<?> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex,
+    public ResponseEntity<Object> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex,
                                                                   WebRequest req) {
         HttpStatusCode status = HttpStatus.NOT_FOUND;
         Problem problem = createProblemBuilder(ProblemType.RECURSO_NAO_ENCONTRADO, status, ex.getMessage()).build();
@@ -37,21 +37,43 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
+
     @ExceptionHandler(NegocioException.class)
-    public ResponseEntity<?> handleNegocioException(NegocioException ex, WebRequest req) {
+    public ResponseEntity<Object> handleNegocioException(NegocioException ex, WebRequest req) {
         HttpStatusCode status = HttpStatus.BAD_REQUEST;
         Problem problem = createProblemBuilder(ProblemType.ERRO_NA_REQUISICAO, status, ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
+
     @ExceptionHandler(EntidadeEmUsoException.class)
-    public ResponseEntity<?> handleEntidadeEmUsoException(EntidadeEmUsoException ex, WebRequest req) {
+    public ResponseEntity<Object> handleEntidadeEmUsoException(EntidadeEmUsoException ex, WebRequest req) {
         HttpStatusCode status = HttpStatus.CONFLICT;
         Problem problem = createProblemBuilder(ProblemType.ENTIDADE_EM_USO, status, ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handlerException(Exception ex, WebRequest req) {
+        HttpStatusCode status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        String detail = "Erro interno inesperado no sistema. Tente novamente mais tarde e se o " +
+                        "problema persistir, entre em contato com o Administrador do sistema.";
+
+        Problem problem = createProblemBuilder(ProblemType.ERRO_INTERNO_DO_SISTEMA,  status, detail).build();
+
+        // Importante colocar o printStackTrace (pelo menos por enquanto, que não estamos
+        // fazendo logging) para mostrar a stacktrace no console
+        // Se não fizer isso, você não vai ver a stacktrace de exceptions que seriam importantes
+        // para você durante, especialmente na fase de desenvolvimento
+        ex.printStackTrace();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(@NonNull HttpMessageNotReadableException ex,
@@ -74,6 +96,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         };
     }
 
+
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(@NonNull TypeMismatchException ex, @NonNull HttpHeaders headers,
                                                         @NonNull HttpStatusCode status, @NonNull WebRequest req) {
@@ -85,6 +108,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleTypeMismatch(ex, headers, status, req);
     }
 
+
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(@NonNull NoHandlerFoundException ex, @NonNull HttpHeaders headers,
                                                                    @NonNull HttpStatusCode status, @NonNull WebRequest req) {
@@ -94,6 +118,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
+
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(@NonNull Exception ex, Object body, @NonNull HttpHeaders headers,
@@ -107,6 +132,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(ex, body, headers, status, req);
     }
 
+
     private ResponseEntity<Object> handleMethodArgumentTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
                                                                     HttpStatusCode status, WebRequest req) {
         String detail = String.format(" O parâmetro '%s' com valor '%s', é inválido. Requer um tipo %s.",
@@ -116,6 +142,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
+
 
     private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers,
                                                                 HttpStatusCode status, WebRequest req) {
@@ -130,6 +157,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
+
     private ResponseEntity<Object> handleIgnoredPropertyException(IgnoredPropertyException ex, HttpHeaders headers,
                                                                   HttpStatusCode status, WebRequest req) {
 
@@ -140,6 +168,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
+
 
     private ResponseEntity<Object> handleUnrecognizedPropertyException(UnrecognizedPropertyException ex,
                                                                        HttpHeaders headers, HttpStatusCode status,
