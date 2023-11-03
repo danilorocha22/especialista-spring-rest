@@ -3,6 +3,7 @@ package com.dan.esr.api.exceptionhandler;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
@@ -22,17 +23,24 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import static com.dan.esr.api.exceptionhandler.Problem.*;
+import static com.dan.esr.api.exceptionhandler.Problem.createProblemBuilder;
+import static com.dan.esr.api.exceptionhandler.Problem.novoProblema;
+import static com.dan.esr.api.exceptionhandler.ProblemType.*;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+    public static final String MSG_ERRO_GENERICA_USUARIO_FINAL = "Erro interno inesperado no sistema. Tente novamente" +
+            " mais tarde e se o problema persistir, entre em contato com o Administrador do sistema.";
+
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<Object> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex,
-                                                                  WebRequest req) {
-        HttpStatusCode status = HttpStatus.NOT_FOUND;
-        Problem problem = createProblemBuilder(ProblemType.RECURSO_NAO_ENCONTRADO, status, ex.getMessage()).build();
+                                                                       WebRequest req) {
+        HttpStatusCode status = NOT_FOUND;
+        Problem problem = createProblemBuilder(RECURSO_NAO_ENCONTRADO, status, ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
@@ -40,8 +48,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NegocioException.class)
     public ResponseEntity<Object> handleNegocioException(NegocioException ex, WebRequest req) {
-        HttpStatusCode status = HttpStatus.BAD_REQUEST;
-        Problem problem = createProblemBuilder(ProblemType.ERRO_NA_REQUISICAO, status, ex.getMessage()).build();
+        HttpStatusCode status = BAD_REQUEST;
+        Problem problem = createProblemBuilder(ERRO_NA_REQUISICAO, status, ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
@@ -49,8 +57,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntidadeEmUsoException.class)
     public ResponseEntity<Object> handleEntidadeEmUsoException(EntidadeEmUsoException ex, WebRequest req) {
-        HttpStatusCode status = HttpStatus.CONFLICT;
-        Problem problem = createProblemBuilder(ProblemType.ENTIDADE_EM_USO, status, ex.getMessage()).build();
+        HttpStatusCode status = CONFLICT;
+        Problem problem = createProblemBuilder(ENTIDADE_EM_USO, status, ex.getMessage()).build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
@@ -58,12 +66,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handlerException(Exception ex, WebRequest req) {
-        HttpStatusCode status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-        String detail = "Erro interno inesperado no sistema. Tente novamente mais tarde e se o " +
-                        "problema persistir, entre em contato com o Administrador do sistema.";
-
-        Problem problem = createProblemBuilder(ProblemType.ERRO_INTERNO_DO_SISTEMA,  status, detail).build();
+        HttpStatusCode status = INTERNAL_SERVER_ERROR;
+        Problem problem = createProblemBuilder(ERRO_INTERNO_DO_SISTEMA, status, MSG_ERRO_GENERICA_USUARIO_FINAL).build();
 
         // Importante colocar o printStackTrace (pelo menos por enquanto, que não estamos
         // fazendo logging) para mostrar a stacktrace no console
@@ -114,7 +118,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                    @NonNull HttpStatusCode status, @NonNull WebRequest req) {
 
         String detail = String.format("O recurso solicitado '%s', não existe", ex.getRequestURL());
-        Problem problem= createProblemBuilder(ProblemType.RECURSO_NAO_ENCONTRADO, status, detail).build();
+        Problem problem = createProblemBuilder(RECURSO_NAO_ENCONTRADO, status, detail).build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
@@ -138,7 +142,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = String.format(" O parâmetro '%s' com valor '%s', é inválido. Requer um tipo %s.",
                 ex.getPropertyName(), ex.getValue(), Objects.requireNonNull(ex.getRequiredType()).getSimpleName());
 
-        Problem problem = createProblemBuilder(ProblemType.PARAMETRO_INVALIDO, status, detail).build();
+        Problem problem = createProblemBuilder(PARAMETRO_INVALIDO, status, detail).build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
@@ -146,13 +150,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers,
                                                                 HttpStatusCode status, WebRequest req) {
-        String property = getProperty(ex);
 
         String detail = String.format("A propriedade '%s' recebeu o valor '%s', que é um tipo inválido. Corrija" +
-                " e informe um valor compatível com o tipo %s.", property, ex.getValue(), ex.getTargetType()
+                " e informe um valor compatível com o tipo %s.", getProperty(ex), ex.getValue(), ex.getTargetType()
                 .getSimpleName());
 
-        Problem problem = createProblemBuilder(ProblemType.FALHA_AO_LER_REQUISICAO, status, detail).build();
+        Problem problem = createProblemBuilder(FALHA_AO_LER_REQUISICAO, status, detail)
+                .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
@@ -164,7 +169,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = String.format("A propriedade '%s', no momento, não é aceita pela entidade %s.",
                 getProperty(ex), getEntity(ex));
 
-        Problem problem = createProblemBuilder(ProblemType.PROPRIEDADE_IGNORADA, status, detail).build();
+        Problem problem = createProblemBuilder(PROPRIEDADE_IGNORADA, status, detail).build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
@@ -175,9 +180,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                        WebRequest req) {
 
         String detail = String.format("A propriedade '%s' não existe na entidade %s.", getProperty(ex), getEntity(ex));
-        Problem problem = createProblemBuilder(ProblemType.PROPRIEDADE_DESCONHECIDA, status, detail).build();
+
+        Problem problem = createProblemBuilder(PROPRIEDADE_DESCONHECIDA, status, detail)
+                .build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
+    }
+
+    private static String getProperty(JsonMappingException ex) {
+        return ex.getPath().stream()
+                .map(JsonMappingException.Reference::getFieldName)
+                .collect(Collectors.joining("."));
+    }
+
+    private static String getEntity(JsonMappingException ex) {
+        return ex.getPath().get(0).getFrom().getClass().getSimpleName();
     }
 
 
