@@ -9,6 +9,8 @@ import com.dan.esr.domain.services.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpInputMessage;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
@@ -33,7 +36,7 @@ public class RestauranteController {
     private final CadastroRestauranteService restauranteService;
 
     @GetMapping("/{id}")
-    public Restaurante buscarPorId(@PathVariable Long id) {
+    public Restaurante buscarPorId(@PathVariable @Validated Long id) {
         return this.restauranteService.buscarRestaurantePorId(id);
     }
 
@@ -84,7 +87,7 @@ public class RestauranteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Restaurante salvar(@RequestBody Restaurante restaurante) {
+    public Restaurante salvar(@RequestBody @Valid Restaurante restaurante) {
         try {
             return this.restauranteService.salvarOuAtualizar(restaurante);
         }catch (EntidadeNaoEncontradaException e) {
