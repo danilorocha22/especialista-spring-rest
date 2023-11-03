@@ -1,37 +1,39 @@
 package com.dan.esr.api.exceptionhandler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonMappingException.Reference;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter
 @Builder
-@JsonInclude(Include.NON_NULL)
+@JsonInclude(NON_NULL)
 public final class Problem {
 
     private Integer status;
     private String type;
     private String title;
     private String detail;
+
     private String userMessage;
+    private LocalDateTime timestamp;
+    private List<Field> fields;
 
 
-    /* Métodos */
+    /* Métodos da classe Problem */
     public static Problem novoProblema(Exception ex, HttpStatusCode status) {
         return Problem.builder()
                 .title(ex.getMessage())
                 .status(status.value())
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 
@@ -39,15 +41,36 @@ public final class Problem {
         return Problem.builder()
                 .title(msg)
                 .status(status.value())
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 
-    public static Problem.ProblemBuilder createProblemBuilder(ProblemType problemType, HttpStatusCode status, String detail) {
+    public static ProblemBuilder createProblemBuilder(ProblemType problemType, HttpStatusCode status,
+                                                              String detail) {
         return Problem.builder()
                 .status(status.value())
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
-                .detail(detail);
+                .detail(detail)
+                .timestamp(LocalDateTime.now());
+    }
+
+
+    @Getter
+    @Builder
+    public static class Field {
+        private String nome;
+        private String userMessage;
+
+        /* Métodos da classe Field*/
+        public static List<Field> getProblemFields(BindException ex) {
+            return ex.getFieldErrors().stream()
+                    .map(fieldError -> Field.builder()
+                            .nome(fieldError.getField())
+                            .userMessage(fieldError.getDefaultMessage())
+                            .build())
+                    .toList();
+        }
     }
 
 
