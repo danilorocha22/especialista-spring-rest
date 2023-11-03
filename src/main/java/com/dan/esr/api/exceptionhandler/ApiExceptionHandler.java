@@ -126,9 +126,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   @NonNull HttpStatusCode status,
                                                                   @NonNull WebRequest req) {
 
-        String detail = "Um ou mais campos estão inválidos e devem ser informado corretamente.";
+        String detail = "Um ou mais campos estão inválidos e devem ser informados corretamente.";
 
-        Problem problem = createProblemBuilder(PROPRIEDADE_OBRIGATORIA, status, detail)
+        Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, detail)
                 .userMessage(detail)
                 .fields(getProblemFields(ex))
                 .build();
