@@ -7,10 +7,12 @@ import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil.MSG_PROPRIEDADE_NAO_PODE_SER_NULA;
@@ -53,11 +55,11 @@ public class CadastroCozinhaService {
     }
 
     public Cozinha salvarOuAtualizar(Cozinha cozinha) {
-        try {
-            return this.cozinhaRepo.saveAndFlush(cozinha);
-        } catch (DataIntegrityViolationException e) {
-            throw new NegocioException(MSG_PROPRIEDADE_NAO_PODE_SER_NULA, e);
+        if (Objects.isNull(cozinha.getId())){
+          return  this.salvar(cozinha);
         }
+
+        return this.atualizar(cozinha);
     }
 
     public void remover(Long id) {
@@ -79,5 +81,21 @@ public class CadastroCozinhaService {
                 .orElseThrow(() -> new EntidadeNaoEncontradaException(
                         MSG_COZINHA_NAO_ENCONTRADA));
     }
+
+    private Cozinha salvar(Cozinha cozinha) {
+        return this.cozinhaRepo.save(cozinha);
+    }
+
+    private Cozinha atualizar(Cozinha cozinha) {
+        Cozinha cozinhaRegistro = this.buscarCozinhaPorId(cozinha.getId());
+        BeanUtils.copyProperties(cozinha, cozinhaRegistro, "id");
+
+        try {
+            return this.cozinhaRepo.saveAndFlush(cozinha);
+        } catch (DataIntegrityViolationException e) {
+            throw new NegocioException(MSG_PROPRIEDADE_NAO_PODE_SER_NULA, e);
+        }
+    }
+
 
 }

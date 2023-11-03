@@ -1,10 +1,13 @@
 package com.dan.esr.domain.entities;
 
+import com.dan.esr.Groups.CozinhaId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.io.Serial;
@@ -27,10 +30,12 @@ public class Cozinha implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @NotNull(groups = CozinhaId.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     //@JsonIgnore
+    @NotBlank
     @JsonProperty("tipo")
     @Column(nullable = false)
     private String nome;

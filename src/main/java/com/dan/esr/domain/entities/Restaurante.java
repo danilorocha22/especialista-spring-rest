@@ -1,11 +1,15 @@
 package com.dan.esr.domain.entities;
 
+import com.dan.esr.Groups.CozinhaId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.groups.ConvertGroup;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -39,11 +43,15 @@ public class Restaurante implements Serializable {
     private String nome;
 
     @NotNull
+    @PositiveOrZero
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
     //@JsonIgnore //ignora o objeto na serialização do json
     //@JsonIgnoreProperties("hibernateLazyInitializer") //ignora o atributo na serialização do json
+    @Valid //Valida em cascata as propriedades da cozinha
+    @ConvertGroup(to = CozinhaId.class)
+    @NotNull
     @ManyToOne//(fetch = FetchType.LAZY) //para evitar vários selects foi criado uma consulta jpql com join em cozinha
     @JoinColumn(name = "cozinha_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_restaurante_cozinha"), referencedColumnName = "id")

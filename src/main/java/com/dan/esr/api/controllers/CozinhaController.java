@@ -2,15 +2,21 @@ package com.dan.esr.api.controllers;
 
 import com.dan.esr.api.models.CozinhasXML;
 import com.dan.esr.domain.entities.Cozinha;
+import com.dan.esr.domain.exceptions.NegocioException;
+import com.dan.esr.domain.exceptions.PropriedadeIlegalException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import com.dan.esr.domain.services.CadastroCozinhaService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,7 +38,7 @@ public class CozinhaController {
 
     @GetMapping("/unica-por-nome")
     public Cozinha buscarUnicaPorNome(String nome) {
-       return this.cozinhaService.buscarUnicaPorNome(nome);
+        return this.cozinhaService.buscarUnicaPorNome(nome);
     }
 
     @GetMapping("/existe")
@@ -58,15 +64,19 @@ public class CozinhaController {
 
     @ResponseStatus(HttpStatus.CREATED) //retorna 201
     @PostMapping
-    public Cozinha salvar(@RequestBody Cozinha cozinha) {
+    public Cozinha salvar(@RequestBody @Valid Cozinha cozinha) {
+        if (Objects.nonNull(cozinha.getId())) {
+            throw new PropriedadeIlegalException(String.format(
+                    "A propriedade 'id' com valor '%s' não pode ser informada", cozinha.getId()));
+        }
+
         return this.cozinhaService.salvarOuAtualizar(cozinha);
     }
 
     @PutMapping("/{id}")
     public Cozinha atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
-        Cozinha cozinhaRegistro = this.cozinhaService.buscarCozinhaPorId(id);
-        BeanUtils.copyProperties(cozinha, cozinhaRegistro, "id");
-        return this.cozinhaService.salvarOuAtualizar(cozinhaRegistro);
+        cozinha.setId(id);
+        return this.cozinhaService.salvarOuAtualizar(cozinha);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
