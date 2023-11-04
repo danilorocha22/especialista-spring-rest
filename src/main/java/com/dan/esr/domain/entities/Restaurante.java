@@ -1,6 +1,8 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.core.validation.Groups.CozinhaId;
+import com.dan.esr.core.validation.Multiplo;
+import com.dan.esr.core.validation.TaxaFrete;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -43,7 +45,9 @@ public class Restaurante implements Serializable {
     private String nome;
 
     @NotNull
-    @PositiveOrZero//(message = "{TaxaFrete.invalida}")
+    //@PositiveOrZero//(message = "{TaxaFrete.invalida}")
+    @Multiplo(numero = 5)
+    @TaxaFrete
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
