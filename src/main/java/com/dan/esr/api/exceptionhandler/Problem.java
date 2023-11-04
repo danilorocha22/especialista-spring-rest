@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,8 +66,8 @@ public final class Problem {
         private String userMessage;
 
         /* Métodos da classe Field*/
-        public static List<Object> getProblemObjects(BindException ex, MessageSource messageSource) {
-            return ex.getAllErrors().stream()
+        public static List<Object> getProblemObjects(List<ObjectError> errors, MessageSource messageSource) {
+            return errors.stream()
                     .map(objectError -> {
                         String msg = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
                         String name = StringUtils.capitalize(objectError.getObjectName());

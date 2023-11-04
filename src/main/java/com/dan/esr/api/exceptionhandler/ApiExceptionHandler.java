@@ -3,10 +3,12 @@ package com.dan.esr.api.exceptionhandler;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
+import com.dan.esr.domain.exceptions.ValidacaoException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
@@ -16,6 +18,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,13 +38,14 @@ import static com.dan.esr.api.exceptionhandler.Problem.novoProblema;
 import static com.dan.esr.api.exceptionhandler.ProblemType.*;
 import static org.springframework.http.HttpStatus.*;
 
+@AllArgsConstructor
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String MSG_ERRO_GENERICA_USUARIO_FINAL = "Erro interno inesperado no sistema. Tente novamente" +
             " mais tarde e se o problema persistir, entre em contato com o Administrador do sistema.";
+    public static final String MSG_PROPRIEDADE_INVALIDA = "Um ou mais campos estão inválidos e devem ser informados corretamente.";
 
-    @Autowired
     private MessageSource messageSource;
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
@@ -70,6 +76,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatusCode status = CONFLICT;
         Problem problem = createProblemBuilder(ENTIDADE_EM_USO, status, ex.getMessage())
                 .userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
+                .build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
+    }
+
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity<Object> handleValidacaoException(ValidacaoException ex, WebRequest req) {
+        HttpStatusCode status = BAD_REQUEST;
+
+        Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, MSG_PROPRIEDADE_INVALIDA)
+                .userMessage(MSG_PROPRIEDADE_INVALIDA)
+                .objects(getProblemObjects(ex.getBindingResult().getAllErrors(), this.messageSource))
                 .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
@@ -131,11 +149,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   @NonNull HttpStatusCode status,
                                                                   @NonNull WebRequest req) {
 
-        String detail = "Um ou mais campos estão inválidos e devem ser informados corretamente.";
-
-        Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, detail)
-                .userMessage(detail)
-                .objects(getProblemObjects(ex, this.messageSource))
+        Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, MSG_PROPRIEDADE_INVALIDA)
+                .userMessage(MSG_PROPRIEDADE_INVALIDA)
+                .objects(getProblemObjects(ex.getAllErrors(), this.messageSource))
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);

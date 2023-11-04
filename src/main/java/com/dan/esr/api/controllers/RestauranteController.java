@@ -4,6 +4,7 @@ import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
+import com.dan.esr.domain.exceptions.ValidacaoException;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import com.dan.esr.domain.services.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -17,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +36,7 @@ public class RestauranteController {
 
     private final RestauranteRepository restauranteRepo;
     private final CadastroRestauranteService restauranteService;
+    private final SmartValidator validator;
 
     @GetMapping("/{id}")
     public Restaurante buscarPorId(@PathVariable @Validated Long id) {
@@ -89,7 +93,7 @@ public class RestauranteController {
     public Restaurante salvar(@RequestBody @Valid Restaurante restaurante) {
         try {
             return this.restauranteService.salvarOuAtualizar(restaurante);
-        }catch (EntidadeNaoEncontradaException e) {
+        } catch (EntidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
     }
@@ -111,6 +115,7 @@ public class RestauranteController {
                                         HttpServletRequest request) {
         Restaurante restauranteRegistro = this.restauranteService.buscarRestaurantePorId(id);
         mesclarCampos(campos, restauranteRegistro, request);
+        validate(restauranteRegistro);
 
         return this.restauranteService.salvarOuAtualizar(restauranteRegistro);
     }
@@ -135,7 +140,7 @@ public class RestauranteController {
             Throwable rootCause = ExceptionUtils.getRootCause(ex);
             HttpInputMessage inputMessage = new ServletServerHttpRequest(request);
 
-            throw new HttpMessageNotReadableException(ex.getMessage(), rootCause, inputMessage );
+            throw new HttpMessageNotReadableException(ex.getMessage(), rootCause, inputMessage);
         }
 
         dadosOrigem.forEach((nomeCampo, valorCampo) -> {
@@ -144,6 +149,15 @@ public class RestauranteController {
             Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
             ReflectionUtils.setField(Objects.requireNonNull(field), restauranteDestino, novoValor);
         });
+    }
+
+    private void validate(Restaurante restaurante) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(restaurante, "restaurante");
+        this.validator.validate(restaurante, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidacaoException(bindingResult);
+        }
     }
 
 }
