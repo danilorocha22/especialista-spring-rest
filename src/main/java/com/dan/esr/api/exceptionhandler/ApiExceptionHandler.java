@@ -27,7 +27,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.dan.esr.api.exceptionhandler.Problem.Field.getProblemFields;
+import static com.dan.esr.api.exceptionhandler.Problem.Object.getProblemObjects;
 import static com.dan.esr.api.exceptionhandler.Problem.createProblemBuilder;
 import static com.dan.esr.api.exceptionhandler.Problem.novoProblema;
 import static com.dan.esr.api.exceptionhandler.ProblemType.*;
@@ -135,7 +135,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, detail)
                 .userMessage(detail)
-                .fields(getProblemFields(ex, this.messageSource))
+                .objects(getProblemObjects(ex, this.messageSource))
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);
