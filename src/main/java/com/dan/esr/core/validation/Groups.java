@@ -1,4 +1,4 @@
-package com.dan.esr;
+package com.dan.esr.core.validation;
 
 public interface Groups {
 

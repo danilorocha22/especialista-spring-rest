@@ -1,7 +1,7 @@
 package com.dan.esr.domain.entities;
 
 
-import com.dan.esr.Groups.EstadoId;
+import com.dan.esr.core.validation.Groups.EstadoId;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

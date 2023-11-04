@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import lombok.NonNull;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String MSG_ERRO_GENERICA_USUARIO_FINAL = "Erro interno inesperado no sistema. Tente novamente" +
             " mais tarde e se o problema persistir, entre em contato com o Administrador do sistema.";
+
+    @Autowired
+    private MessageSource messageSource;
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<Object> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex,
@@ -130,7 +135,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, detail)
                 .userMessage(detail)
-                .fields(getProblemFields(ex))
+                .fields(getProblemFields(ex, this.messageSource))
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, req);

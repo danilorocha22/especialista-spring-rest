@@ -1,6 +1,6 @@
 package com.dan.esr.domain.entities;
 
-import com.dan.esr.Groups.CozinhaId;
+import com.dan.esr.core.validation.Groups.CozinhaId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
