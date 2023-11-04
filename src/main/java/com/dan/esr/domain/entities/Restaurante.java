@@ -3,6 +3,7 @@ package com.dan.esr.domain.entities;
 import com.dan.esr.core.validation.Groups.CozinhaId;
 import com.dan.esr.core.validation.Multiplo;
 import com.dan.esr.core.validation.TaxaFrete;
+import com.dan.esr.core.validation.ValorZeroIncluiDescricao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -29,6 +30,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@ValorZeroIncluiDescricao(
+        valorField = "taxaFrete",
+        descricaoField = "nome",
+        descricaoObrigatoria = "Frete Grátis")
 @JsonInclude(Include.NON_NULL)
 @Entity
 @Table(name = "restaurantes")
@@ -44,9 +49,9 @@ public class Restaurante implements Serializable {
     @Column(nullable = false)
     private String nome;
 
-    @NotNull
     //@PositiveOrZero//(message = "{TaxaFrete.invalida}")
-    @Multiplo(numero = 5)
+    //@Multiplo(numero = 5)
+    @NotNull
     @TaxaFrete
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
