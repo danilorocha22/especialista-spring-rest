@@ -88,9 +88,9 @@ class CadastroCozinhaIntegrationTests {
 
     @Test
     public void falha_QuandoExcluirCozinhaInexistente() {
-        assertThrows(CozinhaNaoEncontradaException.class, () -> {
-            this.cadastroCozinha.remover(10L);
-        });
+        assertThrows(CozinhaNaoEncontradaException.class, () ->
+            this.cadastroCozinha.remover(10L)
+        );
     }
 
 }
