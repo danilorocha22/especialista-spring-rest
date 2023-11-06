@@ -1,19 +1,12 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.core.validation.Groups.CozinhaId;
-import com.dan.esr.core.validation.Multiplo;
 import com.dan.esr.core.validation.TaxaFrete;
 import com.dan.esr.core.validation.ValorZeroIncluiDescricao;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.groups.ConvertGroup;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,16 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+//@JsonInclude(NON_NULL)
+//@ToString
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @ValorZeroIncluiDescricao(
         valorField = "taxaFrete",
         descricaoField = "nome",
         descricaoObrigatoria = "Frete Grátis")
-@JsonInclude(Include.NON_NULL)
 @Entity
 @Table(name = "restaurantes")
 public class Restaurante implements Serializable {
@@ -60,33 +53,34 @@ public class Restaurante implements Serializable {
 
     //@JsonIgnore //ignora o objeto na serialização do json
     //@JsonIgnoreProperties("hibernateLazyInitializer") //ignora o atributo na serialização do json
+    //@JsonIgnoreProperties(value = "tipo", allowGetters = true)// na desserialização do Restaurante (json -> objeto), o nome da cozinha é ignorado
+    //@ToString.Exclude
     @Valid //Valida em cascata as propriedades da cozinha
     @ConvertGroup(to = CozinhaId.class)
     @NotNull
-    @JsonIgnoreProperties(value = "tipo", allowGetters = true)// na desserialização do Restaurante (json -> objeto), o nome da cozinha é ignorado
     @ManyToOne//(fetch = FetchType.LAZY) //para evitar vários selects foi criado uma consulta jpql com join em cozinha
     @JoinColumn(name = "cozinha_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_restaurante_cozinha"), referencedColumnName = "id")
-    @ToString.Exclude
     private Cozinha cozinha;
 
-    @JsonIgnore
+    //@JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id", foreignKey =
     @ForeignKey(name = "fk_restaurante_endereco"), referencedColumnName = "id")
     private Endereco endereco;
 
-    @JsonIgnore
+    //@JsonIgnore
     @CreationTimestamp //Instancia a data uma única vez, na primeira vez de salvar no banco
     @Column(nullable = false, columnDefinition = "datetime")
     private LocalDateTime dataCadastro;
 
-    @JsonIgnore
+    //@JsonIgnore
     @UpdateTimestamp //Instancia uma nova data, sempre que for atualizado
     @Column(nullable = false, columnDefinition = "datetime")
     private LocalDateTime dataAtualizacao;
 
     //@JsonIgnore
+    //@ToString.Exclude
     @ManyToMany
     @JoinTable(
             name = "restaurantes_formas_de_pagamento",
@@ -94,11 +88,10 @@ public class Restaurante implements Serializable {
             @ForeignKey(name = "fk_restaurante_formas_pagamento_restaurante"), referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id", foreignKey =
             @ForeignKey(name = "fk_restaurante_formas_pagamento_formas_pagamento"), referencedColumnName = "id"))
-    @ToString.Exclude
     private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
 
-    @ToString.Exclude
-    @JsonIgnore
+    //@JsonIgnore
+    //@ToString.Exclude
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Produto> produtos = new ArrayList<>();
 
