@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ProblemType {
 
     FALHA_AO_LER_REQUISICAO("Erro ao Ler a Requisição", "/erro-ao-ler-requisicao"),
-    RECURSO_NAO_ENCONTRADO("Recurso não #ncontrado", "/recurso-nao-encontrado"),
+    RECURSO_NAO_ENCONTRADO("Recurso não Encontrado", "/recurso-nao-encontrado"),
     ENTIDADE_EM_USO("Entidade em Uso", "/entidade-em-uso"),
     ERRO_NA_REQUISICAO("Erro na Requisição", "/erro-na-requisicao"),
     PROPRIEDADE_IGNORADA("Propriedade Ignorada", "/propriedade-ignorada"),

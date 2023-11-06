@@ -25,9 +25,9 @@ import static org.hamcrest.Matchers.*;
 class CadastroCozinhaIT {
     /*INÍCIO DOS TESTES DA API utilizando a lib RestAssured*/
 
-    public static final String COZINHA_JSON = "/json/cozinha.json";
+    public static final String COZINHA_JSON = "/json/correto/cozinhaChinesa.json";
     public static final Long ID_COZINHA_INEXISTENTE = 1000L;
-    public static final String COZINHA_FRANCESA = "Francesa";
+    public static final String COZINHA_AMERICANA = "Americana";
 
     @LocalServerPort
     private int port;
@@ -40,7 +40,7 @@ class CadastroCozinhaIT {
 
     private int totalCozinhas;
 
-    private Cozinha cozinhaFrancesa;
+    private Cozinha cozinhaAmericana;
 
     //Método de Callback para auxiliar os métodos de testes
     @BeforeEach // Código executado antes de cada teste
@@ -93,13 +93,13 @@ class CadastroCozinhaIT {
     public void deveRetornarStatus200_QuandoBuscarCozinhaExistente() {
         // GET /cozinhas/{cozinhaId}, ou seja, /cozinhas/2
         given() //dado cenário
-            .pathParams("cozinhaId", this.cozinhaFrancesa.getId())
+            .pathParams("cozinhaId", this.cozinhaAmericana.getId())
             .accept(ContentType.JSON)
         .when() //quando fazer get
             .get("/{cozinhaId}")
         .then() //então resultado
             .statusCode(HttpStatus.OK.value())
-                .body("tipo", equalTo(this.cozinhaFrancesa.getNome()));
+                .body("tipo", equalTo(this.cozinhaAmericana.getNome()));
     }
 
     @Test
@@ -119,10 +119,10 @@ class CadastroCozinhaIT {
         Cozinha coz1 = new Cozinha();
         coz1.setNome("Brasileira");
 
-        cozinhaFrancesa = new Cozinha();
-        cozinhaFrancesa.setNome(COZINHA_FRANCESA);
+        cozinhaAmericana = new Cozinha();
+        cozinhaAmericana.setNome(COZINHA_AMERICANA);
 
-        return this.cadastroCozinha.saveAll(List.of(coz1, cozinhaFrancesa)).size();
+        return this.cadastroCozinha.saveAll(List.of(coz1, cozinhaAmericana)).size();
     }
 
 
