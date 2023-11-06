@@ -5,8 +5,10 @@ import com.dan.esr.core.validation.Multiplo;
 import com.dan.esr.core.validation.TaxaFrete;
 import com.dan.esr.core.validation.ValorZeroIncluiDescricao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -61,6 +63,7 @@ public class Restaurante implements Serializable {
     @Valid //Valida em cascata as propriedades da cozinha
     @ConvertGroup(to = CozinhaId.class)
     @NotNull
+    @JsonIgnoreProperties(value = "tipo", allowGetters = true)// na desserialização do Restaurante (json -> objeto), o nome da cozinha é ignorado
     @ManyToOne//(fetch = FetchType.LAZY) //para evitar vários selects foi criado uma consulta jpql com join em cozinha
     @JoinColumn(name = "cozinha_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_restaurante_cozinha"), referencedColumnName = "id")
