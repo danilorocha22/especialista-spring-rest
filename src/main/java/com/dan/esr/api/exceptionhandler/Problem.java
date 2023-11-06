@@ -7,11 +7,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -27,7 +26,7 @@ public final class Problem {
     private String detail;
 
     private String userMessage;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<Object> objects;
 
 
@@ -36,7 +35,7 @@ public final class Problem {
         return Problem.builder()
                 .title(ex.getMessage())
                 .status(status.value())
-                .timestamp(LocalDateTime.now())
+                .timestamp(OffsetDateTime.now())
                 .build();
     }
 
@@ -44,7 +43,7 @@ public final class Problem {
         return Problem.builder()
                 .title(msg)
                 .status(status.value())
-                .timestamp(LocalDateTime.now())
+                .timestamp(OffsetDateTime.now())
                 .build();
     }
 
@@ -55,7 +54,7 @@ public final class Problem {
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
                 .detail(detail)
-                .timestamp(LocalDateTime.now());
+                .timestamp(OffsetDateTime.now());
     }
 
 

@@ -16,6 +16,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,12 +73,12 @@ public class Restaurante implements Serializable {
     //@JsonIgnore
     @CreationTimestamp //Instancia a data uma única vez, na primeira vez de salvar no banco
     @Column(nullable = false, columnDefinition = "datetime")
-    private LocalDateTime dataCadastro;
+    private OffsetDateTime dataCadastro;
 
     //@JsonIgnore
     @UpdateTimestamp //Instancia uma nova data, sempre que for atualizado
     @Column(nullable = false, columnDefinition = "datetime")
-    private LocalDateTime dataAtualizacao;
+    private OffsetDateTime dataAtualizacao;
 
     //@JsonIgnore
     //@ToString.Exclude
