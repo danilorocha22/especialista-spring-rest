@@ -1,10 +1,6 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.core.validation.Groups.CozinhaId;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,13 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@JsonRootName(value = "cozinha")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "cozinhas")
 public class Cozinha implements Serializable {
@@ -34,15 +28,12 @@ public class Cozinha implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //@JsonIgnore
     @NotBlank
-    @JsonProperty("tipo")
     @Column(nullable = false)
     private String nome;
 
-    @OneToMany(mappedBy = "cozinha",fetch = FetchType.LAZY)
     @ToString.Exclude
-    @JsonIgnore
+    @OneToMany(mappedBy = "cozinha",fetch = FetchType.LAZY)
     private List<Restaurante> restaurantes = new ArrayList<>();
 
     @Override

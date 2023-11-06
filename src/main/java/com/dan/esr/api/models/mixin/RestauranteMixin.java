@@ -10,10 +10,10 @@ import jakarta.persistence.Column;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-public class RestauranteMixin {
+//@JsonInclude(NON_NULL)
+public abstract class RestauranteMixin {
 
     @JsonIgnoreProperties(value = "tipo", allowGetters = true)
     private Cozinha cozinha;
@@ -30,9 +30,9 @@ public class RestauranteMixin {
     private LocalDateTime dataAtualizacao;
 
     @JsonIgnore
-    private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
+    private List<FormasDePagamento> formasDePagamento;
 
     @JsonIgnore
-    private List<Produto> produtos = new ArrayList<>();
+    private List<Produto> produtos;
 
 }
