@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,6 +55,7 @@ public class CadastroCozinhaService {
                 String.format(MSG_COZINHA_NAO_ENCONTRADA_COM_NOME, nome)));
     }
 
+    @Transactional
     public Cozinha salvarOuAtualizar(Cozinha cozinha) {
         if (Objects.isNull(cozinha.getId())){
           return  this.salvar(cozinha);
@@ -62,6 +64,7 @@ public class CadastroCozinhaService {
         return this.atualizar(cozinha);
     }
 
+    @Transactional
     public void remover(Long id) {
         Cozinha cozinhaRegistro = this.buscarCozinhaPorId(id);
 

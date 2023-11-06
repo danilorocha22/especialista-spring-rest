@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -121,10 +122,12 @@ public class CadastroRestauranteService {
                 .orElseThrow(() -> new RestauranteNaoEncontradoException("Restaurante não encontrado"));
     }
 
+    @Transactional
     public Restaurante salvarOuAtualizar(Restaurante restaurante) {
         return (Objects.isNull(restaurante.getId())) ? this.salvar(restaurante) : this.atualizar(restaurante);
     }
 
+    @Transactional
     public void remover(Long id) {
         Restaurante restaurante = this.buscarRestaurantePorId(id);
 
