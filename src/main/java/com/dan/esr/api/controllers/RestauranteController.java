@@ -89,9 +89,10 @@ public class RestauranteController {
         restauranteInput.setId(id);
 
         try {
-            Restaurante restaurante = this.entityAssembler.toRestauranteDomain(restauranteInput);
-            restaurante = this.restauranteService.salvarOuAtualizar(restaurante);
-            return this.modelAssembler.toModel(restaurante);
+            Restaurante restauranteRegistro = this.restauranteService.buscarRestaurantePorId(id);
+            this.entityAssembler.copyToRestauranteDomain(restauranteInput, restauranteRegistro);
+            restauranteRegistro = this.restauranteService.salvarOuAtualizar(restauranteRegistro);
+            return this.modelAssembler.toModel(restauranteRegistro);
 
         } catch (CozinhaNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());

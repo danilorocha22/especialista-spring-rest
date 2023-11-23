@@ -124,7 +124,14 @@ public class CadastroRestauranteService {
 
     @Transactional
     public Restaurante salvarOuAtualizar(Restaurante restaurante) {
-        return (Objects.isNull(restaurante.getId())) ? this.salvar(restaurante) : this.atualizar(restaurante);
+        /*return (Objects.nonNull(restaurante) && Objects.isNull(restaurante.getId())) ? this.salvar(restaurante) :
+                this.atualizar(restaurante);*/
+
+        Long cozinhaId = restaurante.getCozinha().getId();
+        Cozinha cozinha = this.cozinhaService.buscarCozinhaPorId(cozinhaId);
+        restaurante.setCozinha(cozinha);
+
+        return restauranteRepo.saveAndFlush(restaurante);
     }
 
     @Transactional
@@ -147,13 +154,11 @@ public class CadastroRestauranteService {
     }
 
     private Restaurante atualizar(Restaurante restaurante) {
-        Restaurante restauranteRegistro = this.buscarRestaurantePorId(restaurante.getId());
         Long cozinhaId = restaurante.getCozinha().getId();
-        this.cozinhaService.buscarCozinhaPorId(cozinhaId);
-        BeanUtils.copyProperties(restaurante, restauranteRegistro, "id", "formasDePagamento",
-                "endereco", "dataCadastro", "produtos");
+        Cozinha cozinha = this.cozinhaService.buscarCozinhaPorId(cozinhaId);
+        restaurante.setCozinha(cozinha);
 
-        return restauranteRepo.saveAndFlush(restauranteRegistro);
+        return restauranteRepo.saveAndFlush(restaurante);
     }
 
 
