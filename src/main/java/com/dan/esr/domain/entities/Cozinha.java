@@ -24,7 +24,8 @@ public class Cozinha implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @NotNull(groups = CozinhaId.class)
+    //@NotNull(groups = CozinhaId.class)
+    //@NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

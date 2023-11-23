@@ -41,14 +41,14 @@ public class Restaurante implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    //@NotBlank
     @Column(nullable = false)
     private String nome;
 
     //@PositiveOrZero//(message = "{TaxaFrete.invalida}")
     //@Multiplo(numero = 5)
-    @NotNull
-    @TaxaFrete
+    //@NotNull
+    //@TaxaFrete
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
@@ -56,9 +56,9 @@ public class Restaurante implements Serializable {
     //@JsonIgnoreProperties("hibernateLazyInitializer") //ignora o atributo na serialização do json
     //@JsonIgnoreProperties(value = "tipo", allowGetters = true)// na desserialização do Restaurante (json -> objeto), o nome da cozinha é ignorado
     //@ToString.Exclude
-    @Valid //Valida em cascata as propriedades da cozinha
-    @ConvertGroup(to = CozinhaId.class)
-    @NotNull
+    //@Valid //Valida em cascata as propriedades da cozinha
+    //@ConvertGroup(to = CozinhaId.class)
+    //@NotNull
     @ManyToOne//(fetch = FetchType.LAZY) //para evitar vários selects foi criado uma consulta jpql com join em cozinha
     @JoinColumn(name = "cozinha_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_restaurante_cozinha"), referencedColumnName = "id")

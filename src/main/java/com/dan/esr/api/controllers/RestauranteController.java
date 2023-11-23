@@ -1,11 +1,17 @@
 package com.dan.esr.api.controllers;
 
+import com.dan.esr.api.assembler.RestauranteEntityAssembler;
+import com.dan.esr.api.assembler.RestauranteModelAssembler;
+import com.dan.esr.api.models.input.RestauranteInput;
+import com.dan.esr.api.models.output.RestauranteOutput;
+import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.ValidacaoException;
 import com.dan.esr.domain.repositories.RestauranteRepository;
+import com.dan.esr.domain.services.CadastroCozinhaService;
 import com.dan.esr.domain.services.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -29,43 +36,116 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Comparator.comparingLong;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/restaurantes")
 public class RestauranteController {
 
     private final RestauranteRepository restauranteRepo;
+
     private final CadastroRestauranteService restauranteService;
+
+    private final CadastroCozinhaService cozinhaService;
+
     private final SmartValidator validator;
 
+    @Autowired
+    private RestauranteModelAssembler modelAssembler;
+
+    @Autowired
+    private RestauranteEntityAssembler entityAssembler;
+
     @GetMapping("/{id}")
-    public Restaurante buscarPorId(@PathVariable @Validated Long id) {
-        return this.restauranteService.buscarRestaurantePorId(id);
+    public RestauranteOutput buscarPorId(@PathVariable @Validated Long id) {
+        Restaurante restauranteRegistro = this.restauranteService.buscarRestaurantePorId(id);
+        return this.modelAssembler.toModel(restauranteRegistro);
+    }
+
+    @GetMapping
+    public List<RestauranteOutput> listar() {
+        return this.modelAssembler.toCollectionModel(this.restauranteRepo.findAll())
+                .stream()
+                .sorted(comparingLong(RestauranteOutput::getId))
+                .toList();
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public RestauranteOutput salvar(@RequestBody @Valid RestauranteInput restauranteInput) {
+        try {
+            Restaurante restaurante = this.entityAssembler.toRestauranteDomain(restauranteInput);
+            restaurante = this.restauranteService.salvarOuAtualizar(restaurante);
+            return this.modelAssembler.toModel(restaurante);
+
+        } catch (EntidadeNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public RestauranteOutput atualizar(@PathVariable Long id, @Valid @RequestBody RestauranteInput restauranteInput) {
+        restauranteInput.setId(id);
+
+        try {
+            Restaurante restaurante = this.entityAssembler.toRestauranteDomain(restauranteInput);
+            restaurante = this.restauranteService.salvarOuAtualizar(restaurante);
+            return this.modelAssembler.toModel(restaurante);
+
+        } catch (CozinhaNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public RestauranteOutput atualizarParcial(@PathVariable Long id, @RequestBody Map<String, Object> campos,
+                                              HttpServletRequest request) {
+
+        Restaurante restauranteRegistro = this.restauranteService.buscarRestaurantePorId(id);
+        mesclarCampos(campos, restauranteRegistro, request);
+        validate(restauranteRegistro);
+        restauranteRegistro = this.restauranteService.salvarOuAtualizar(restauranteRegistro);
+
+        Cozinha cozinhaRegistro = this.cozinhaService.buscarCozinhaPorId(restauranteRegistro.getCozinha().getId());
+        restauranteRegistro.setCozinha(cozinhaRegistro);
+
+        return this.modelAssembler.toModel(restauranteRegistro);
+    }
+
+    @DeleteMapping("/{id}")
+    public void remover(@PathVariable Long id) {
+        this.restauranteService.remover(id);
     }
 
     @GetMapping("/por-taxa")
-    public List<Restaurante> buscarPorTaxa(BigDecimal taxaInicial, BigDecimal taxaFinal) {
-        return this.restauranteService.buscarRestaurantesPorTaxa(taxaInicial, taxaFinal);
+    public List<RestauranteOutput> buscarPorTaxa(BigDecimal taxaInicial, BigDecimal taxaFinal) {
+        List<Restaurante> restaurantes = this.restauranteService.buscarRestaurantesPorTaxa(taxaInicial, taxaFinal);
+        return this.modelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/por-nome-e-cozinha")
-    public List<Restaurante> buscarPorNomeECozinha(String nome, Long cozinhaId) {
-        return this.restauranteService.consultarPorNomeECozinhaId(nome, cozinhaId);
+    public List<RestauranteOutput> buscarPorNomeECozinha(String nome, Long cozinhaId) {
+        List<Restaurante> restaurantes = this.restauranteService.consultarPorNomeECozinhaId(nome, cozinhaId);
+        return this.modelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/por-nome-e-frete")
-    public List<Restaurante> buscarPorNomeEFrete(String nome, BigDecimal freteInicial, BigDecimal freteFinal) {
-        return this.restauranteService.consultarPorNomeEFrete(nome, freteInicial, freteFinal);
+    public List<RestauranteOutput> buscarPorNomeEFrete(String nome, BigDecimal freteInicial, BigDecimal freteFinal) {
+        List<Restaurante> restaurantes = this.restauranteService.consultarPorNomeEFrete(nome, freteInicial, freteFinal);
+        return this.modelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/primeiro-por-nome")
-    public Restaurante buscarPrimeiroPorNome(String nome) {
-        return this.restauranteService.buscarPrimeiroPorNome(nome);
+    public RestauranteOutput buscarPrimeiroPorNome(String nome) {
+        Restaurante restaurante = this.restauranteService.buscarPrimeiroPorNome(nome);
+        return this.modelAssembler.toModel(restaurante);
     }
 
     @GetMapping("/top2-por-nome")
-    public List<Restaurante> buscarTop2PorNome(String nome) {
-        return this.restauranteService.buscarTop2PorNome(nome);
+    public List<RestauranteOutput> buscarTop2PorNome(String nome) {
+        List<Restaurante> restaurantes = this.restauranteService.buscarTop2PorNome(nome);
+        return this.modelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/count-por-cozinha")
@@ -74,56 +154,17 @@ public class RestauranteController {
     }
 
     @GetMapping("/com-frete-gratis")
-    public List<Restaurante> buscarComFreteGratis(String nome) {
-        return this.restauranteService.buscarComFreteGratis(nome);
+    public List<RestauranteOutput> buscarComFreteGratis(String nome) {
+        List<Restaurante> restaurantes = this.restauranteService.buscarComFreteGratis(nome);
+        return this.modelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/primeiro")
-    public Restaurante restaurantePrimeiro() {
-        return this.restauranteService.buscarPrimeiroRestaurante();
+    public RestauranteOutput restaurantePrimeiro() {
+        Restaurante restaurante = this.restauranteService.buscarPrimeiroRestaurante();
+        return this.modelAssembler.toModel(restaurante);
     }
 
-    @GetMapping
-    public List<Restaurante> listar() {
-        return restauranteRepo.findAll();
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Restaurante salvar(@RequestBody @Valid Restaurante restaurante) {
-        try {
-            return this.restauranteService.salvarOuAtualizar(restaurante);
-        } catch (EntidadeNaoEncontradaException e) {
-            throw new NegocioException(e.getMessage());
-        }
-    }
-
-    @PutMapping("/{id}")
-    public Restaurante atualizar(@PathVariable Long id, @Valid @RequestBody Restaurante restaurante) {
-        restaurante.setId(id);
-
-        try {
-            return this.restauranteService.salvarOuAtualizar(restaurante);
-        } catch (CozinhaNaoEncontradaException e) {
-            throw new NegocioException(e.getMessage());
-        }
-    }
-
-    @PatchMapping("/{id}")
-    public Restaurante atualizarParcial(@PathVariable Long id,
-                                        @RequestBody Map<String, Object> campos,
-                                        HttpServletRequest request) {
-        Restaurante restauranteRegistro = this.restauranteService.buscarRestaurantePorId(id);
-        mesclarCampos(campos, restauranteRegistro, request);
-        validate(restauranteRegistro);
-
-        return this.restauranteService.salvarOuAtualizar(restauranteRegistro);
-    }
-
-    @DeleteMapping("/{id}")
-    public void remover(@PathVariable Long id) {
-        this.restauranteService.remover(id);
-    }
 
     private void mesclarCampos(Map<String, Object> dadosOrigem, Restaurante restauranteDestino,
                                HttpServletRequest request) {
