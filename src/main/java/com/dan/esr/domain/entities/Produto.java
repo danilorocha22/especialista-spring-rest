@@ -14,7 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "produtos")
+@Table(name = "produtos", schema = "dan_food")
 public class Produto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -23,7 +23,7 @@ public class Produto implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,  length = 20)
+    @Column(nullable = false, length = 20)
     private String nome;
 
     @Column(nullable = false)
@@ -35,9 +35,10 @@ public class Produto implements Serializable {
     @Column(nullable = false)
     private boolean ativo;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurante_id", nullable = false, foreignKey =
-    @ForeignKey(name = "fk_produto_restaurante"), referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurante_id",
+            foreignKey = @ForeignKey(name = "fk_produto_restaurante"),
+            referencedColumnName = "id")
     private Restaurante restaurante;
 
     @Override

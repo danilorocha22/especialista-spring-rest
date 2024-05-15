@@ -17,7 +17,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuarios", schema = "dan_food")
 public class Usuario implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -39,14 +39,16 @@ public class Usuario implements Serializable {
     @Column(nullable = false)
     private LocalDateTime dataCadastro;
 
+    @ToString.Exclude
     @ManyToMany
     @JoinTable(
             name = "usuarios_grupos",
-            joinColumns = @JoinColumn(name = "usuario_id", foreignKey =
-            @ForeignKey(name = "fk_usuario_grupo_usuario"), referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "grupo_id", foreignKey =
-            @ForeignKey(name = "fk_usuario_grupo_grupo"), referencedColumnName = "id"))
-    @ToString.Exclude
+            joinColumns = @JoinColumn(name = "usuario_id",
+                    foreignKey = @ForeignKey(name = "fk_usuario_grupo_usuario"),
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "grupo_id",
+                    foreignKey = @ForeignKey(name = "fk_usuario_grupo_grupo"),
+                    referencedColumnName = "id"))
     private List<Grupo> grupos = new ArrayList<>();
 
 

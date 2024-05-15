@@ -16,7 +16,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "grupos")
+@Table(name = "grupos", schema = "dan_food")
 public class Grupo implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -28,15 +28,17 @@ public class Grupo implements Serializable {
     @Column(nullable = false, length = 20)
     private String nome;
 
+    @ToString.Exclude
     @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "grupos_permissoes",
-            joinColumns = @JoinColumn(name = "grupo_id", foreignKey =
-            @ForeignKey(name = "fk_grupo_permissoes_grupo"), referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "permissao_id", foreignKey =
-            @ForeignKey(name = "fk_grupo_permissoes_permissoes"), referencedColumnName = "id"))
-    @ToString.Exclude
+            joinColumns = @JoinColumn(name = "grupo_id",
+                    foreignKey = @ForeignKey(name = "fk_grupo_permissoes_grupo"),
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "permissao_id",
+                    foreignKey = @ForeignKey(name = "fk_grupo_permissoes_permissoes"),
+                    referencedColumnName = "id"))
     private List<Permissao> permissoes = new ArrayList<>();
 
     @Override

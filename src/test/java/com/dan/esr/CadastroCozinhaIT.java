@@ -13,18 +13,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-
 @TestPropertySource("/application-test.properties")//Configurando um banco de testes
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CadastroCozinhaIT {
     /*INÍCIO DOS TESTES DA API utilizando a lib RestAssured*/
-
     public static final String COZINHA_JSON = "/json/correto/cozinhaChinesa.json";
     public static final Long ID_COZINHA_INEXISTENTE = 1000L;
     public static final String COZINHA_AMERICANA = "Americana";
@@ -49,7 +48,6 @@ class CadastroCozinhaIT {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
         RestAssured.basePath = "/cozinhas";
-
         this.cleaner.clearTables();
         this.totalCozinhas = this.prepararDados();
     }
@@ -130,10 +128,9 @@ class CadastroCozinhaIT {
 
 /*
     */
-/*INÍCIO DOS TESTES DE INTEGRAÇÃO*//*
-
+/*INÍCIO DOS TESTES DE INTEGRAÇÃO*/
+    /*
     //Os testes são divididos em três fases: Cenário, Ação e Validação
-
     @Autowired
     private CadastroCozinhaService cadastroCozinha;
 

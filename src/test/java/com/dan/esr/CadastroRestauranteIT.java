@@ -28,7 +28,6 @@ import static org.hamcrest.Matchers.hasSize;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CadastroRestauranteIT {
     /*INÍCIO DOS TESTES DA API utilizando a lib RestAssured*/
-
     public static final String RESTAURANTE_CORRETO_JSON = "/json/correto/restauranteNewYorkComCozinha.json";
     public static final String RESTAURANTE_COM_COZINHA_INEXISTENTE_JSON = "/json/incorreto/restauranteNewYorkComCozinhaInexistente.json";
     public static final String RESTAURANTE_SEM_COZINHA_JSON = "/json/incorreto/restauranteNewYorkSemCozinha.json";
@@ -51,7 +50,6 @@ class CadastroRestauranteIT {
     private CozinhaRepository cadastroCozinha;
 
     private Restaurante restauranteTexas;
-
 
     private int totalRestaurantes;
 

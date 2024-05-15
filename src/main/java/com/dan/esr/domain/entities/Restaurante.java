@@ -1,39 +1,30 @@
 package com.dan.esr.domain.entities;
 
-import com.dan.esr.core.validation.Groups.CozinhaId;
-import com.dan.esr.core.validation.TaxaFrete;
-import com.dan.esr.core.validation.ValorZeroIncluiDescricao;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.groups.ConvertGroup;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 //@JsonInclude(NON_NULL)
 //@ToString
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-@ValorZeroIncluiDescricao(
-        valorField = "taxaFrete",
-        descricaoField = "nome",
-        descricaoObrigatoria = "Frete Grátis")
+@EqualsAndHashCode(of = {"id"})
 @Entity
-@Table(name = "restaurantes")
-public class Restaurante implements Serializable {
+@Table(name = "restaurantes", schema = "dan_food")
+public class Restaurante implements Serializable, Comparable<Restaurante> {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -49,7 +40,8 @@ public class Restaurante implements Serializable {
     //@Multiplo(numero = 5)
     //@NotNull
     //@TaxaFrete
-    @Column(name = "taxa_frete", nullable = false)
+    @Column(name = "taxa_frete", columnDefinition = "DECIMAL(10, 2)", nullable = false)
+    @ColumnDefault("0.00")
     private BigDecimal taxaFrete;
 
     //@JsonIgnore //ignora o objeto na serialização do json
@@ -59,13 +51,13 @@ public class Restaurante implements Serializable {
     //@Valid //Valida em cascata as propriedades da cozinha
     //@ConvertGroup(to = CozinhaId.class)
     //@NotNull
-    @ManyToOne//(fetch = FetchType.LAZY) //para evitar vários selects foi criado uma consulta jpql com join em cozinha
+    @ManyToOne(fetch = FetchType.LAZY) //para evitar vários selects foi criado uma consulta jpql com join em cozinha
     @JoinColumn(name = "cozinha_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_restaurante_cozinha"), referencedColumnName = "id")
     private Cozinha cozinha;
 
     //@JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_id", foreignKey =
     @ForeignKey(name = "fk_restaurante_endereco"), referencedColumnName = "id")
     private Endereco endereco;
@@ -85,26 +77,34 @@ public class Restaurante implements Serializable {
     @ManyToMany
     @JoinTable(
             name = "restaurantes_formas_de_pagamento",
-            joinColumns = @JoinColumn(name = "restaurante_id", foreignKey =
-            @ForeignKey(name = "fk_restaurante_formas_pagamento_restaurante"), referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id", foreignKey =
-            @ForeignKey(name = "fk_restaurante_formas_pagamento_formas_pagamento"), referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "restaurante_id",
+                    foreignKey = @ForeignKey(name = "fk_restaurante_formas_pagamento_restaurante"),
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id",
+                    foreignKey = @ForeignKey(name = "fk_restaurante_formas_pagamento_formas_pagamento"),
+                    referencedColumnName = "id"))
     private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
 
     //@JsonIgnore
     //@ToString.Exclude
-    @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "restaurante",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<Produto> produtos = new ArrayList<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Restaurante that)) return false;
-        return Objects.equals(getId(), that.getId());
+    public Restaurante() {
+        if (taxaFrete == null) {
+            taxaFrete = BigDecimal.ZERO;
+        }
+    }
+
+    public boolean isNovo() {
+        return getId() == null;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    public int compareTo(Restaurante restaurante) {
+        //return this.getId() < restaurante.getId() ? -1 : this.getId() == restaurante.getId() ? 0 : 1;
+        return this.getId().compareTo(restaurante.getId());
     }
 }

@@ -1,72 +1,66 @@
 package com.dan.esr.api.controllers;
 
+import com.dan.esr.api.assembler.CidadeAssembler;
+import com.dan.esr.api.models.input.CidadeInput;
+import com.dan.esr.api.models.output.CidadeEstadoOutput;
+import com.dan.esr.api.models.output.CidadeNomeOutput;
+import com.dan.esr.api.models.output.CidadeOutput;
 import com.dan.esr.domain.entities.Cidade;
-import com.dan.esr.domain.exceptions.EstadoNaoEncontradoException;
-import com.dan.esr.domain.exceptions.NegocioException;
-import com.dan.esr.domain.exceptions.PropriedadeIlegalException;
-import com.dan.esr.domain.repositories.CidadeRepository;
-import com.dan.esr.domain.services.CadastroCidadeService;
+import com.dan.esr.domain.services.CidadeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
-@RequiredArgsConstructor
+import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/cidades")
 public class CidadeController {
-
-    private final CadastroCidadeService cidadeService;
-    private final CidadeRepository cidadeRepo;
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Cidade> listar() {
-        return this.cidadeRepo.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public Cidade buscarPorId(@PathVariable Long id) {
-        return this.cidadeService.buscarCidadePorId(id);
-    }
+    private final CidadeService cidadeService;
+    private final CidadeAssembler cidadeAssembler;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cidade salvar(@RequestBody @Valid Cidade cidade) {
-        if (Objects.nonNull(cidade.getId())) {
-            throw new PropriedadeIlegalException(String.format(
-                    "A propriedade 'id' com valor '%s' não pode ser informada", cidade.getId()));
-        }
-
-        try {
-            return this.cidadeService.salvarOuAtualizar(cidade);
-        }catch (EstadoNaoEncontradoException e) {
-            throw new NegocioException(e.getMessage(), e);
-        }
+    public CidadeOutput salvar(@RequestBody @Valid CidadeInput cidadeInput) {
+        Cidade cidade = this.cidadeAssembler.toDomain(cidadeInput);
+        cidade = this.cidadeService.salvarOuAtualizar(cidade);
+        return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
     }
 
     @PutMapping("/{id}")
-    public Cidade atualizar(@PathVariable Long id, @RequestBody @Valid Cidade cidade) {
-        Cidade cidadeRegistro = this.cidadeService.buscarCidadePorId(id);
-        BeanUtils.copyProperties(cidade, cidadeRegistro, "id");
-
-        try {
-            return this.cidadeService.salvarOuAtualizar(cidadeRegistro);
-        } catch (EstadoNaoEncontradoException e) {
-            throw new NegocioException(e.getMessage(), e);
-        }
+    public CidadeOutput atualizar(
+            @PathVariable Long id,
+            @RequestBody @Valid CidadeInput cidadeInput
+    ) {
+        validarCampoObrigatorio(id, "ID");
+        Cidade cidade = this.cidadeAssembler.toDomain(cidadeInput);
+        cidade.setId(id);
+        cidade = this.cidadeService.salvarOuAtualizar(cidade);
+        return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void remover(@PathVariable Long id) {
+        validarCampoObrigatorio(id, "ID");
         this.cidadeService.remover(id);
     }
 
+    @GetMapping("/{id}")
+    public CidadeOutput buscarPorId(@PathVariable Long id) {
+        validarCampoObrigatorio(id, "ID");
+        Cidade cidade = this.cidadeService.buscarCidadePorId(id);
+        return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
+    }
 
-
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CidadeOutput> listar() {
+        List<Cidade> cidades = this.cidadeService.buscarTodos();
+        return this.cidadeAssembler.toModelList(cidades, CidadeNomeOutput.class);
+    }
 }

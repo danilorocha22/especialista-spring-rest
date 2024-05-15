@@ -1,7 +1,8 @@
 ## Arquivo de callback
-## Após o Flyway finalizaras migrations, este arquivo será executado
-set foreign_key_checks = 0;
+## Após o Flyway finalizaras as migrations, este arquivo será executado
 
+## Apaga todos os registros
+set foreign_key_checks = 0; # Desabilita as chaves estrangeiras para poder apagar os registros
 delete from cidades;
 delete from cozinhas;
 delete from estados;
@@ -16,9 +17,9 @@ delete from restaurantes_formas_de_pagamento;
 delete from usuarios;
 delete from usuarios_grupos;
 
-set foreign_key_checks = 1;
-
-alter table cidades auto_increment = 1;
+## Cria os registros novamente
+set foreign_key_checks = 1; # Habilita as chaves estrangeiras para poder criar os registros
+alter table cidades auto_increment = 1; # O auto_increment=1 reinicia os ids para 1
 alter table cozinhas auto_increment = 1;
 alter table estados auto_increment = 1;
 alter table formas_de_pagamento auto_increment = 1;
@@ -66,9 +67,9 @@ insert into permissoes(nome, descricao) values('EDITAR_COZINHAS', 'Permite edita
 insert into restaurantes_formas_de_pagamento(restaurante_id, formas_de_pagamento_id) values(1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3), (4, 1), (4, 2), (5, 1), (5, 2), (6, 3);
 
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Porco com molho agridoce', 'Deliciosa carne suína ao molho especial', 78.90, 1, 1);
-insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Camarão tailandês', '16 camarões grandes ao molho picante', 110, 1, 1);
+insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Camarão tailandês', '16 camarões grandes ao molho picante', 110, 0, 1);
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Salada picante com carne grelhada', 'Salada de folhas com cortes finos de carne bovina grelhada e nosso molho especial de pimenta vermelha', 87.20, 1, 2);
-insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Garlic Naan', 'Pão tradicional indiano com cobertura de alho', 21, 1, 3);
+insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Garlic Naan', 'Pão tradicional indiano com cobertura de alho', 21, 0, 3);
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Murg Curry', 'Cubos de frango preparados com molho curry e especiarias', 43, 1, 3);
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('Bife Ancho', 'Corte macio e suculento, com dois dedos de espessura, retirado da parte dianteira do contrafilé', 79, 1, 4);
 insert into produtos(nome, descricao, preco, ativo, restaurante_id) values('T-Bone', 'Corte muito saboroso, com um osso em formato de T, sendo de um lado o contrafilé e do outro o filé mignon', 89, 1, 4);

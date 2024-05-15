@@ -1,9 +1,7 @@
 package com.dan.esr.domain.entities;
 
-import com.dan.esr.core.validation.Groups.CozinhaId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.io.Serial;
@@ -18,7 +16,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "cozinhas")
+@Table(name = "cozinhas", schema = "dan_food")
 public class Cozinha implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -48,4 +46,13 @@ public class Cozinha implements Serializable {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
+    public boolean isNova() {
+        return this.getId() == null;
+    }
+
+    public boolean isExiste() {
+        return !this.isNova();
+    }
+
 }

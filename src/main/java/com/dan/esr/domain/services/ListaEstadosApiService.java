@@ -14,8 +14,7 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 @Service
-public class ListaEstadoService {
-
+public class ListaEstadosApiService {
     public static final String URL_IBGE_ESTADOS = "https://servicodados.ibge.gov.br/api/v1/localidades/estados";
 
     public List<Estado> estados() {

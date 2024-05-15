@@ -2,7 +2,7 @@ package com.dan.esr.api.controllers;
 
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.repositories.EstadoRepository;
-import com.dan.esr.domain.services.CadastroEstadoService;
+import com.dan.esr.domain.services.EstadoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/estados")
 public class EstadoController {
 
-    private final CadastroEstadoService cadastroEstado;
+    private final EstadoService cadastroEstado;
     private final EstadoRepository estadoRepo;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

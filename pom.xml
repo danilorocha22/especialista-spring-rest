@@ -2,38 +2,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.9</version>
+        <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.dan</groupId>
     <artifactId>esr</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>especialista-spring-rest</name>
     <description>especialista-spring-rest</description>
+
     <properties>
         <java.version>17</java.version>
-        <modelmapper.version>3.0.0</modelmapper.version>
+        <model-mapper.version>3.2.0</model-mapper.version>
+        <rest-assured.version>5.4.0</rest-assured.version>
+        <specification-arg.version>3.1.0</specification-arg.version>
+        <snake-yaml.version>2.2</snake-yaml.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
+            <!--<exclusions>
                 <exclusion>
                     <groupId>org.yaml</groupId>
                     <artifactId>snakeyaml</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>2.2</version>
-        </dependency>
+            <version>${snake-yaml.version}</version>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -78,7 +84,7 @@
         <dependency>
             <groupId>net.kaczmarzyk</groupId>
             <artifactId>specification-arg-resolver</artifactId>
-            <version>3.0.0</version>
+            <version>${specification-arg.version}</version>
         </dependency>
 
         <!--Flyway-->
@@ -102,21 +108,21 @@
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
-            <version>${modelmapper.version}</version>
+            <version>${model-mapper.version}</version>
         </dependency>
 
         <!--Testes da API-->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>5.3.1</version>
+            <version>${rest-assured.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
         <plugins>
+            <!--Plugin Spring Boot para build a partir do maven-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -129,43 +135,14 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <!--Plugin Failsafe por padrão não executa os testes de integração na build do projeto-->
+            <!--Para executar os testes de integração pela linha de comando, basta executar o comando: mvn verify-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.1.2</version>
             </plugin>
-
-            <!--Plugin MapStruct-->
-           <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.mapstruct.extensions.spring</groupId>
-                            <artifactId>mapstruct-spring-extensions</artifactId>
-                            <version>${org.mapstruct.extensions.spring.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                    <executable>
-                        <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    </executable>
-                </configuration>
-               &lt;!&ndash; <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>&ndash;&gt;
-            </plugin>-->
         </plugins>
     </build>
 

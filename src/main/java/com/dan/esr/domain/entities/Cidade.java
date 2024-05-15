@@ -1,6 +1,5 @@
 package com.dan.esr.domain.entities;
 
-
 import com.dan.esr.core.validation.Groups.EstadoId;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -11,15 +10,15 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"id"})
 @Entity
-@Table(name = "cidades")
+@Table(name = "cidades", schema = "dan_food")
 public class Cidade implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -35,20 +34,31 @@ public class Cidade implements Serializable {
     @Valid
     @NotNull
     @ConvertGroup(to = EstadoId.class)
-    @ManyToOne
-    @JoinColumn(name = "estado_id", nullable = false, foreignKey =
-    @ForeignKey(name = "fk_cidade_estado"), referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estado_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_cidade_estado"),
+            referencedColumnName = "id")
     private Estado estado;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Cidade cidade)) return false;
-        return Objects.equals(getId(), cidade.getId());
+    /*###################################     MÉTODOS      ###################################*/
+
+    public boolean isNova() {
+        return getId() == null;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    public String getCidadeUF() {
+        String nomeCompleto = "";
+        if (isNomeCidadeValido() && isSiglaEstadoValido()) {
+            return nome + "/" + estado.getSigla();
+        }
+        return nomeCompleto;
+    }
+
+    private boolean isNomeCidadeValido() {
+        return nome != null && !nome.isBlank();
+    }
+
+    private boolean isSiglaEstadoValido() {
+        return estado != null && !estado.getSigla().isBlank();
     }
 }

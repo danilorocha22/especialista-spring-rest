@@ -6,20 +6,15 @@ import com.dan.esr.domain.exceptions.EstadoNaoEncontradoException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.EstadoRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.patterns.IfPointcut;
-import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
-import static com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil.MSG_PROPRIEDADE_NAO_PODE_SER_NULA;
-import static com.dan.esr.domain.util.ValidarCamposObrigatoriosUtil.validarCampoObrigatorio;
+import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.MSG_PROPRIEDADE_NAO_PODE_SER_NULA;
+import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
 
 @RequiredArgsConstructor
 @Service
-public class CadastroEstadoService {
-
+public class EstadoService {
     private static final String MSG_ESTADO_EM_USO = "Estado com ID %s, está em uso com " +
             "e não pode ser excluído";
 

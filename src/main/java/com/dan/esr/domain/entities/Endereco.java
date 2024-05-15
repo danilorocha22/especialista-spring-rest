@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 @Entity
-@Table(name = "enderecos")
+@Table(name = "enderecos", schema = "dan_food")
 public class Endereco implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class Endereco implements Serializable {
     @Column(nullable = false, length = 9)
     private String cep;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cidade_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_endereco_cidade"), referencedColumnName = "id")
     private Cidade cidade;

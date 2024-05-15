@@ -6,8 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class MultiploValidator implements ConstraintValidator<Multiplo, Number> {
-
+public class MultiploConstraint implements ConstraintValidator<Multiplo, Number> {
     private int numeroMultiplo;
 
     @Override
@@ -23,7 +22,6 @@ public class MultiploValidator implements ConstraintValidator<Multiplo, Number> 
             var valorDecimal = BigDecimal.valueOf(value.doubleValue());
             var multiploDecimal = BigDecimal.valueOf(this.numeroMultiplo);
             var resto = valorDecimal.remainder(multiploDecimal);
-
             valido = BigDecimal.ZERO.compareTo(resto) == 0;
         }
 

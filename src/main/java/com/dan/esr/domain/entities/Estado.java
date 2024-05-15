@@ -15,9 +15,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"id"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
-@Table(name = "estados")
+@Table(name = "estados", schema = "dan_food")
 public class Estado implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -29,17 +30,4 @@ public class Estado implements Serializable {
 
     @Column(nullable = false, length = 2)
     private String sigla;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Estado estado)) return false;
-        return Objects.equals(getId(), estado.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
 }

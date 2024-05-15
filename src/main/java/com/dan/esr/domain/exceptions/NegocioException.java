@@ -10,11 +10,19 @@ public class NegocioException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public NegocioException() {
+        super();
+    }
+
     public NegocioException(String message) {
         super(message);
     }
 
     public NegocioException(String message, Throwable causa) {
         super(message, causa);
+    }
+
+    public NegocioException(Exception ex) {
+        super(ex);
     }
 }

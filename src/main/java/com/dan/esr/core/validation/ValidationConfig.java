@@ -7,7 +7,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /*
     LocalValidatorFactoryBean é uma classe que faz a configuração e
-    integração entre o BeanValidation e Spring Framework
+    integração entre o BeanValidation e Spring Framework para validar
+    e usar o mesmo arquivo de messages.properties
 */
 @Configuration
 public class ValidationConfig {

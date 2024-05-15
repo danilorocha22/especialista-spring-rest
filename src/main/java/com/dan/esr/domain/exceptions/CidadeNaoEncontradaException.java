@@ -11,7 +11,14 @@ public class CidadeNaoEncontradaException extends EntidadeNaoEncontradaException
     }
 
     public CidadeNaoEncontradaException(Long id) {
-        this(String.format("Não existe cidade cadastrada com ID %s", id));
+        this("Não existe cidade cadastrada com ID %s".formatted(id));
     }
 
+    public CidadeNaoEncontradaException(Long id, Throwable cause) {
+        this("Não existe cidade cadastrada com ID %s".formatted(id), cause);
+    }
+
+    public CidadeNaoEncontradaException(String message, Throwable causa) {
+        super(message, causa);
+    }
 }

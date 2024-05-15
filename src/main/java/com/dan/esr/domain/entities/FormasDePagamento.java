@@ -13,7 +13,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "formas_de_pagamento")
+@Table(name = "formas_de_pagamento", schema = "dan_food")
 public class FormasDePagamento implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

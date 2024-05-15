@@ -5,11 +5,11 @@ import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class ValorZeroIncluiDescricaoValidator implements ConstraintValidator<ValorZeroIncluiDescricao, Object> {
-
+public class ValorZeroIncluiDescricaoConstraint implements ConstraintValidator<ValorZeroIncluiDescricao, Object> {
     private String valorField;
     private String descricaoField;
     private String descricaoObrigatoria;
@@ -24,28 +24,33 @@ public class ValorZeroIncluiDescricaoValidator implements ConstraintValidator<Va
     @Override
     public boolean isValid(Object objetoValidacao, ConstraintValidatorContext context) {
         try {
-            BigDecimal valor = (BigDecimal) Objects.requireNonNull(BeanUtils.getPropertyDescriptor(
-                    objetoValidacao.getClass(), this.valorField)).getReadMethod().invoke(objetoValidacao);
-
-            String descricao = (String) Objects.requireNonNull(BeanUtils.getPropertyDescriptor(
-                    objetoValidacao.getClass(), this.descricaoField)).getReadMethod().invoke(objetoValidacao);
-
+            var valor = (BigDecimal) getObject(objetoValidacao, this.valorField);
+            var descricao = (String) getObject(objetoValidacao, this.descricaoField);
             return validar(valor, descricao);
 
-        } catch (Exception e) {
-            throw new ValidationException(e);
+        } catch (Exception ex) {
+            throw new ValidationException(ex.getLocalizedMessage(), ex);
         }
+    }
 
+    private Object getObject(Object objetoValidacao, String nomePropriedade)
+            throws IllegalAccessException, InvocationTargetException {
+
+        return Objects.requireNonNull(BeanUtils.getPropertyDescriptor(objetoValidacao.getClass(), nomePropriedade))
+                .getReadMethod().invoke(objetoValidacao);
     }
 
     private boolean validar(BigDecimal valor, String descricao) {
         boolean valido = true;
 
-        if (valor != null && BigDecimal.ZERO.compareTo(valor) == 0 && descricao != null) {
+        if (valor != null && isZero(valor) && descricao != null) {
             valido = descricao.toLowerCase().contains(this.descricaoObrigatoria.toLowerCase());
         }
 
         return valido;
     }
 
+    private boolean isZero(BigDecimal valor) {
+        return BigDecimal.ZERO.compareTo(valor) == 0;
+    }
 }

@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "permissoes")
+@Table(name = "permissoes", schema = "dan_food")
 public class Permissao implements Serializable {
     @Serial
     private static final  long serialVersionUID = 1L;
