@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Getter
@@ -15,8 +16,9 @@ public class RestauranteOutput {
     private Long id;
     private String nome;
     private BigDecimal taxaFrete;
-    @JsonProperty("cozinha") private CozinhaOutput cozinhaOutput;
-    @JsonProperty("formasDePagamento") private List<FormasDePagamentoOutput> formasDePagamentoOutput;
+    @JsonProperty("cozinha") private CozinhaOutput cozinha;
+    @JsonProperty("formasDePagamento") private List<FormasDePagamentoOutput> formasDePagamento;
     //private List<ProdutoOutput> produtos;
     private Endereco endereco;
+    private OffsetDateTime dataCadastro;
 }

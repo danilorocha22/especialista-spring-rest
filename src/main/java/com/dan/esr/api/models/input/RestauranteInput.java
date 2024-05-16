@@ -4,6 +4,7 @@ import com.dan.esr.core.validation.Groups;
 import com.dan.esr.core.validation.TaxaFrete;
 import com.dan.esr.core.validation.ValorZeroIncluiDescricao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
@@ -23,7 +24,7 @@ import java.math.BigDecimal;
         descricaoField = "nome",
         descricaoObrigatoria = "Frete Grátis")
 public class RestauranteInput {
-    private Long id;
+    //private Long id;
 
     @NotBlank
     private String nome;
@@ -34,11 +35,11 @@ public class RestauranteInput {
     @TaxaFrete
     private BigDecimal taxaFrete;
 
-    @ConvertGroup(to = Groups.CozinhaId.class)
+    //@ConvertGroup(to = Groups.CozinhaId.class)
+    //@JsonIgnoreProperties(value = "nome", allowGetters = true)
     @Valid //Valida em cascata as propriedades da cozinha
     @NotNull
-    //@JsonProperty("cozinha")
-    private CozinhaInput cozinha;
+    private CozinhaIdInput cozinha;
 
 
 }

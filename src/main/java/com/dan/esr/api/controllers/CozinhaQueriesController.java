@@ -1,6 +1,6 @@
 package com.dan.esr.api.controllers;
 
-import com.dan.esr.api.assembler.CozinhaAssembler;
+import com.dan.esr.api.assemblers.CozinhaAssembler;
 import com.dan.esr.api.models.CozinhasXML;
 import com.dan.esr.api.models.output.CozinhaOutput;
 import com.dan.esr.domain.entities.Cozinha;
@@ -27,7 +27,7 @@ public class CozinhaQueriesController {
     @GetMapping("/{id}")
     public CozinhaOutput buscarPorId(@PathVariable Long id) {
         validarCampoObrigatorio(id, "ID");
-        Cozinha cozinha = this.cozinhaService.buscarCozinhaPorId(id);
+        Cozinha cozinha = this.cozinhaService.buscarPorId(id);
         return this.cozinhaAssembler.toModel(cozinha);
     }
 

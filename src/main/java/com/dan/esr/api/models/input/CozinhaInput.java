@@ -11,8 +11,8 @@ import lombok.Setter;
 @Setter
 @JsonRootName("cozinha")
 public class CozinhaInput {
-    @NotNull(groups = Groups.CozinhaId.class)
-    private Long id;
+    /*@NotNull(groups = Groups.CozinhaId.class)
+    private Long id;*/
     @NotBlank
     private String nome;
 }

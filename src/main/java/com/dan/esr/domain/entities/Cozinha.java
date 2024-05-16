@@ -50,9 +50,4 @@ public class Cozinha implements Serializable {
     public boolean isNova() {
         return this.getId() == null;
     }
-
-    public boolean isExiste() {
-        return !this.isNova();
-    }
-
 }

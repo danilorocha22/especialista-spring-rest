@@ -1,6 +1,6 @@
 package com.dan.esr.api.controllers;
 
-import com.dan.esr.api.assembler.CidadeAssembler;
+import com.dan.esr.api.assemblers.CidadeAssembler;
 import com.dan.esr.api.models.input.CidadeInput;
 import com.dan.esr.api.models.output.CidadeEstadoOutput;
 import com.dan.esr.api.models.output.CidadeNomeOutput;

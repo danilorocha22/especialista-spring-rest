@@ -1,6 +1,6 @@
 package com.dan.esr.api.models.input;
 
-import com.dan.esr.domain.entities.Estado;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,5 +8,6 @@ import lombok.Setter;
 @Setter
 public class CidadeInput {
     private String nome;
-    private Estado estado;
+    @JsonIgnoreProperties(value = "sigla", allowGetters = true)
+    private EstadoInput estado;
 }

@@ -8,11 +8,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import java.util.TimeZone;
 
 @SpringBootApplication
-@EnableJpaRepositories(repositoryBaseClass = CustomBaseJpaRepositoryImpl.class)
+@EnableJpaRepositories(repositoryBaseClass = CustomBaseJpaRepositoryImpl.class) // Habilita o repositório customizado
 public class EspecialistaSpringRestApplication {
 
 	public static void main(String[] args) {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));// Configura o horário default da aplicação para UTC
 		SpringApplication.run(EspecialistaSpringRestApplication.class, args);
 	}
 

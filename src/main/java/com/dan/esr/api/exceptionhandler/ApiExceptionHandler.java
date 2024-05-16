@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -253,6 +254,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         Throwable cause = ExceptionUtils.getRootCause(ex);
         String exceptionName = cause.getClass().getSimpleName();
+        System.out.printf("NOME COMPLETO: %s", cause.getClass());
 
         return switch (exceptionName) {
             case ("InvalidFormatException") ->
@@ -268,6 +270,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                     handleWstxUnexpectedCharException((WstxUnexpectedCharException) cause, headers, status, req);
 
             case ("JsonParseException") -> handleJsonParseException((JsonParseException) cause, headers, status, req);
+
+            case ("MismatchedInputException") ->
+                    handleMismatchedInputException((MismatchedInputException) cause, headers, status, req);
 
             default -> super.handleHttpMessageNotReadable(ex, headers, status, req);
         };
@@ -297,8 +302,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest req
     ) {
+        String nomeEntidade = getEntityName(ex);
         String detail = "A propriedade '%s', no momento, não é aceita pela entidade %s.".formatted(
-                getPropertyName(ex), getEntityName(ex));
+                getPropertyName(ex), formatarNomeEntidadeInput(nomeEntidade));
         Problem problem = createProblemBuilder(PROPRIEDADE_IGNORADA, status, detail)
                 .userMessage(detail)
                 .build();
@@ -313,8 +319,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest req
     ) {
-        String nomeEntidade = formatarNomeEntidadeInput(getEntityName(ex));
-        String detail = "A propriedade '%s' não existe na entidade %s.".formatted(getPropertyName(ex), nomeEntidade);
+        String detail = "A propriedade '%s' não existe na entidade %s."
+                .formatted(getPropertyName(ex), getEntityName(ex));
         Problem problem = createProblemBuilder(PROPRIEDADE_DESCONHECIDA, status, detail)
                 .userMessage(detail)
                 .build();
@@ -351,6 +357,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         logger.error("handleJsonParseException() -> Erro: {}", detail, ex.getCause());
+        return handleExceptionInternal(ex, problem, headers, status, req);
+    }
+
+    private ResponseEntity<Object> handleMismatchedInputException(
+            MismatchedInputException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest req
+    ) {
+        String detail = "Erro ao tentar desserializar os dados JSON em um objeto Java, " +
+                "devido à incompatibilidade nos tipos de dados ou na estrutura esperada: %s -> %s."
+                        .formatted(getEntityName(ex), getPropertyName(ex));
+
+        Problem problem = createProblemBuilder(ERRO_NA_REQUISICAO, status, detail)
+                .userMessage(MSG_ERRO_GENERICO_CLIENTE)
+                .build();
+
+        logger.error("handleMismatchedInputException() -> Erro: {}", ex.getLocalizedMessage(), ex.getCause());
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
@@ -393,6 +417,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private static String getEntityName(JsonMappingException ex) {
-        return ex.getPath().get(0).getFrom().getClass().getSimpleName();
+        return formatarNomeEntidadeInput(ex.getPath().get(0).getFrom().getClass().getSimpleName());
     }
 }

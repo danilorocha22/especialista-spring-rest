@@ -1,13 +1,12 @@
 package com.dan.esr.api.controllers;
 
-import com.dan.esr.api.assembler.RestauranteAssembler;
+import com.dan.esr.api.assemblers.RestauranteAssembler;
 import com.dan.esr.api.models.output.RestauranteOutput;
 import com.dan.esr.api.models.output.RestauranteProdutosOutput;
 import com.dan.esr.api.models.output.RestauranteSummaryOutput;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.RestauranteService;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +25,7 @@ public class RestauranteQueriesController {
     private RestauranteAssembler restauranteAssembler;
 
     @GetMapping("/{id}")
-    public RestauranteOutput buscarPorId(@PathVariable @Validated Long id) {
+    public RestauranteOutput buscarPorId(@PathVariable Long id) {
         validarCampoObrigatorio(id, "ID");
         Restaurante restauranteRegistro = this.restauranteService.buscarPorId(id);
         return this.restauranteAssembler.toModel(restauranteRegistro);
@@ -34,7 +33,7 @@ public class RestauranteQueriesController {
 
 
     @GetMapping("/com-produtos/{id}")
-    public RestauranteProdutosOutput buscarComProdutos(@PathVariable @Validated Long id) {
+    public RestauranteProdutosOutput buscarComProdutos(@PathVariable Long id) {
         validarCampoObrigatorio(id, "ID");
         Restaurante restauranteRegistro = this.restauranteService.buscarComProdutos(id);
         return this.restauranteAssembler.toModelProdutos(restauranteRegistro);
@@ -77,10 +76,10 @@ public class RestauranteQueriesController {
     }
 
     @GetMapping("/primeiro-por-nome")
-    public RestauranteSummaryOutput buscarPrimeiroNomeContendo(String nome) {
+    public RestauranteOutput buscarPrimeiroNomeContendo(String nome) {
         validarCampoObrigatorio(nome, "Nome");
         Restaurante restaurante = this.restauranteService.buscarPrimeiroNomeContendo(nome);
-        return this.restauranteAssembler.toModelSummary(restaurante);
+        return this.restauranteAssembler.toModel(restaurante);
     }
 
     @GetMapping("/top2-por-nome")
@@ -111,15 +110,15 @@ public class RestauranteQueriesController {
     }
 
     @GetMapping("/com-nome-igual")
-    public RestauranteSummaryOutput buscarPorNomeIgual(String nome) {
+    public RestauranteOutput buscarPorNomeIgual(String nome) {
         validarCampoObrigatorio(nome, "Nome");
         Restaurante restaurante = this.restauranteService.buscarPorNomeIgual(nome);
-        return this.restauranteAssembler.toModelSummary(restaurante);
+        return this.restauranteAssembler.toModel(restaurante);
     }
 
     @GetMapping("/primeiro")
-    public RestauranteSummaryOutput buscarPrimeiroRestaurante() {
+    public RestauranteOutput buscarPrimeiroRestaurante() {
         Restaurante restaurante = this.restauranteService.buscarPrimeiroRestaurante();
-        return this.restauranteAssembler.toModelSummary(restaurante);
+        return this.restauranteAssembler.toModel(restaurante);
     }
 }

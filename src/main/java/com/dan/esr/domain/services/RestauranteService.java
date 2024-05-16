@@ -5,6 +5,7 @@ import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.*;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import lombok.AllArgsConstructor;
+import org.hibernate.HibernateException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +25,11 @@ public class RestauranteService {
     public Restaurante salvarOuAtualizar(Restaurante restaurante) {
         try {
             Long cozinhaId = restaurante.getCozinha().getId();
-            Cozinha cozinha = this.cozinhaService.buscarCozinhaPorId(cozinhaId);
+            Cozinha cozinha = this.cozinhaService.buscarPorId(cozinhaId);
             restaurante.setCozinha(cozinha);
             return restauranteRepository.salvarOuAtualizar(restaurante).orElseThrow();
 
-        } catch (EntidadeNaoPersistidaException ex) {
+        } catch (HibernateException ex) {
             if (restaurante.isNovo()) {
                 throw new RestauranteNaoPersistidoException(MSG_RESTAURANTE_NAO_SALVO);
             } else {
@@ -39,8 +40,9 @@ public class RestauranteService {
 
     @Transactional
     public void remover(Long id) {
+        Restaurante restaurante = this.buscarPorId(id);
         try {
-            this.restauranteRepository.removeById(id);
+            this.restauranteRepository.removeById(restaurante.getId());
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(MSG_RESTAURANTE_EM_USO.formatted(id));
         }

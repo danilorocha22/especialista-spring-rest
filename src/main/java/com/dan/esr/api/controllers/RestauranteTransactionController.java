@@ -1,7 +1,8 @@
 package com.dan.esr.api.controllers;
 
-import com.dan.esr.api.assembler.RestauranteAssembler;
+import com.dan.esr.api.assemblers.RestauranteAssembler;
 import com.dan.esr.api.models.input.RestauranteInput;
+import com.dan.esr.api.models.output.RestauranteOutput;
 import com.dan.esr.api.models.output.RestauranteSummaryOutput;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.ValidacaoException;
@@ -25,8 +26,6 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/restaurantes")
@@ -38,32 +37,29 @@ public class RestauranteTransactionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RestauranteSummaryOutput salvar(@RequestBody @Valid RestauranteInput restauranteInput) {
+    public RestauranteOutput salvar(@RequestBody @Valid RestauranteInput restauranteInput) {
         Restaurante restaurante = this.restauranteAssembler.toDomain(restauranteInput);
         restaurante = this.restauranteService.salvarOuAtualizar(restaurante);
-        return this.restauranteAssembler.toModelSummary(restaurante);
+        return this.restauranteAssembler.toModel(restaurante);
     }
 
     @PutMapping("/{id}")
-    public RestauranteSummaryOutput atualizar(
+    public RestauranteOutput atualizar(
             @PathVariable Long id,
             @RequestBody @Valid RestauranteInput restauranteInput
     ) {
-        validarCampoObrigatorio(id, "ID");
-        restauranteInput.setId(id);
-        Restaurante restauranteRegistro = this.restauranteService.buscarPorId(id);
-        this.restauranteAssembler.copyToRestauranteDomain(restauranteInput, restauranteRegistro);
-        restauranteRegistro = this.restauranteService.salvarOuAtualizar(restauranteRegistro);
-        return this.restauranteAssembler.toModelSummary(restauranteRegistro);
+        Restaurante restaurante = this.restauranteService.buscarPorId(id);
+        this.restauranteAssembler.copyToRestauranteDomain(restauranteInput, restaurante);
+        restaurante = this.restauranteService.salvarOuAtualizar(restaurante);
+        return this.restauranteAssembler.toModel(restaurante);
     }
 
     @PatchMapping("/{id}")
-    public RestauranteSummaryOutput atualizarParcial(
+    public RestauranteOutput atualizarParcial(
             @PathVariable Long id,
             @RequestBody Map<String, Object> campos,
             HttpServletRequest request
     ) {
-        validarCampoObrigatorio(id, "ID");
         Restaurante restaurante = this.restauranteService.buscarPorId(id);
         mesclarCampos(campos, restaurante, request);
         validate(this.restauranteAssembler.toModelInput(restaurante));
@@ -71,13 +67,13 @@ public class RestauranteTransactionController {
         /*Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinhaRegistro = this.cozinhaService.buscarCozinhaPorId(cozinhaId).orElseThrow();
         restaurante.setCozinha(cozinhaRegistro);*/
-        return this.restauranteAssembler.toModelSummary(restaurante);
+        return this.restauranteAssembler.toModel(restaurante);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void remover(@PathVariable Long id) {
-        validarCampoObrigatorio(id, "ID");
+        //validarCampoObrigatorio(id, "ID");
         this.restauranteService.remover(id);
     }
 
@@ -111,10 +107,9 @@ public class RestauranteTransactionController {
     private void validate(RestauranteInput restauranteInput) {
         BeanPropertyBindingResult bindingResult =
                 new BeanPropertyBindingResult(restauranteInput, "Restaurante");
+
         this.validator.validate(restauranteInput, bindingResult);
 
-        if (bindingResult.hasErrors()) {
-            throw new ValidacaoException(bindingResult);
-        }
+        if (bindingResult.hasErrors()) throw new ValidacaoException(bindingResult);
     }
 }

@@ -6,5 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CidadeNomeOutput extends CidadeOutput {
+    private Long id;
     private String nome;
 }

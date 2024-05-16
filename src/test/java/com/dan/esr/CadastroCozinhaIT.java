@@ -18,7 +18,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.HttpStatus.*;
 
 @TestPropertySource("/application-test.properties")//Configurando um banco de testes
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -47,7 +49,7 @@ class CadastroCozinhaIT {
         //Verifica o que foi enviado na requisição e o que foi retornado na resposta
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
-        RestAssured.basePath = "/cozinhas";
+        RestAssured.basePath = "/danfood/api/teste/cozinhas";
         this.cleaner.clearTables();
         this.totalCozinhas = this.prepararDados();
     }
@@ -57,47 +59,47 @@ class CadastroCozinhaIT {
     @Test
     public void deveRetornarStatus200_QuandoConsultarCozinhas() {
         given() //dado cenário
-            .accept(ContentType.JSON)
+            .accept(JSON)
         .when() //quando fazer get
             .get()
         .then() //então resultado
-            .statusCode(HttpStatus.OK.value());
+            .statusCode(OK.value());
     }
 
     @Test
     public void deveConterTotalCozinhas_QuandoConsultarCozinhas() {
         given() //dado cenário
-            .accept(ContentType.JSON)
+            .accept(JSON)
         .when() //quando fizer get
             .get()
         .then() //então resultado
-            .body("tipo", hasSize(this.totalCozinhas));
-            //.body("tipo", hasItems("Brasileira"));
+            .body("", hasSize(this.totalCozinhas));
+            //.body("nome", hasItems("Brasileira"));
     }
 
     @Test
     public void deveRetornarStatus201_QuandoCadastrarCozinha() {
         given()
             .body(ResourceUtils.getContentFromResource(COZINHA_JSON))
-            .contentType(ContentType.JSON)
-            .accept(ContentType.JSON)
+            .contentType(JSON)
+            .accept(JSON)
         .when()
             .post()
         .then()
-            .statusCode(HttpStatus.CREATED.value());
+            .statusCode(CREATED.value());
     }
 
     @Test
     public void deveRetornarStatus200_QuandoBuscarCozinhaExistente() {
         // GET /cozinhas/{cozinhaId}, ou seja, /cozinhas/2
         given() //dado cenário
-            .pathParams("cozinhaId", this.cozinhaAmericana.getId())
-            .accept(ContentType.JSON)
+            .pathParams("id", this.cozinhaAmericana.getId())
+            .accept(JSON)
         .when() //quando fazer get
-            .get("/{cozinhaId}")
+            .get("/{id}")
         .then() //então resultado
-            .statusCode(HttpStatus.OK.value())
-                .body("tipo", equalTo(this.cozinhaAmericana.getNome()));
+            .statusCode(OK.value())
+            .body("nome", equalTo(this.cozinhaAmericana.getNome()));
     }
 
     @Test
@@ -105,11 +107,11 @@ class CadastroCozinhaIT {
         // GET /cozinhas/{cozinhaId}, ou seja, /cozinhas/2
         given() //dado cenário
             .pathParams("cozinhaId", ID_COZINHA_INEXISTENTE)
-            .accept(ContentType.JSON)
+            .accept(JSON)
         .when() //quando fazer get
             .get("/{cozinhaId}")
         .then() //então resultado
-            .statusCode(HttpStatus.NOT_FOUND.value());
+            .statusCode(NOT_FOUND.value());
     }
 
 
@@ -117,8 +119,8 @@ class CadastroCozinhaIT {
         Cozinha coz1 = new Cozinha();
         coz1.setNome("Brasileira");
 
-        cozinhaAmericana = new Cozinha();
-        cozinhaAmericana.setNome(COZINHA_AMERICANA);
+        this.cozinhaAmericana = new Cozinha();
+        this.cozinhaAmericana.setNome(COZINHA_AMERICANA);
 
         return this.cadastroCozinha.saveAll(List.of(coz1, cozinhaAmericana)).size();
     }

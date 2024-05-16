@@ -25,7 +25,7 @@ public class CozinhaService {
     @Transactional
     public Cozinha salvarOuAtualizar(Cozinha cozinha) {
         try {
-            return cozinha.isNova() ? this.salvar(cozinha) : this.atualizar(cozinha);
+            return this.cozinhaRepository.salvarOuAtualizar(cozinha).orElseThrow();
 
         } catch (HibernateException ex) {
             if (cozinha.isNova()) {
@@ -36,20 +36,9 @@ public class CozinhaService {
         }
     }
 
-    private Cozinha salvar(Cozinha cozinha) {
-        return this.cozinhaRepository.salvarOuAtualizar(cozinha)
-                .orElse(null);
-    }
-
-    private Cozinha atualizar(Cozinha cozinha) {
-        Cozinha cozinhaRegistro = this.buscarCozinhaPorId(cozinha.getId());
-        copyProperties(cozinha, cozinhaRegistro, "id");
-        return this.cozinhaRepository.salvarOuAtualizar(cozinhaRegistro).orElse(null);
-    }
-
     @Transactional
     public void remover(Long id) {
-        Cozinha cozinha = this.buscarCozinhaPorId(id);
+        Cozinha cozinha = this.buscarPorId(id);
 
         try {
             this.cozinhaRepository.remover(cozinha.getId());
@@ -58,7 +47,7 @@ public class CozinhaService {
         }
     }
 
-    public Cozinha buscarCozinhaPorId(Long id) {
+    public Cozinha buscarPorId(Long id) {
         try {
             return this.cozinhaRepository.buscarPorId(id).orElse(null);
 
