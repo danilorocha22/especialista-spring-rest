@@ -7,6 +7,7 @@ import com.dan.esr.domain.repositories.RestauranteRepository;
 import lombok.AllArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,7 @@ public class RestauranteService {
         Restaurante restaurante = this.buscarPorId(id);
         try {
             this.restauranteRepository.removeById(restaurante.getId());
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException ex) {
             throw new EntidadeEmUsoException(MSG_RESTAURANTE_EM_USO.formatted(id));
         }
     }

@@ -42,8 +42,9 @@ public class CozinhaService {
 
         try {
             this.cozinhaRepository.remover(cozinha.getId());
-        } catch (DataIntegrityViolationException e) {
-            throw new EntidadeEmUsoException(MSG_COZINHA_EM_USO.formatted(id));
+            //this.cozinhaRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new EntidadeEmUsoException(MSG_COZINHA_EM_USO.formatted(id), ex);
         }
     }
 
