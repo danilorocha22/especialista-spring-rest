@@ -20,17 +20,15 @@ public class ModelMapperConfig {
 
         //Configurando o mapeamento de Restaurante para RestauranteFormasDePagamentosOutput
         mapper.createTypeMap(Restaurante.class, RestauranteOutput.class)
-                .addMapping(Restaurante::getFormasDePagamento, RestauranteOutput::setFormasDePagamento);
+                .addMapping(Restaurante::getFormasDePagamento, RestauranteOutput::setDescricaoFormasPagamento);
 
         //Configurando o mapeamento de Restaurante para RestauranteProdutosOutput
         mapper.createTypeMap(Restaurante.class, RestauranteProdutosOutput.class)
-                .addMapping(Restaurante::getProdutos, RestauranteProdutosOutput::setProdutoOutputs);
+                .addMapping(Restaurante::getProdutos, RestauranteProdutosOutput::setProdutos);
 
         //Configurando o mapeamento de Cidade para CidadeNomeOutput
         mapper.createTypeMap(Cidade.class, CidadeNomeOutput.class)
-                .addMappings(mapping -> mapping.map(Cidade::getCidadeUF, CidadeNomeOutput::setNome));
-
-
+                .addMappings(mapping -> mapping.map(Cidade::getCidadeEstado, CidadeNomeOutput::setNome));
 
         return mapper;
     }

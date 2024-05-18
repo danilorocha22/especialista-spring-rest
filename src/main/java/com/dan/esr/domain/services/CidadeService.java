@@ -1,11 +1,11 @@
 package com.dan.esr.domain.services;
 
+import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.entities.Estado;
-import com.dan.esr.domain.exceptions.CidadeNaoEncontradaException;
-import com.dan.esr.domain.exceptions.CidadeNaoPersistidaException;
-import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
+import com.dan.esr.domain.exceptions.*;
 import com.dan.esr.domain.repositories.CidadeRepository;
+import com.dan.esr.domain.services.restaurante.RestauranteCadastroService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,49 +16,49 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.dan.esr.core.util.MessagesUtil.*;
-import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
-import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Service
 @RequiredArgsConstructor
 public class CidadeService {
+    private static final LoggerHelper logger = new LoggerHelper(RestauranteCadastroService.class);
     private final CidadeRepository cidadeRepository;
     private final EstadoService estadoService;
 
     @Transactional
     public Cidade salvarOuAtualizar(Cidade cidade) {
-        validarCampoObrigatorio(cidade.getEstado(), "Estado");
-        Long estadoId = cidade.getEstado().getId();
-        Estado estado = this.estadoService.buscarEstadoPorId(estadoId);
-        cidade.setEstado(estado);
-
         try {
-            return cidade.isNova() ? this.salvar(cidade) : this.atualizar(cidade);
+            return save(cidade);
+
+        } catch (EstadoNaoEncontradoException ex) {
+            logger.error("salvarOuAtualizar(cidade) -> Erro: {}", ex.getLocalizedMessage(), ex.getCause());
+            throw new NegocioException(ex.getMessage());
+
         } catch (HibernateException ex) {
+            logger.error("salvarOuAtualizar(cidade) -> Erro: {}", ex.getLocalizedMessage(), ex.getCause());
+            String nome = cidade.getNome();
             if (cidade.isNova()) {
-                throw new CidadeNaoPersistidaException(MSG_CIDADE_NAO_SALVA
-                        .formatted(cidade.getNome()), ex.getCause());
+                throw new CidadeNaoPersistidaException(MSG_CIDADE_NAO_SALVA.formatted(nome), ex.getCause());
             } else {
-                throw new CidadeNaoPersistidaException(MSG_CIDADE_NAO_ATUALIZADA
-                        .formatted(cidade.getNome()), ex.getCause());
+                throw new CidadeNaoPersistidaException(MSG_CIDADE_NAO_ATUALIZADA.formatted(nome), ex.getCause());
             }
         }
     }
 
-    private Cidade salvar(Cidade cidade) {
+    private Cidade save(Cidade cidade) {
+        configurarCidade(cidade);
         return this.cidadeRepository.salvarOuAtualizar(cidade)
-                .orElse(null);
+                .orElseThrow();
     }
 
-    private Cidade atualizar(Cidade cidade) {
-        Cidade cidadeRegistro = this.buscarCidadePorId(cidade.getId());
-        copyProperties(cidade, cidadeRegistro, "id");
-        return this.cidadeRepository.salvarOuAtualizar(cidadeRegistro).orElse(null);
+    private void configurarCidade(Cidade cidade) {
+        Long estadoId = cidade.getEstado().getId();
+        Estado estado = this.estadoService.buscarEstadoPorId(estadoId);
+        cidade.setEstado(estado);
     }
 
     @Transactional
     public void remover(Long id) {
-        Cidade cidadeRegistro = this.buscarCidadePorId(id);
+        Cidade cidadeRegistro = this.buscarPor(id);
 
         try {
             this.cidadeRepository.remover(cidadeRegistro.getId());
@@ -67,11 +67,12 @@ public class CidadeService {
         }
     }
 
-    public Cidade buscarCidadePorId(Long id) {
+    public Cidade buscarPor(Long id) {
         try {
-            return this.cidadeRepository.buscarPorId(id).orElse(null);
+            return this.cidadeRepository.buscarPor(id)
+                    .orElse(null);
 
-        } catch (EmptyResultDataAccessException ex) {
+        } catch (EmptyResultDataAccessException | DataIntegrityViolationException ex) {
             throw new CidadeNaoEncontradaException(id, ex.getCause());
         }
     }

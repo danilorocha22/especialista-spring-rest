@@ -7,7 +7,6 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -45,15 +44,4 @@ public class Endereco implements Serializable {
     @ForeignKey(name = "fk_endereco_cidade"), referencedColumnName = "id")
     private Cidade cidade;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Endereco endereco)) return false;
-        return Objects.equals(getId(), endereco.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
 }

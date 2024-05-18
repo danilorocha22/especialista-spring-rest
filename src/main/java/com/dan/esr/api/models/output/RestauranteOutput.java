@@ -1,7 +1,5 @@
 package com.dan.esr.api.models.output;
 
-import com.dan.esr.domain.entities.Endereco;
-import com.dan.esr.domain.entities.Produto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,10 +13,11 @@ import java.util.List;
 public class RestauranteOutput {
     private Long id;
     private String nome;
+    private boolean ativo;
     private BigDecimal taxaFrete;
-    @JsonProperty("cozinha") private CozinhaOutput cozinha;
-    @JsonProperty("formasDePagamento") private List<FormasDePagamentoOutput> formasDePagamento;
-    //private List<ProdutoOutput> produtos;
-    private Endereco endereco;
+    @JsonProperty("cozinha") private String nomeCozinha;
+    @JsonProperty("formasDePagamento") private List<String> descricaoFormasPagamento;
+    private EnderecoOutput endereco;
     private OffsetDateTime dataCadastro;
+    //private List<ProdutoOutput> produtos;
 }

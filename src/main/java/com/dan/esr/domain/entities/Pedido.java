@@ -89,7 +89,7 @@ public class Pedido implements Serializable {
     @JoinColumn(name = "formas_pagamento_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_formas_pagamento"),
             referencedColumnName = "id")
-    private FormasDePagamento formasDePagamento;
+    private FormasPagamento formasPagamento;
 
     @Setter
     @OneToMany(mappedBy = "pedido",

@@ -5,6 +5,7 @@ import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EstadoNaoEncontradoException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.EstadoRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class EstadoService {
                 new EstadoNaoEncontradoException(id));
     }
 
+    @Transactional
     public Estado salvarOuAtualizar(Estado estado) {
         try {
             return this.estadoRepo.saveAndFlush(estado);
@@ -34,6 +36,7 @@ public class EstadoService {
         }
     }
 
+    @Transactional
     public void remover(Long id) {
         Estado estadoRegistro = this.buscarEstadoPorId(id);
 

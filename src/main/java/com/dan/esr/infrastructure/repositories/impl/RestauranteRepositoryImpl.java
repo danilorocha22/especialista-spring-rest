@@ -1,8 +1,13 @@
 package com.dan.esr.infrastructure.repositories.impl;
 
+import com.dan.esr.api.models.output.ProdutoOutput;
+import com.dan.esr.api.models.output.RestauranteProdutosOutput;
+import com.dan.esr.core.assemblers.ProdutoModelAssembler;
+import com.dan.esr.core.assemblers.RestauranteEntityAssembler;
 import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.entities.Endereco;
+import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.PersistenciaException;
 import com.dan.esr.domain.exceptions.RestauranteNaoEncontradoException;
@@ -19,7 +24,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.dan.esr.core.util.MessagesUtil.MSG_ERRO_BANCO_DE_DADOS;
 import static com.dan.esr.infrastructure.spec.RestauranteSpecs.*;
@@ -36,6 +44,12 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
     @Autowired
     private RestauranteRepository restauranteRepository;
 
+    @Autowired
+    private ProdutoModelAssembler produtoModelAssembler;
+
+    @Autowired
+    private RestauranteEntityAssembler restauranteEntityAssembler;
+
     /*###################################### CONSULTAS ######################################*/
 
     @Override
@@ -49,24 +63,26 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
     }
 
     @Override
-    public Optional<Restaurante> buscarRestauranteComProdutos(Long id) {
-        try {
-            Optional<Restaurante> restauranteOptional = this.restauranteRepository.findOne(comProdutosAtivos(id));
-            return Optional.ofNullable(restauranteOptional
-                    .orElseThrow(() -> new RestauranteNaoEncontradoException(id)));
-            /*var jpql = ("FROM %s r " +
-                    "LEFT JOIN FETCH r.produtos p " +
-                    "WHERE r.id = :id AND p.ativo = true").formatted(Restaurante.class.getSimpleName());
+    public Optional<Restaurante> buscarRestauranteComProdutos(Long restauranteId) {
+        String jpql = "SELECT new com.dan.esr.api.models.output.RestauranteProdutosOutput(r.id, r.nome) FROM " +
+                "Restaurante r WHERE r.id = :id";
 
-            Restaurante restaurante = this.entityManager.createQuery(jpql, Restaurante.class)
-                    .setParameter("id", id)
+        List<Produto> produtos = entityManager.createQuery(
+                        "SELECT p FROM Produto p WHERE p.restaurante.id = :id AND p.ativo = true", Produto.class)
+                .setParameter("id", restauranteId)
+                .getResultList();
+
+        try {
+            RestauranteProdutosOutput restauranteOutput = entityManager.createQuery(jpql, RestauranteProdutosOutput.class)
+                    .setParameter("id", restauranteId)
                     .getSingleResult();
 
-            return Optional.ofNullable(restaurante);*/
-        } catch (NoSuchElementException ex) {
-            logger.error("buscarProdutosRestaurante(id) -> Erro: {}", ex.getLocalizedMessage());
-            throw new RestauranteNaoEncontradoException(id);
+            List<ProdutoOutput> produtoOutputs = this.produtoModelAssembler.toCollectionDTO(produtos);
+            restauranteOutput.setProdutos(produtoOutputs);
+            return Optional.ofNullable(this.restauranteEntityAssembler.toDomain(restauranteOutput));
 
+        } catch (NoResultException ex) {
+            throw new RestauranteNaoEncontradoException(restauranteId);
         }
     }
 
@@ -86,7 +102,7 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
         try {
             var jpql = ("FROM %s r " +
                     "JOIN FETCH r.cozinha " +
-                    "LEFT JOIN FETCH r.formasDePagamento " +
+                    "LEFT JOIN FETCH r.formasPagamento " +
                     "LEFT JOIN FETCH r.endereco e " +
                     "LEFT JOIN FETCH e.cidade c " +
                     "LEFT JOIN FETCH c.estado " +

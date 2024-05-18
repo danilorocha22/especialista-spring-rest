@@ -9,6 +9,8 @@ public interface RestauranteRepository extends
         JpaSpecificationExecutor<Restaurante> {
 
     void removeById(Long id);
+
+    boolean existsByNomeIgnoreCase(String nome);
 }
 
 

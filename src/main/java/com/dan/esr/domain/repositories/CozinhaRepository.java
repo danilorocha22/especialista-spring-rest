@@ -7,10 +7,10 @@ public interface CozinhaRepository extends
 
     void removeById(Long id);
 
+    boolean existsByNomeIgnoreCase(String nome);
+
     //Optional<Cozinha> findByNome(String nome);
 
     //List<Cozinha> findCozinhasByNomeContains(String nome);
-
-    //boolean existsByNome(String nome);
 
 }

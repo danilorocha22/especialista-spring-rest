@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/estados")
 public class EstadoController {
-
     private final EstadoService cadastroEstado;
     private final EstadoRepository estadoRepo;
 

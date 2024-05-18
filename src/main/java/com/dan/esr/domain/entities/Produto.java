@@ -6,11 +6,11 @@ import lombok.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -41,15 +41,4 @@ public class Produto implements Serializable {
             referencedColumnName = "id")
     private Restaurante restaurante;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Produto produto)) return false;
-        return Objects.equals(getId(), produto.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
 }

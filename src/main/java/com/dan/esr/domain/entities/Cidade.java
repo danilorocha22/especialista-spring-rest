@@ -46,7 +46,7 @@ public class Cidade implements Serializable {
         return getId() == null;
     }
 
-    public String getCidadeUF() {
+    public String getCidadeEstado() {
         String nomeCompleto = "";
         if (isNomeCidadeValido() && isSiglaEstadoValido()) {
             return nome + "/" + estado.getSigla();

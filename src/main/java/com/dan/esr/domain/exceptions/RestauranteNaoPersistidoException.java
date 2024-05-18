@@ -6,8 +6,8 @@ public class RestauranteNaoPersistidoException extends EntidadeNaoPersistidaExce
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public RestauranteNaoPersistidoException() {
-        super();
+    public RestauranteNaoPersistidoException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public RestauranteNaoPersistidoException(String message) {

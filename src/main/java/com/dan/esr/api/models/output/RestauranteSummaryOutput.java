@@ -14,4 +14,5 @@ public class RestauranteSummaryOutput {
     private BigDecimal taxaFrete;
     @JsonProperty("cozinha")
     private CozinhaOutput cozinhaOutput;
+    private boolean ativo;
 }

@@ -124,6 +124,22 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
+    @ExceptionHandler(EntidadeExistenteException.class)
+    public ResponseEntity<Object> handleEntidadeExistenteException(
+            EntidadeExistenteException ex,
+            WebRequest req
+    ) {
+        HttpStatusCode status = CONFLICT;
+        Problem problem = createProblemBuilder(RECURSO_EXISTENTE, status, ex.getMessage())
+                .userMessage(ex.getMessage())
+                .build();
+
+        /*logger.error("handleEntidadeExistenteException() -> Erro: {}",
+                ex.getLocalizedMessage(), ex.getCause());*/
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
+    }
+
     @ExceptionHandler(PersistenciaException.class)
     public ResponseEntity<Object> handlePersistenciaException(
             PersistenciaException ex,
@@ -139,26 +155,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
-    /*@ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(
-            ConstraintViolationException ex,
-            WebRequest req
-    ) {
-        HttpStatusCode status = BAD_REQUEST;
-        Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, ex.getLocalizedMessage())
-                .userMessage(ex.getConstraintViolations().iterator().next().getMessage())
-                .build();
-
-        logger.error("handleConstraintViolationException() -> Erro: {}",
-                ex.getLocalizedMessage(), ex.getCause());
-        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
-    }*/
-
     @ExceptionHandler(NegocioException.class)
     public ResponseEntity<Object> handleNegocioException(NegocioException ex, WebRequest req) {
         HttpStatusCode status = BAD_REQUEST;
         Problem problem = createProblemBuilder(ERRO_NA_REQUISICAO, status, ex.getMessage())
-                .userMessage(MSG_ERRO_GENERICO_SERVIDOR)
+                .userMessage(ex.getMessage())
                 .build();
 
         logger.error("handleNegocioException() -> Erro: {}",
@@ -254,7 +255,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         Throwable cause = ExceptionUtils.getRootCause(ex);
         String exceptionName = cause.getClass().getSimpleName();
-        System.out.printf("NOME COMPLETO: %s", cause.getClass());
 
         return switch (exceptionName) {
             case ("InvalidFormatException") ->

@@ -1,10 +1,10 @@
 package com.dan.esr.api.controllers;
 
-import com.dan.esr.api.assemblers.CidadeAssembler;
 import com.dan.esr.api.models.input.CidadeInput;
 import com.dan.esr.api.models.output.CidadeEstadoOutput;
 import com.dan.esr.api.models.output.CidadeNomeOutput;
 import com.dan.esr.api.models.output.CidadeOutput;
+import com.dan.esr.core.assemblers.CidadeAssembler;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.services.CidadeService;
 import jakarta.validation.Valid;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
+import static org.springframework.beans.BeanUtils.copyProperties;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,9 +38,9 @@ public class CidadeController {
             @PathVariable Long id,
             @RequestBody @Valid CidadeInput cidadeInput
     ) {
-        validarCampoObrigatorio(id, "ID");
-        Cidade cidade = this.cidadeAssembler.toDomain(cidadeInput);
-        cidade.setId(id);
+        Cidade cidade = this.cidadeService.buscarPor(id);
+        //copyProperties(cidadeInput, cidade, "id");
+        this.cidadeAssembler.copyToCidadeDomain(cidadeInput, cidade);
         cidade = this.cidadeService.salvarOuAtualizar(cidade);
         return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
     }
@@ -54,7 +55,7 @@ public class CidadeController {
     @GetMapping("/{id}")
     public CidadeOutput buscarPorId(@PathVariable Long id) {
         validarCampoObrigatorio(id, "ID");
-        Cidade cidade = this.cidadeService.buscarCidadePorId(id);
+        Cidade cidade = this.cidadeService.buscarPor(id);
         return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
     }
 

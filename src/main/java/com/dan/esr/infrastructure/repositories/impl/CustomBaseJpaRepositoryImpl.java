@@ -3,6 +3,8 @@ package com.dan.esr.infrastructure.repositories.impl;
 import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.repositories.CustomBaseJpaRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
@@ -12,7 +14,6 @@ import java.util.Optional;
 public class CustomBaseJpaRepositoryImpl<T, ID>
         extends SimpleJpaRepository<T, ID> implements CustomBaseJpaRepository<T, ID> {
 
-    private static final LoggerHelper logger = new LoggerHelper(CustomBaseJpaRepositoryImpl.class);
     private final EntityManager entityManager;
 
     public CustomBaseJpaRepositoryImpl(
@@ -45,7 +46,7 @@ public class CustomBaseJpaRepositoryImpl<T, ID>
     }
 
     @Override
-    public Optional<T> buscarPorId(Long id) {
+    public Optional<T> buscarPor(Long id) {
         var jpql = "FROM %s WHERE id = :id"
                 .formatted(getDomainClass().getSimpleName());
 
@@ -107,17 +108,25 @@ public class CustomBaseJpaRepositoryImpl<T, ID>
 
     @Override
     public boolean existeRegistroCom(String nome) {
-        return this.entityManager.createQuery(getJpqlNomeIgual(), getDomainClass())
-                .setParameter("nome", nome)
-                .getSingleResult() != null;
+        String jpql = "SELECT COUNT(r) FROM %s r WHERE LOWER(r.nome) = LOWER(:nome)".formatted(
+                getDomainClass().getSimpleName());
+        Long count = (Long) this.entityManager.createQuery(jpql)
+                .setParameter("nome", nome.trim().toLowerCase())
+                .getSingleResult();
+        System.out.printf("QUANT: %s\n", count);
+        return count > 0;
     }
 
     private String getJpqlNomeContendo() {
-        return "FROM %s WHERE nome LIKE :nome".formatted(getDomainClass().getName());
+        return "FROM %s WHERE nome LIKE :nome"
+                .formatted(getDomainClass().getName());
     }
 
     private String getJpqlNomeIgual() {
-        return "FROM %s WHERE nome = :nome".formatted(getDomainClass().getName());
+        return ("SELECT CASE WHEN COUNT(r.nome) > 0 THEN TRUE ELSE FALSE END " +
+                "FROM %s r " +
+                "WHERE LOWER(r.nome) = LOWER(:nome);")
+                .formatted(getDomainClass().getName());
     }
 
     private String getJpqlTodos() {

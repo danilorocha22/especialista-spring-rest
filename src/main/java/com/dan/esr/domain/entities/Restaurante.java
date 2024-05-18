@@ -1,10 +1,7 @@
 package com.dan.esr.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,6 +17,7 @@ import java.util.List;
 //@ToString
 @Getter
 @Setter
+@ToString(exclude = {"formasPagamento"})
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Entity
@@ -58,8 +56,10 @@ public class Restaurante implements Serializable, Comparable<Restaurante> {
 
     //@JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "endereco_id", foreignKey =
-    @ForeignKey(name = "fk_restaurante_endereco"), referencedColumnName = "id")
+    @JoinColumn(
+            name = "endereco_id",
+            foreignKey = @ForeignKey(name = "fk_restaurante_endereco"),
+            referencedColumnName = "id")
     private Endereco endereco;
 
     //@JsonIgnore
@@ -83,7 +83,7 @@ public class Restaurante implements Serializable, Comparable<Restaurante> {
             inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id",
                     foreignKey = @ForeignKey(name = "fk_restaurante_formas_pagamento_formas_pagamento"),
                     referencedColumnName = "id"))
-    private List<FormasDePagamento> formasDePagamento = new ArrayList<>();
+    private List<FormasPagamento> formasPagamento = new ArrayList<>();
 
     //@JsonIgnore
     //@ToString.Exclude
@@ -92,14 +92,33 @@ public class Restaurante implements Serializable, Comparable<Restaurante> {
             orphanRemoval = true)
     private List<Produto> produtos = new ArrayList<>();
 
+    @Column(nullable = false)
+    //@ColumnDefault("true")
+    private boolean ativo = true;
+
     public Restaurante() {
         if (taxaFrete == null) {
             taxaFrete = BigDecimal.ZERO;
         }
     }
 
+    public void ativar() {
+        setAtivo(true);
+    }
+
+    public void inativar() {
+        setAtivo(false);
+    }
+
     public boolean isNovo() {
         return getId() == null;
+    }
+
+    public List<String> getFormasDePagamento() {
+        return formasPagamento
+                .stream()
+                .map(FormasPagamento::getDescricao)
+                .toList();
     }
 
     @Override

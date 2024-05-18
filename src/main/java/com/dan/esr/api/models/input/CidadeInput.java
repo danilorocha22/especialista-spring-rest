@@ -9,5 +9,5 @@ import lombok.Setter;
 public class CidadeInput {
     private String nome;
     @JsonIgnoreProperties(value = "sigla", allowGetters = true)
-    private EstadoInput estado;
+    private EstadoIdInput estado;
 }
