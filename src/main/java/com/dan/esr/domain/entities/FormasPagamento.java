@@ -10,11 +10,12 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "formas_de_pagamento", schema = "dan_food")
-public class FormasDePagamento implements Serializable {
+public class FormasPagamento implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -25,15 +26,7 @@ public class FormasDePagamento implements Serializable {
     @Column(nullable = false, length = 20)
     private String descricao;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FormasDePagamento that)) return false;
-        return Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    public boolean isNova() {
+        return Objects.isNull(this.id);
     }
 }

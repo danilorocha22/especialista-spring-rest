@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FormasDePagamentoOutput {
+public class FormasPagamentoOutput {
     private Long id;
     private String descricao;
 }
