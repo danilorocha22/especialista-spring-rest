@@ -1,11 +1,9 @@
 package com.dan.esr.domain.services.cozinha;
 
-import com.dan.esr.api.exceptionhandler.ProblemType;
 import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.entities.Cozinha;
-import com.dan.esr.domain.exceptions.CozinhaNaoPersistidaException;
+import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoPersistidaException;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
-import com.dan.esr.domain.exceptions.EntidadeExistenteException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;

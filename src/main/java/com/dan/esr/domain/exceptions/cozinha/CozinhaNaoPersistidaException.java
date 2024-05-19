@@ -1,4 +1,6 @@
-package com.dan.esr.domain.exceptions;
+package com.dan.esr.domain.exceptions.cozinha;
+
+import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 
 public class CozinhaNaoPersistidaException extends EntidadeNaoPersistidaException {
 

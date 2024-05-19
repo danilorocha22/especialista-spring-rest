@@ -1,7 +1,7 @@
 package com.dan.esr.domain.services.cozinha;
 
 import com.dan.esr.domain.entities.Cozinha;
-import com.dan.esr.domain.exceptions.CozinhaNaoEncontradaException;
+import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;

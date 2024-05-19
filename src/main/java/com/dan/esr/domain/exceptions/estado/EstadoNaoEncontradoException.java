@@ -1,4 +1,6 @@
-package com.dan.esr.domain.exceptions;
+package com.dan.esr.domain.exceptions.estado;
+
+import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 
 import java.io.Serial;
 

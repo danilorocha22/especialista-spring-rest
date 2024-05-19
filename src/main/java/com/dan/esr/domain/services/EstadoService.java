@@ -2,7 +2,7 @@ package com.dan.esr.domain.services;
 
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
-import com.dan.esr.domain.exceptions.EstadoNaoEncontradoException;
+import com.dan.esr.domain.exceptions.estado.EstadoNaoEncontradoException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.EstadoRepository;
 import jakarta.transaction.Transactional;

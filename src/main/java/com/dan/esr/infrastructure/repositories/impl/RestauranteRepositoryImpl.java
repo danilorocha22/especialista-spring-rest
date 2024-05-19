@@ -10,7 +10,7 @@ import com.dan.esr.domain.entities.Endereco;
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.PersistenciaException;
-import com.dan.esr.domain.exceptions.RestauranteNaoEncontradoException;
+import com.dan.esr.domain.exceptions.restaurante.RestauranteNaoEncontradoException;
 import com.dan.esr.domain.repositories.RestauranteQueries;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import com.dan.esr.infrastructure.spec.RestauranteSpecs;

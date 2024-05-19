@@ -2,7 +2,7 @@ package com.dan.esr.domain.services.restaurante;
 
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
-import com.dan.esr.domain.exceptions.RestauranteNaoEncontradoException;
+import com.dan.esr.domain.exceptions.restaurante.RestauranteNaoEncontradoException;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

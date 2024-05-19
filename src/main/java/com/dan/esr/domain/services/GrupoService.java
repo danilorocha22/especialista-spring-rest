@@ -4,6 +4,7 @@ import com.dan.esr.domain.entities.Grupo;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
+import com.dan.esr.domain.exceptions.grupo.GrupoNaoEncontradoException;
 import com.dan.esr.domain.repositories.GrupoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,13 @@ public class GrupoService {
     // todos os métodos de CRUD
     public Grupo buscarPor(Long id) {
         return grupoRepository.buscarPor(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException(
-                        "Nenhum grupo encontrado com ID %s".formatted(id)));
+                .orElseThrow(() -> new GrupoNaoEncontradoException(id));
     }
 
     public List<Grupo> buscarTodos() {
         List<Grupo> grupos = grupoRepository.buscarTodos();
         if (grupos.isEmpty()) {
-            throw new EntidadeNaoEncontradaException("Nenhuma grupo cadastrado.");
+            throw new GrupoNaoEncontradoException();
         }
         return grupos;
     }

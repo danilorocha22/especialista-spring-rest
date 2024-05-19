@@ -3,8 +3,8 @@ package com.dan.esr.domain.services;
 import com.dan.esr.domain.entities.FormasPagamento;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
+import com.dan.esr.domain.exceptions.formapagamento.FormaPagamentoNaoEncontradoException;
 import com.dan.esr.domain.repositories.FormasPagamentoRepository;
-import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,34 +17,32 @@ import java.util.List;
 public class FormasPagamentoService {
     private final FormasPagamentoRepository formasPagamentoRepository;
 
-    // todos os métodos de CRUD
     public FormasPagamento buscarPor(Long id) {
         return formasPagamentoRepository.buscarPor(id)
-                .orElseThrow(() -> new EntidadeNaoPersistidaException(
-                        "Forma de pagamento não encontrada com ID %s".formatted(id)));
+                .orElseThrow(() -> new FormaPagamentoNaoEncontradoException(id));
     }
 
     public List<FormasPagamento> buscarTodos() {
         List<FormasPagamento> formasPagamentos = formasPagamentoRepository.buscarTodos();
         if (formasPagamentos.isEmpty()) {
-            throw new EntidadeNaoPersistidaException("Nenhuma forma de pagamento foi encontrada");
+            throw new FormaPagamentoNaoEncontradoException();
         }
         return formasPagamentos;
     }
 
     @Transactional
     public FormasPagamento salvarOuAtualizar(FormasPagamento formasPagamento) {
-        try {
-            return formasPagamentoRepository.salvarOuAtualizar(formasPagamento)
-                    .orElseThrow(() -> new EntidadeNaoPersistidaException("Não foi possível cadastrar a forma de pagamento"));
-
-        } catch (PersistenceException e) {
-            if (formasPagamento.isNova()) {
-                throw new EntidadeNaoPersistidaException("Não foi possível cadastrar a forma de pagamento");
-            } else {
-                throw new EntidadeNaoPersistidaException("Não foi possível atualizar a forma de pagamento");
-            }
-        }
+        return formasPagamentoRepository.salvarOuAtualizar(formasPagamento)
+                .orElseThrow(() -> {
+                    String descricao = formasPagamento.getDescricao();
+                    if (formasPagamento.isNova()) {
+                        return new EntidadeNaoPersistidaException(
+                                "Não foi possível cadastrar a forma de pagamento: %s.".formatted(descricao));
+                    } else {
+                        return new EntidadeNaoPersistidaException(
+                                "Não foi possível atualizar a forma de pagamento: %s.".formatted(descricao));
+                    }
+                });
     }
 
     @Transactional

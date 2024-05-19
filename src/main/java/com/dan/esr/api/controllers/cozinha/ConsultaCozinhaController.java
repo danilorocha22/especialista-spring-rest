@@ -4,7 +4,7 @@ import com.dan.esr.api.models.CozinhasXML;
 import com.dan.esr.api.models.output.CozinhaOutput;
 import com.dan.esr.core.assemblers.CozinhaAssembler;
 import com.dan.esr.domain.entities.Cozinha;
-import com.dan.esr.domain.exceptions.CozinhaNaoEncontradaException;
+import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.services.cozinha.CozinhaConsultaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
