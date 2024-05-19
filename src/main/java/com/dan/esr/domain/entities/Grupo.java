@@ -13,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -41,15 +42,7 @@ public class Grupo implements Serializable {
                     referencedColumnName = "id"))
     private List<Permissao> permissoes = new ArrayList<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Grupo grupo)) return false;
-        return Objects.equals(getId(), grupo.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    public boolean isNova() {
+        return getId() == null;
     }
 }
