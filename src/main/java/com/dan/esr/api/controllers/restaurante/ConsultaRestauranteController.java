@@ -27,7 +27,7 @@ public class ConsultaRestauranteController {
     @GetMapping("/{id}")
     public RestauranteOutput buscarPorId(@PathVariable Long id) {
         validarCampoObrigatorio(id, "ID");
-        Restaurante restauranteRegistro = this.restauranteConsulta.buscarPorId(id);
+        Restaurante restauranteRegistro = this.restauranteConsulta.buscarPor(id);
         return this.restauranteModelAssembler.toModel(restauranteRegistro);
     }
 

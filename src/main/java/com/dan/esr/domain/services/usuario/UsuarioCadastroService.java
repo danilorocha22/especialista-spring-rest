@@ -54,7 +54,7 @@ public class UsuarioCadastroService {
     public void validarUsuarioComEmailJaCadastrado(Usuario usuario) {
         this.usuarioRepository.buscarPorEmail(usuario.getEmail())
                 .ifPresent(usuarioExistente -> {
-                    if (usuario.isNovo() || usuario.isDiferente(usuarioExistente))  {
+                    if (usuarioExistente.isDiferente(usuario))  {
                         throw new NegocioException("Já existe usuário cadastrado com o e-mail: %s."
                                 .formatted(usuario.getEmail()));
                     }

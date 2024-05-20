@@ -58,10 +58,6 @@ public class Usuario implements Serializable {
         return getId() == null;
     }
 
-    public boolean isExiste() {
-        return !isNovo();
-    }
-
     public void validarSenhaAtual(String senha) {
         if (isSenhaNaoConfere(senha)) {
             throw new NegocioException("A senha atual não confere.");
@@ -81,6 +77,6 @@ public class Usuario implements Serializable {
     }
 
     public boolean isIgual(Usuario usuario) {
-        return isExiste() && Objects.equals(getId(), usuario.getId());
+        return Objects.equals(getId(), usuario.getId());
     }
 }

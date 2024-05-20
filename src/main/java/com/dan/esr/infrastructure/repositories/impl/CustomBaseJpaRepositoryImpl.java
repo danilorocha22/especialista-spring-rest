@@ -31,14 +31,14 @@ public class CustomBaseJpaRepositoryImpl<T, ID>
     @Override
     public Optional<Integer> remover(Long id) {
         String jpql = "DELETE FROM " + nomeEntidade() + " e WHERE e.id = :id";
-        int quantosExcluidos = this.entityManager.createQuery(jpql)
+        int quantosRegistrosExcluidos = this.entityManager.createQuery(jpql)
                 .setParameter("id", id)
                 .executeUpdate();
 
-        if (quantosExcluidos == 0) {
+        if (quantosRegistrosExcluidos == 0) {
             return Optional.empty();
         } else {
-            return Optional.of(quantosExcluidos);
+            return Optional.of(quantosRegistrosExcluidos);
         }
     }
 

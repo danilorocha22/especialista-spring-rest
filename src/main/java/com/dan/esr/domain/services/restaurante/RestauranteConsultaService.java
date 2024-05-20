@@ -18,7 +18,7 @@ import static com.dan.esr.core.util.MessagesUtil.MSG_RESTAURANTE_NAO_ENCONTRADO_
 public class RestauranteConsultaService {
     private final RestauranteRepository restauranteRepository;
 
-    public Restaurante buscarPorId(Long id) {
+    public Restaurante buscarPor(Long id) {
         try {
             return this.restauranteRepository.buscarPorId(id)
                     .orElseThrow();
