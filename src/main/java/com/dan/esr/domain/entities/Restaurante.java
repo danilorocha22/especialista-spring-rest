@@ -1,5 +1,6 @@
 package com.dan.esr.domain.entities;
 
+import com.dan.esr.domain.exceptions.NegocioException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -11,7 +12,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 //@JsonInclude(NON_NULL)
 //@ToString
@@ -83,7 +86,7 @@ public class Restaurante implements Serializable, Comparable<Restaurante> {
             inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id",
                     foreignKey = @ForeignKey(name = "fk_restaurante_formas_pagamento_formas_pagamento"),
                     referencedColumnName = "id"))
-    private List<FormasPagamento> formasPagamento = new ArrayList<>();
+    private Set<FormasPagamento> formasPagamento = new HashSet<>();
 
     //@JsonIgnore
     //@ToString.Exclude
@@ -123,7 +126,46 @@ public class Restaurante implements Serializable, Comparable<Restaurante> {
 
     @Override
     public int compareTo(Restaurante restaurante) {
-        //return this.getId() < restaurante.getId() ? -1 : this.getId() == restaurante.getId() ? 0 : 1;
         return this.getId().compareTo(restaurante.getId());
+    }
+
+    public void adicionarFormaPagamento(FormasPagamento formasPagamento) {
+        if (isExiste(formasPagamento)) {
+            throw new NegocioException("Não é possível adicionar novamente a forma de pagamento, " +
+                    "pois ela já existe no restaurante.");
+        }
+        boolean adicionado = this.formasPagamento.add(formasPagamento);
+        validarSeFormaPagamentoFoiAdicionado(adicionado);
+    }
+
+    public void retirarFormaPagamento(FormasPagamento formasPagamento) {
+        if (isNaoExiste(formasPagamento)) {
+            throw new NegocioException("Não é possível remover a forma de pagamento, " +
+                    "pois ela não existe no restaurante.");
+        }
+        boolean removido = this.formasPagamento.remove(formasPagamento);
+        validarSeFormaPagamentoFoiRemovido(removido);
+    }
+
+    private void validarSeFormaPagamentoFoiAdicionado(boolean adicionado) {
+        if (!adicionado) {
+            throw new NegocioException("Forma de pagamento não foi adicionada, verifique os dados " +
+                    "informados e tente novamente. Se o problema persistir, contate o administrador.");
+        }
+    }
+
+    private void validarSeFormaPagamentoFoiRemovido(boolean removido) {
+        if (!removido) {
+            throw new NegocioException("Forma de pagamento não foi removida, verifique os dados " +
+                    "informados e tente novamente. Se o problema persistir, contate o administrador.");
+        }
+    }
+
+    private boolean isExiste(FormasPagamento formasPagamento) {
+        return this.formasPagamento.contains(formasPagamento);
+    }
+
+    private boolean isNaoExiste(FormasPagamento formasPagamento) {
+        return !isExiste(formasPagamento);
     }
 }

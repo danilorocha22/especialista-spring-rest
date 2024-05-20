@@ -51,7 +51,7 @@ public class CadastroRestauranteController {
             @PathVariable Long id,
             @RequestBody @Valid RestauranteInput restauranteInput
     ) {
-        Restaurante restaurante = this.restauranteConsulta.buscarPorId(id);
+        Restaurante restaurante = this.restauranteConsulta.buscarPor(id);
         this.restauranteEntityAssembler.copyToRestauranteDomain(restauranteInput, restaurante);
         System.out.printf("NOME DO RESTAURANTE: %s\n", restaurante.getNome());
         restaurante = this.restauranteCadastro.salvarOuAtualizar(restaurante);
@@ -64,13 +64,23 @@ public class CadastroRestauranteController {
         return restauranteModelAssembler.toModelStatus(restauranteAtivo);
     }
 
+    @PutMapping("/{restauranteId}/formas-pagamento/{formasPagamentoId}")
+    public RestauranteOutput adicionarFormaPagamento(
+            @PathVariable Long restauranteId,
+            @PathVariable Long formasPagamentoId
+    ) {
+        Restaurante restaurante = this.restauranteCadastro.adicionarFormaPagamento(
+                restauranteId, formasPagamentoId);
+        return this.restauranteModelAssembler.toModel(restaurante);
+    }
+
     @PatchMapping("/{id}")
     public RestauranteOutput atualizarParcial(
             @PathVariable Long id,
             @RequestBody Map<String, Object> campos,
             HttpServletRequest request
     ) {
-        Restaurante restaurante = this.restauranteConsulta.buscarPorId(id);
+        Restaurante restaurante = this.restauranteConsulta.buscarPor(id);
         mesclarCampos(campos, restaurante, request);
         validate(this.restauranteModelAssembler.toModelInput(restaurante));
         restaurante = this.restauranteCadastro.salvarOuAtualizar(restaurante);
@@ -80,7 +90,6 @@ public class CadastroRestauranteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void remover(@PathVariable Long id) {
-        //validarCampoObrigatorio(id, "ID");
         this.restauranteCadastro.remover(id);
     }
 
@@ -88,6 +97,15 @@ public class CadastroRestauranteController {
     public RestauranteStatusOutput inativar(@PathVariable Long id) {
         Restaurante restauranteInativo = this.restauranteCadastro.desativar(id);
         return restauranteModelAssembler.toModelStatus(restauranteInativo);
+    }
+
+    @DeleteMapping("/{restauranteId}/formas-pagamento/{formasPagamentoId}")
+    public RestauranteOutput removerFormaPagamento(
+            @PathVariable Long restauranteId,
+            @PathVariable Long formasPagamentoId
+    ) {
+        Restaurante restaurante = this.restauranteCadastro.retirarFormaPagamento(restauranteId, formasPagamentoId);
+        return this.restauranteModelAssembler.toModel(restaurante);
     }
 
     private void mesclarCampos(
