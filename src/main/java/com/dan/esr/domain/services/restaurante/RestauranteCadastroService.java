@@ -66,7 +66,6 @@ public class RestauranteCadastroService {
         restaurante.getEndereco().setCidade(cidade);
     }
 
-
     @Transactional
     public void remover(Long id) {
         Restaurante restaurante = this.restauranteConsulta.buscarPorId(id);

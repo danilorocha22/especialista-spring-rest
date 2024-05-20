@@ -1,6 +1,6 @@
 package com.dan.esr.api.controllers;
 
-import com.dan.esr.api.models.input.FormasPagamentoInput;
+import com.dan.esr.api.models.input.formaspagamento.FormasPagamentoInput;
 import com.dan.esr.api.models.output.FormasPagamentoOutput;
 import com.dan.esr.core.assemblers.FormasPagamentoAssembler;
 import com.dan.esr.domain.entities.FormasPagamento;

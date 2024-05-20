@@ -1,11 +1,10 @@
 package com.dan.esr.core.assemblers;
 
-import com.dan.esr.api.models.input.RestauranteInput;
+import com.dan.esr.api.models.input.restaurante.RestauranteInput;
 import com.dan.esr.api.models.output.RestauranteOutput;
 import com.dan.esr.api.models.output.RestauranteProdutosOutput;
 import com.dan.esr.api.models.output.RestauranteStatusOutput;
 import com.dan.esr.api.models.output.RestauranteSummaryOutput;
-import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.entities.Restaurante;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

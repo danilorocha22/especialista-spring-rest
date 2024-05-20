@@ -82,7 +82,7 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
             return Optional.ofNullable(this.restauranteEntityAssembler.toDomain(restauranteOutput));
 
         } catch (NoResultException ex) {
-            throw new RestauranteNaoEncontradoException(restauranteId);
+            return Optional.empty();
         }
     }
 

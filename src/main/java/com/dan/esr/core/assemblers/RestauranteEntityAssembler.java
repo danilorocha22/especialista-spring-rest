@@ -1,6 +1,6 @@
 package com.dan.esr.core.assemblers;
 
-import com.dan.esr.api.models.input.RestauranteInput;
+import com.dan.esr.api.models.input.restaurante.RestauranteInput;
 import com.dan.esr.api.models.output.RestauranteProdutosOutput;
 import com.dan.esr.domain.entities.*;
 import lombok.AllArgsConstructor;
@@ -20,15 +20,24 @@ public class RestauranteEntityAssembler {
         return this.mapper.map(restauranteOutput, Restaurante.class);
     }
 
+    /**
+     * Copia dados de RestauranteInput para Restaurante, resetando
+     * Cozinha e Cidade para evitar problemas de alteração de identificador:
+     * org.hibernate.HibernateException: identifier of an instance of Cozinha/Cidade was altered from 1 to 2
+     */
     public void copyToRestauranteDomain(RestauranteInput restauranteInput, Restaurante restaurante) {
-        /* Nova Cozinha, para evitar org.hibernate.HibernateException: identifier of an instance of Cozinha was
-           altered from 1 to 2 */
-        if (restaurante.getEndereco() != null) {
-            restaurante.getEndereco().setCidade(new Cidade());
-        }
-
-        restaurante.setCozinha(new Cozinha());
+        resetCozinha(restaurante);
+        resetCidade(restaurante);
         mapper.map(restauranteInput, restaurante);
     }
 
+    private static void resetCozinha(Restaurante restaurante) {
+        restaurante.setCozinha(new Cozinha());
+    }
+
+    private static void resetCidade(Restaurante restaurante) {
+        if (restaurante.getEndereco() != null) {
+            restaurante.getEndereco().setCidade(new Cidade());
+        }
+    }
 }

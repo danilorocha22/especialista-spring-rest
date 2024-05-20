@@ -1,6 +1,6 @@
 package com.dan.esr.core.assemblers;
 
-import com.dan.esr.api.models.input.FormasPagamentoInput;
+import com.dan.esr.api.models.input.formaspagamento.FormasPagamentoInput;
 import com.dan.esr.api.models.output.FormasPagamentoOutput;
 import com.dan.esr.domain.entities.FormasPagamento;
 import lombok.RequiredArgsConstructor;

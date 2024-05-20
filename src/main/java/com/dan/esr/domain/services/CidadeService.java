@@ -81,7 +81,7 @@ public class CidadeService {
     }
 
     public List<Cidade> buscarTodos() {
-        List<Cidade> cidades = this.cidadeRepository.buscarTodos();
+        List<Cidade> cidades = this.cidadeRepository.todos();
         validar(cidades);
         return cidades;
     }

@@ -1,9 +1,7 @@
-package com.dan.esr.api.models.input;
+package com.dan.esr.api.models.input.cozinha;
 
-import com.dan.esr.core.validation.Groups;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

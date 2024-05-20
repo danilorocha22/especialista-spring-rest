@@ -23,7 +23,7 @@ public class FormasPagamentoService {
     }
 
     public List<FormasPagamento> buscarTodos() {
-        List<FormasPagamento> formasPagamentos = formasPagamentoRepository.buscarTodos();
+        List<FormasPagamento> formasPagamentos = formasPagamentoRepository.todos();
         if (formasPagamentos.isEmpty()) {
             throw new FormaPagamentoNaoEncontradoException();
         }

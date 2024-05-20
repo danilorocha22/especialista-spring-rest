@@ -1,5 +1,6 @@
 package com.dan.esr.domain.entities;
 
+import com.dan.esr.domain.exceptions.NegocioException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,14 +14,14 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = { "grupos" })
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "usuarios", schema = "dan_food")
 public class Usuario implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +36,13 @@ public class Usuario implements Serializable {
     @Column(nullable = false)
     private String senha;
 
+    @Transient
+    private String novaSenha;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime dataCadastro;
 
-    @ToString.Exclude
     @ManyToMany
     @JoinTable(
             name = "usuarios_grupos",
@@ -51,16 +54,33 @@ public class Usuario implements Serializable {
                     referencedColumnName = "id"))
     private List<Grupo> grupos = new ArrayList<>();
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Usuario usuario)) return false;
-        return Objects.equals(getId(), usuario.getId());
+    public boolean isNovo() {
+        return getId() == null;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
+    public boolean isExiste() {
+        return !isNovo();
+    }
+
+    public void validarSenhaAtual(String senha) {
+        if (isSenhaNaoConfere(senha)) {
+            throw new NegocioException("A senha atual não confere.");
+        }
+    }
+
+    public boolean isSenhaNaoConfere(String senha) {
+        return !isSenhaConfere(senha);
+    }
+
+    public boolean isSenhaConfere(String senha) {
+        return getSenha().equals(senha);
+    }
+
+    public boolean isDiferente(Usuario usuario) {
+        return !isIgual(usuario);
+    }
+
+    public boolean isIgual(Usuario usuario) {
+        return isExiste() && Objects.equals(getId(), usuario.getId());
     }
 }

@@ -4,10 +4,10 @@ import com.dan.esr.domain.exceptions.PropriedadeIlegalException;
 
 import java.util.Objects;
 
-public final class ValidacaoCampoObrigatorioUtil {
+public final class ValidacaoUtil {
     public static final String MSG_PROPRIEDADE_NAO_PODE_SER_NULA = "Não é permitido propriedade nula";
 
-    private ValidacaoCampoObrigatorioUtil() {
+    private ValidacaoUtil() {
     }
 
     public static void validarCampoObrigatorio(Object obj, String msg) {
@@ -16,6 +16,10 @@ public final class ValidacaoCampoObrigatorioUtil {
         } catch (NullPointerException e) {
             throw new PropriedadeIlegalException(e.getMessage());
         }
+    }
+
+    public static boolean isCampoVazio(String nome) {
+        return nome != null && nome.isBlank();
     }
 
 }

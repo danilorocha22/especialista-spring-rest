@@ -1,10 +1,8 @@
 package com.dan.esr.infrastructure.repositories.impl;
 
-import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.repositories.CustomBaseJpaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
@@ -31,105 +29,113 @@ public class CustomBaseJpaRepositoryImpl<T, ID>
     }
 
     @Override
-    public void remover(Long id) {
-        var jpql = "DELETE FROM %s WHERE id = :id"
-                .formatted(getDomainClass().getName());
-
-        this.entityManager.createQuery(jpql)
+    public Optional<Integer> remover(Long id) {
+        String jpql = "DELETE FROM " + nomeEntidade() + " e WHERE e.id = :id";
+        int quantosExcluidos = this.entityManager.createQuery(jpql)
                 .setParameter("id", id)
                 .executeUpdate();
+
+        if (quantosExcluidos == 0) {
+            return Optional.empty();
+        } else {
+            return Optional.of(quantosExcluidos);
+        }
     }
 
-    @Override
+    /*@Override
     public void remover(T t) {
         this.entityManager.remove(t);
-    }
+    }*/
 
     @Override
     public Optional<T> buscarPor(Long id) {
-        var jpql = "FROM %s WHERE id = :id"
-                .formatted(getDomainClass().getSimpleName());
+        try {
+            var jpql = "FROM %s WHERE id = :id".formatted(nomeEntidade());
+            T entity = this.entityManager.createQuery(jpql, getDomainClass())
+                    .setParameter("id", id)
+                    .getSingleResult();
+            return Optional.of(entity);
 
-        T entity = this.entityManager.createQuery(jpql, getDomainClass())
-                .setParameter("id", id)
-                .getSingleResult();
-
-        return Optional.of(entity);
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public Optional<T> buscarPrimeira() {
-        T entity = this.entityManager.createQuery(getJpqlTodos(), getDomainClass())
-                .setMaxResults(1)
-                .getSingleResult();
+    public Optional<T> primeiro() {
+        try {
+            T entity = this.entityManager.createQuery(jpqlTodos(), getDomainClass())
+                    .setMaxResults(1)
+                    .getSingleResult();
+            return Optional.ofNullable(entity);
 
-        return Optional.ofNullable(entity);
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public List<T> buscarPorNomeSemelhante(String nome) {
-        return this.entityManager.createQuery(getJpqlNomeContendo(), getDomainClass())
+    public Optional<T> primeiroComNomeSemelhante(String nome) {
+        try {
+            T entity = this.entityManager.createQuery(jpqlNomeSemelhante(), getDomainClass())
+                    .setParameter("nome", "%" + nome + "%")
+                    .setMaxResults(1)
+                    .getSingleResult();
+            return Optional.ofNullable(entity);
+
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<T> comNomeIgual(String nome) {
+        try {
+            String jpql = ("SELECT CASE WHEN COUNT(r.nome) > 0 THEN TRUE ELSE FALSE END " +
+                    "FROM %s r " +
+                    "WHERE LOWER(r.nome) = LOWER(:nome)").formatted(nomeEntidade());
+
+            T entity = this.entityManager.createQuery(jpql, getDomainClass())
+                    .setParameter("nome", nome.trim().toLowerCase())
+                    .getSingleResult();
+
+            return Optional.ofNullable(entity);
+
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<T> todos() {
+        return this.entityManager.createQuery(jpqlTodos(), getDomainClass())
+                .getResultList();
+    }
+
+    @Override
+    public List<T> comNomeSemelhante(String nome) {
+        return this.entityManager.createQuery(jpqlNomeSemelhante(), getDomainClass())
                 .setParameter("nome", "%" + nome + "%")
                 .getResultList();
     }
 
     @Override
-    public Optional<T> buscarPrimeiraComNomeContendo(String nome) {
-        T entity = this.entityManager.createQuery(getJpqlNomeContendo(), getDomainClass())
-                .setParameter("nome", "%" + nome + "%")
-                .setMaxResults(1)
-                .getSingleResult();
-
-        return Optional.ofNullable(entity);
-    }
-
-    @Override
-    public Optional<T> buscarPorNomeIgual(String nome) {
-        T entity = this.entityManager.createQuery(getJpqlNomeIgual(), getDomainClass())
-                .setParameter("nome", nome)
-                .getSingleResult();
-
-        return Optional.ofNullable(entity);
-    }
-
-    @Override
-    public List<T> buscarTodos() {
-        return this.entityManager.createQuery(getJpqlTodos(), getDomainClass())
-                .getResultList();
-    }
-
-    @Override
-    public List<T> buscarTop2ComNomeContendo(String nome) {
-        return this.entityManager.createQuery(getJpqlNomeContendo(), getDomainClass())
+    public List<T> top2ComNomeSemelhante(String nome) {
+        return this.entityManager.createQuery(jpqlNomeSemelhante(), getDomainClass())
                 .setParameter("nome", "%" + nome + "%")
                 .setMaxResults(2)
                 .getResultList();
     }
 
-    @Override
-    public boolean existeRegistroCom(String nome) {
-        String jpql = "SELECT COUNT(r) FROM %s r WHERE LOWER(r.nome) = LOWER(:nome)".formatted(
-                getDomainClass().getSimpleName());
-        Long count = (Long) this.entityManager.createQuery(jpql)
-                .setParameter("nome", nome.trim().toLowerCase())
-                .getSingleResult();
-        System.out.printf("QUANT: %s\n", count);
-        return count > 0;
+    private String jpqlNomeSemelhante() {
+        return "FROM %s WHERE nome LIKE :nome".formatted(nomeEntidade());
     }
 
-    private String getJpqlNomeContendo() {
-        return "FROM %s WHERE nome LIKE :nome"
-                .formatted(getDomainClass().getName());
+    private String jpqlTodos() {
+        return "FROM %s".formatted(nomeEntidade());
     }
 
-    private String getJpqlNomeIgual() {
-        return ("SELECT CASE WHEN COUNT(r.nome) > 0 THEN TRUE ELSE FALSE END " +
-                "FROM %s r " +
-                "WHERE LOWER(r.nome) = LOWER(:nome);")
-                .formatted(getDomainClass().getName());
-    }
-
-    private String getJpqlTodos() {
-        return "FROM %s".formatted(getDomainClass().getName());
+    private String nomeEntidade() {
+        return getDomainClass().getSimpleName();
     }
 }

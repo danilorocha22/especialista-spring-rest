@@ -1,5 +1,6 @@
-package com.dan.esr.api.models.input;
+package com.dan.esr.api.models.input.endereco;
 
+import com.dan.esr.api.models.input.cidade.CidadeIdInput;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

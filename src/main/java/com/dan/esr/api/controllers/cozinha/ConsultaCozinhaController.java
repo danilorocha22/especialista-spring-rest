@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
+import static com.dan.esr.core.util.ValidacaoUtil.isCampoVazio;
+import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
 
 @RestController
 @RequiredArgsConstructor
@@ -84,7 +85,4 @@ public class ConsultaCozinhaController {
         return new CozinhasXML(this.cozinhaAssembler.toModelList(cozinhas));
     }
 
-    private boolean isCampoVazio(String nome) {
-        return nome != null && nome.isBlank();
-    }
 }

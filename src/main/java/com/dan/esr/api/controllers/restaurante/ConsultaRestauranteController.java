@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
+import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
 
 @RequiredArgsConstructor
 @RestController

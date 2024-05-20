@@ -18,22 +18,18 @@ public class CozinhaConsultaService {
     private final CozinhaRepository cozinhaRepository;
 
     public Cozinha buscarPor(Long id) {
-        try {
-            return this.cozinhaRepository.buscarPor(id).orElse(null);
-
-        } catch (EmptyResultDataAccessException ex) {
-            throw new CozinhaNaoEncontradaException(id, ex.getCause());
-        }
+            return this.cozinhaRepository.buscarPor(id)
+                    .orElseThrow(() -> new CozinhaNaoEncontradaException(id));
     }
 
     public Cozinha buscarPrimeira() {
-        return this.cozinhaRepository.buscarPrimeira()
-                .orElseThrow(() -> new CozinhaNaoEncontradaException(MSG_COZINHA_NAO_ENCONTRADA));
+        return this.cozinhaRepository.primeiro()
+                .orElseThrow(CozinhaNaoEncontradaException::new);
     }
 
     public Cozinha buscarPrimeiraComNomeSemelhante(String nome) {
         try {
-            return this.cozinhaRepository.buscarPrimeiraComNomeContendo(nome)
+            return this.cozinhaRepository.primeiroComNomeSemelhante(nome)
                     .orElse(null);
 
         } catch (EmptyResultDataAccessException ex) {
@@ -44,7 +40,7 @@ public class CozinhaConsultaService {
 
     public Cozinha buscarPorNomeIgual(String nome) {
         try {
-            return this.cozinhaRepository.buscarPorNomeIgual(nome)
+            return this.cozinhaRepository.comNomeIgual(nome)
                     .orElse(null);
 
         } catch (EmptyResultDataAccessException ex) {
@@ -54,13 +50,13 @@ public class CozinhaConsultaService {
     }
 
     public List<Cozinha> buscarTodasComNomeSemelhante(String nome) {
-        List<Cozinha> cozinhas = this.cozinhaRepository.buscarPorNomeSemelhante(nome);
+        List<Cozinha> cozinhas = this.cozinhaRepository.comNomeSemelhante(nome);
         validar(cozinhas);
         return cozinhas;
     }
 
     public List<Cozinha> buscarTodos() {
-        List<Cozinha> cozinhas = this.cozinhaRepository.buscarTodos();
+        List<Cozinha> cozinhas = this.cozinhaRepository.todos();
         validar(cozinhas);
         return cozinhas;
     }

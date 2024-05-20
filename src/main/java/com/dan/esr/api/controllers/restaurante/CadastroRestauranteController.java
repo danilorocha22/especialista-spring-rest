@@ -1,15 +1,12 @@
 package com.dan.esr.api.controllers.restaurante;
 
-import com.dan.esr.api.models.input.RestauranteInput;
+import com.dan.esr.api.models.input.restaurante.RestauranteInput;
 import com.dan.esr.api.models.output.RestauranteOutput;
 import com.dan.esr.api.models.output.RestauranteStatusOutput;
 import com.dan.esr.core.assemblers.RestauranteEntityAssembler;
 import com.dan.esr.core.assemblers.RestauranteModelAssembler;
-import com.dan.esr.domain.entities.Cidade;
-import com.dan.esr.domain.entities.Endereco;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.ValidacaoException;
-import com.dan.esr.domain.services.CidadeService;
 import com.dan.esr.domain.services.restaurante.RestauranteCadastroService;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -40,7 +37,6 @@ public class CadastroRestauranteController {
     private final RestauranteModelAssembler restauranteModelAssembler;
     private final RestauranteEntityAssembler restauranteEntityAssembler;
     private final SmartValidator validator;
-
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -78,9 +74,6 @@ public class CadastroRestauranteController {
         mesclarCampos(campos, restaurante, request);
         validate(this.restauranteModelAssembler.toModelInput(restaurante));
         restaurante = this.restauranteCadastro.salvarOuAtualizar(restaurante);
-        /*Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinhaRegistro = this.cozinhaService.buscarCozinhaPorId(cozinhaId).orElseThrow();
-        restaurante.setCozinha(cozinhaRegistro);*/
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 

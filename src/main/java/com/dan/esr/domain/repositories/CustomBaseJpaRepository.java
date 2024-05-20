@@ -1,5 +1,6 @@
 package com.dan.esr.domain.repositories;
 
+import com.dan.esr.domain.entities.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -14,25 +15,22 @@ public interface CustomBaseJpaRepository<T, ID> extends JpaRepository<T, ID> {
 
     //void remover(Long id);
 
-    void remover(Long id);
+    Optional<Integer> remover(Long id);
 
-    void remover(T t);
+    //void remover(T t);
 
     /*****************   CONSULTAS   ****************/
     Optional<T> buscarPor(Long id);
 
-    Optional<T> buscarPorNomeIgual(String nome);
+    Optional<T> comNomeIgual(String nome);
     
-    List<T> buscarPorNomeSemelhante(String nome);
+    List<T> comNomeSemelhante(String nome);
 
-    Optional<T> buscarPrimeira();
+    Optional<T> primeiro();
 
-    Optional<T> buscarPrimeiraComNomeContendo(String nome);
+    Optional<T> primeiroComNomeSemelhante(String nome);
 
-    List<T> buscarTop2ComNomeContendo(String nome);
+    List<T> top2ComNomeSemelhante(String nome);
 
-    List<T> buscarTodos();
-
-    boolean existeRegistroCom(String nome);
-
+    List<T> todos();
 }

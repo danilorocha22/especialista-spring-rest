@@ -1,15 +1,13 @@
-package com.dan.esr.api.models.input;
+package com.dan.esr.api.models.input.cozinha;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
 @JsonRootName("cozinha")
 public class CozinhaIdInput {
     //@NotNull(groups = Groups.CozinhaId.class)
-    @NotNull
-    private Long id;
+    @NotNull private Long id;
 }

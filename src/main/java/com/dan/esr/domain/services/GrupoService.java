@@ -2,7 +2,6 @@ package com.dan.esr.domain.services;
 
 import com.dan.esr.domain.entities.Grupo;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
-import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 import com.dan.esr.domain.exceptions.grupo.GrupoNaoEncontradoException;
 import com.dan.esr.domain.repositories.GrupoRepository;
@@ -18,14 +17,13 @@ import java.util.List;
 public class GrupoService {
     private final GrupoRepository grupoRepository;
 
-    // todos os métodos de CRUD
     public Grupo buscarPor(Long id) {
         return grupoRepository.buscarPor(id)
                 .orElseThrow(() -> new GrupoNaoEncontradoException(id));
     }
 
     public List<Grupo> buscarTodos() {
-        List<Grupo> grupos = grupoRepository.buscarTodos();
+        List<Grupo> grupos = grupoRepository.todos();
         if (grupos.isEmpty()) {
             throw new GrupoNaoEncontradoException();
         }

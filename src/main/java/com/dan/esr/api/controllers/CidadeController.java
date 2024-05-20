@@ -1,6 +1,6 @@
 package com.dan.esr.api.controllers;
 
-import com.dan.esr.api.models.input.CidadeInput;
+import com.dan.esr.api.models.input.cidade.CidadeInput;
 import com.dan.esr.api.models.output.CidadeEstadoOutput;
 import com.dan.esr.api.models.output.CidadeNomeOutput;
 import com.dan.esr.api.models.output.CidadeOutput;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
+import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 @RestController

@@ -1,6 +1,6 @@
 package com.dan.esr.core.assemblers;
 
-import com.dan.esr.api.models.input.GrupoInput;
+import com.dan.esr.api.models.input.grupo.GrupoInput;
 import com.dan.esr.api.models.output.GrupoOutput;
 import com.dan.esr.domain.entities.Grupo;
 import lombok.RequiredArgsConstructor;

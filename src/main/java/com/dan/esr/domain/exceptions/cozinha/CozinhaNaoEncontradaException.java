@@ -8,16 +8,20 @@ public class CozinhaNaoEncontradaException extends EntidadeNaoEncontradaExceptio
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public CozinhaNaoEncontradaException() {
+        this("Nenhuma cozinha encontrada.");
+    }
+
     public CozinhaNaoEncontradaException(String message) {
         super(message);
     }
 
     public CozinhaNaoEncontradaException(Long id) {
-        this("Não existe cozinha cadastrada com ID %s".formatted(id));
+        this("Não existe cozinha cadastrada com ID %s.".formatted(id));
     }
 
     public CozinhaNaoEncontradaException(Long id, Throwable causa) {
-        this("Não existe cozinha cadastrada com ID %s".formatted(id), causa);
+        this("Não existe cozinha cadastrada com ID %s.".formatted(id), causa);
     }
 
     public CozinhaNaoEncontradaException(String message, Throwable causa) {

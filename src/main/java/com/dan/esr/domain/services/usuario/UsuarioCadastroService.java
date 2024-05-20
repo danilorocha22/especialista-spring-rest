@@ -1,6 +1,5 @@
 package com.dan.esr.domain.services.usuario;
 
-import com.dan.esr.core.assemblers.UsuarioAssembler;
 import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 public class UsuarioCadastroService {
     private final UsuarioConsultaService usuarioConsulta;
     private final UsuarioRepository usuarioRepository;
-    private final UsuarioAssembler usuarioAssembler;
 
     @Transactional
     public Usuario salvarOuAtualizar(Usuario usuario) {
@@ -62,5 +60,4 @@ public class UsuarioCadastroService {
                     }
                 });
     }
-
 }

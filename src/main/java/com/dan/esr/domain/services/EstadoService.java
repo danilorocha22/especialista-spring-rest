@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.MSG_PROPRIEDADE_NAO_PODE_SER_NULA;
-import static com.dan.esr.core.util.ValidacaoCampoObrigatorioUtil.validarCampoObrigatorio;
+import static com.dan.esr.core.util.ValidacaoUtil.MSG_PROPRIEDADE_NAO_PODE_SER_NULA;
+import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
 
 @RequiredArgsConstructor
 @Service

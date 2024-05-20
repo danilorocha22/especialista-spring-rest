@@ -1,6 +1,6 @@
 package com.dan.esr.core.assemblers;
 
-import com.dan.esr.api.models.input.CozinhaInput;
+import com.dan.esr.api.models.input.cozinha.CozinhaInput;
 import com.dan.esr.api.models.output.CozinhaOutput;
 import com.dan.esr.domain.entities.Cozinha;
 import lombok.AllArgsConstructor;

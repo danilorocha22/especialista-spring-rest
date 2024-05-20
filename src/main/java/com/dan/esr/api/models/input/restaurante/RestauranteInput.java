@@ -1,5 +1,7 @@
-package com.dan.esr.api.models.input;
+package com.dan.esr.api.models.input.restaurante;
 
+import com.dan.esr.api.models.input.cozinha.CozinhaIdInput;
+import com.dan.esr.api.models.input.endereco.EnderecoInput;
 import com.dan.esr.core.validation.TaxaFrete;
 import com.dan.esr.core.validation.ValorZeroIncluiDescricao;
 import jakarta.validation.Valid;

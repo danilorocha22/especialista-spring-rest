@@ -1,5 +1,6 @@
-package com.dan.esr.api.models.input;
+package com.dan.esr.api.models.input.cidade;
 
+import com.dan.esr.api.models.input.estado.EstadoIdInput;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;

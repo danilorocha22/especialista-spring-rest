@@ -28,17 +28,13 @@ public class RestauranteConsultaService {
     }
 
     public Restaurante buscarPrimeiroRestaurante() {
-        return this.restauranteRepository.buscarPrimeira()
+        return this.restauranteRepository.primeiro()
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO));
     }
 
     public Restaurante buscarComProdutos(Long id) {
-        try {
-            return this.restauranteRepository.buscarRestauranteComProdutos(id)
-                    .orElseThrow();
-        } catch (RestauranteNaoEncontradoException ex) {
-            throw new RestauranteNaoEncontradoException(id);
-        }
+        return this.restauranteRepository.buscarRestauranteComProdutos(id)
+                .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
     public int contarPorCozinhaId(Long cozinhaId) {
@@ -57,7 +53,7 @@ public class RestauranteConsultaService {
     }
 
     public Restaurante buscarPrimeiroNomeContendo(String nome) {
-        return this.restauranteRepository.buscarPrimeiraComNomeContendo(nome)
+        return this.restauranteRepository.primeiroComNomeSemelhante(nome)
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME
                         .formatted(nome)));
     }
@@ -85,7 +81,7 @@ public class RestauranteConsultaService {
     }
 
     public List<Restaurante> buscarTop2NomeContendo(String nome) {
-        List<Restaurante> restaurantes = this.restauranteRepository.buscarTop2ComNomeContendo(nome);
+        List<Restaurante> restaurantes = this.restauranteRepository.top2ComNomeSemelhante(nome);
         validar(restaurantes);
         return restaurantes;
     }
@@ -94,18 +90,17 @@ public class RestauranteConsultaService {
         List<Restaurante> restaurantes = this.restauranteRepository.buscarComNomeContendoEfreteGratis(nome);
         validar(restaurantes);
         return restaurantes;
-
     }
 
     public List<Restaurante> buscarNomeContendo(String nome) {
-        List<Restaurante> restaurantes = this.restauranteRepository.buscarPorNomeSemelhante(nome);
+        List<Restaurante> restaurantes = this.restauranteRepository.comNomeSemelhante(nome);
         validar(restaurantes);
         return restaurantes;
     }
 
     public Restaurante buscarPorNomeIgual(String nome) {
         try {
-            return this.restauranteRepository.buscarPorNomeIgual(nome).orElseThrow();
+            return this.restauranteRepository.comNomeIgual(nome).orElseThrow();
         } catch (EntidadeNaoEncontradaException ex) {
             throw new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO_COM_NOME.formatted(nome));
         }

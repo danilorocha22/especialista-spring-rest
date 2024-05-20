@@ -1,4 +1,4 @@
-package com.dan.esr.api.models.input;
+package com.dan.esr.api.models.input.estado;
 
 import lombok.Getter;
 import lombok.Setter;
