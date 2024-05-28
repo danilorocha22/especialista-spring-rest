@@ -1,18 +1,19 @@
 package com.dan.esr.core.assemblers;
 
 import com.dan.esr.api.models.input.cozinha.CozinhaInput;
-import com.dan.esr.api.models.output.CozinhaOutput;
+import com.dan.esr.api.models.output.cozinha.CozinhaOutput;
 import com.dan.esr.domain.entities.Cozinha;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CozinhaAssembler {
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     public CozinhaOutput toModel(Cozinha cozinha) {
         return this.mapper.map(cozinha, CozinhaOutput.class);

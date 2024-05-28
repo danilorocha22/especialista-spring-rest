@@ -15,14 +15,14 @@ public class NegocioException extends RuntimeException {
     }
 
     public NegocioException(String message) {
-        super(message);
+        this(message, null);
+    }
+
+    public NegocioException(Exception ex) {
+        this(null, ex);
     }
 
     public NegocioException(String message, Throwable causa) {
         super(message, causa);
-    }
-
-    public NegocioException(Exception ex) {
-        super(ex);
     }
 }

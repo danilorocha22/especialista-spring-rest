@@ -1,14 +1,16 @@
 package com.dan.esr.domain.entities;
 
+import com.dan.esr.domain.exceptions.NegocioException;
+import com.dan.esr.domain.exceptions.permissao.PermissaoNaoEncontradoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -40,9 +42,41 @@ public class Grupo implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "permissao_id",
                     foreignKey = @ForeignKey(name = "fk_grupo_permissoes_permissoes"),
                     referencedColumnName = "id"))
-    private List<Permissao> permissoes = new ArrayList<>();
+    private Set<Permissao> permissoes = new HashSet<>();
 
     public boolean isNova() {
         return getId() == null;
+    }
+
+    public void adicionar(Permissao permissao) {
+        validarGrupoPossui(permissao, true);
+        boolean naoAdicionado = !this.permissoes.add(permissao);
+        validarAdicionadoOuRemovido(naoAdicionado, permissao, "adicionada");
+    }
+
+    public void remover(Permissao permissao) {
+        validarGrupoPossui(permissao, false);
+        boolean naoRemovido = !this.permissoes.removeIf(p -> p.getId().equals(permissao.getId()));
+        validarAdicionadoOuRemovido(naoRemovido, permissao, "removida");
+    }
+
+    private void validarGrupoPossui(Permissao permissao, boolean possui) {
+        boolean contem = this.permissoes.contains(permissao);
+        if (possui && contem) {
+            throw new NegocioException(mensagemErro(permissao, "já exite"));
+        } else if (!possui && !contem) {
+            throw new PermissaoNaoEncontradoException(mensagemErro(permissao, "não existe"));
+        }
+    }
+
+    private void validarAdicionadoOuRemovido(boolean condicao, Permissao permissao, String msg) {
+        if (condicao) {
+            throw new NegocioException(mensagemErro(permissao, "não foi ".concat(msg)));
+        }
+    }
+
+    private String mensagemErro(Permissao permissao, String msg) {
+        return ("A permissão com ID %s %s no grupo %s, verifique os dados informados e tente novamente. Se o " +
+                "problema persistir, contate o administrador.").formatted(permissao.getId(), msg, this.getNome());
     }
 }

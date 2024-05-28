@@ -1,6 +1,7 @@
 package com.dan.esr.domain.services.cozinha;
 
 import com.dan.esr.domain.entities.Cozinha;
+import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.dan.esr.core.util.MessagesUtil.MSG_COZINHA_NAO_ENCONTRADA;
-import static com.dan.esr.core.util.MessagesUtil.MSG_COZINHA_NAO_ENCONTRADA_COM_NOME;
+import static com.dan.esr.core.util.MensagensUtil.MSG_COZINHA_NAO_ENCONTRADA;
+import static com.dan.esr.core.util.MensagensUtil.MSG_COZINHA_NAO_ENCONTRADA_COM_NOME;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +19,8 @@ public class CozinhaConsultaService {
     private final CozinhaRepository cozinhaRepository;
 
     public Cozinha buscarPor(Long id) {
-            return this.cozinhaRepository.buscarPor(id)
-                    .orElseThrow(() -> new CozinhaNaoEncontradaException(id));
+        return this.cozinhaRepository.buscarPor(id)
+                .orElseThrow(() -> new CozinhaNaoEncontradaException(id));
     }
 
     public Cozinha buscarPrimeira() {
@@ -28,25 +29,17 @@ public class CozinhaConsultaService {
     }
 
     public Cozinha buscarPrimeiraComNomeSemelhante(String nome) {
-        try {
-            return this.cozinhaRepository.primeiroComNomeSemelhante(nome)
-                    .orElse(null);
+        return this.cozinhaRepository.primeiroComNomeSemelhante(nome)
+                .orElseThrow(() -> new NegocioException(
+                        MSG_COZINHA_NAO_ENCONTRADA_COM_NOME.formatted(nome)));
 
-        } catch (EmptyResultDataAccessException ex) {
-            throw new CozinhaNaoEncontradaException(MSG_COZINHA_NAO_ENCONTRADA_COM_NOME
-                    .formatted(nome), ex.getCause());
-        }
     }
 
     public Cozinha buscarPorNomeIgual(String nome) {
-        try {
-            return this.cozinhaRepository.comNomeIgual(nome)
-                    .orElse(null);
+        return this.cozinhaRepository.comNomeIgual(nome)
+                .orElseThrow(() -> new NegocioException(
+                        MSG_COZINHA_NAO_ENCONTRADA_COM_NOME.formatted(nome)));
 
-        } catch (EmptyResultDataAccessException ex) {
-            throw new CozinhaNaoEncontradaException(MSG_COZINHA_NAO_ENCONTRADA_COM_NOME
-                    .formatted(nome), ex.getCause());
-        }
     }
 
     public List<Cozinha> buscarTodasComNomeSemelhante(String nome) {

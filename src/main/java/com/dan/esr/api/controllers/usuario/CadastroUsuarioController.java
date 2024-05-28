@@ -3,7 +3,8 @@ package com.dan.esr.api.controllers.usuario;
 import com.dan.esr.api.models.input.usuario.UsuarioAtualizadoInput;
 import com.dan.esr.api.models.input.usuario.UsuarioInput;
 import com.dan.esr.api.models.input.usuario.UsuarioSenhaInput;
-import com.dan.esr.api.models.output.UsuarioOutput;
+import com.dan.esr.api.models.output.usuario.UsuarioGruposOutput;
+import com.dan.esr.api.models.output.usuario.UsuarioOutput;
 import com.dan.esr.core.assemblers.UsuarioAssembler;
 import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.services.usuario.UsuarioCadastroService;
@@ -57,6 +58,19 @@ public class CadastroUsuarioController {
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioNovaSenha);
         usuario.setId(id);
         this.usuarioCadastro.atualizarSenha(usuario);
+    }
+
+    @PutMapping("/{usuarioId}/grupos/{grupoId}")
+    public UsuarioGruposOutput adicionarGrupo(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
+        Usuario usuario = this.usuarioCadastro.adicionarGrupo(usuarioId, grupoId);
+        return this.usuarioAssembler.toModelUsuarioGrupos(usuario);
+    }
+
+    @DeleteMapping("/{usuarioId}/grupos/{grupoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public UsuarioGruposOutput removerGrupo(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
+        Usuario usuario = this.usuarioCadastro.removerGrupo(usuarioId, grupoId);
+        return this.usuarioAssembler.toModelUsuarioGrupos(usuario);
     }
 
     @DeleteMapping("/{id}")

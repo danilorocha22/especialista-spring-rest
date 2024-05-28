@@ -1,8 +1,12 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.domain.exceptions.NegocioException;
+import com.dan.esr.domain.exceptions.formapagamento.FormaPagamentoNaoEncontradoException;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,21 +15,21 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.dan.esr.core.util.FormatacaoNomeClasse.formatarNomeClasse;
+
 //@JsonInclude(NON_NULL)
 //@ToString
+@Entity
 @Getter
 @Setter
+@EqualsAndHashCode(of = "id")
 @ToString(exclude = {"formasPagamento"})
-@AllArgsConstructor
-@EqualsAndHashCode(of = {"id"})
-@Entity
 @Table(name = "restaurantes", schema = "dan_food")
-public class Restaurante implements Serializable, Comparable<Restaurante> {
+public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRemover {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -78,26 +82,40 @@ public class Restaurante implements Serializable, Comparable<Restaurante> {
     //@JsonIgnore
     //@ToString.Exclude
     @ManyToMany
-    @JoinTable(
-            name = "restaurantes_formas_de_pagamento",
+    @JoinTable(name = "restaurantes_formas_de_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id",
                     foreignKey = @ForeignKey(name = "fk_restaurante_formas_pagamento_restaurante"),
                     referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "formas_de_pagamento_id",
                     foreignKey = @ForeignKey(name = "fk_restaurante_formas_pagamento_formas_pagamento"),
                     referencedColumnName = "id"))
-    private Set<FormasPagamento> formasPagamento = new HashSet<>();
+    private Set<FormaPagamento> formasPagamento = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "restaurantes_usuarios_responsaveis",
+            joinColumns = @JoinColumn(name = "restaurante_id",
+                    foreignKey = @ForeignKey(name = "fk_restaurantes_usuarios_restaurante"),
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id",
+                    foreignKey = @ForeignKey(name = "fk_restaurantes_usuarios_usuario"),
+                    referencedColumnName = "id"))
+    private Set<Usuario> usuariosResponsaveis = new HashSet<>();
 
     //@JsonIgnore
     //@ToString.Exclude
     @OneToMany(mappedBy = "restaurante",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<Produto> produtos = new ArrayList<>();
+    private Set<Produto> produtos = new HashSet<>();
+
+    //@ColumnDefault("true")
+    @Column(nullable = false)
+    private boolean ativo = true;
 
     @Column(nullable = false)
-    //@ColumnDefault("true")
-    private boolean ativo = true;
+    private boolean aberto = true;
+
+    /*###################################   MÉTODOS   ###########################################*/
 
     public Restaurante() {
         if (taxaFrete == null) {
@@ -113,59 +131,155 @@ public class Restaurante implements Serializable, Comparable<Restaurante> {
         setAtivo(false);
     }
 
+    private void setAtivo(boolean ativar) {
+        this.ativo = ativar;
+    }
+
     public boolean isNovo() {
         return getId() == null;
+    }
+
+    public void abrir() {
+        validarRestaurantePodeAbrir();
+        setAberto(true);
+    }
+
+    private void setAberto(boolean abrir) {
+        this.aberto = abrir;
+    }
+
+    private void validarRestaurantePodeAbrir() {
+        if (isAberto()) {
+            throw new NegocioException("O restaurante não pode ser aberto novamente.");
+        }
+
+        if (isInativo()) {
+            throw new NegocioException("O restaurante não pode ser aberto enquanto estiver inativo.");
+        }
+    }
+
+    private boolean isInativo() {
+        return !isAtivo();
+    }
+
+    public void fechar() {
+        if (isFechado()) {
+            throw new NegocioException("O Restaurante não pode ser fechado novamente.");
+        }
+        setAberto(false);
+    }
+
+    private boolean isFechado() {
+        return !isAberto();
     }
 
     public List<String> getFormasDePagamento() {
         return formasPagamento
                 .stream()
-                .map(FormasPagamento::getDescricao)
+                .map(FormaPagamento::getNome)
                 .toList();
     }
 
-    @Override
-    public int compareTo(Restaurante restaurante) {
-        return this.getId().compareTo(restaurante.getId());
+    public <T extends IdentificavelParaAdicionarOuRemover> void adicionar(T entidade) {
+        validarSePossui(entidade, true);
+        boolean naoAdicionado = !adicionado(entidade);
+        validarAdicionadoOuRemovido(naoAdicionado, entidade, "adicionado(a)");
     }
 
-    public void adicionarFormaPagamento(FormasPagamento formasPagamento) {
-        if (isExiste(formasPagamento)) {
-            throw new NegocioException("Não é possível adicionar novamente a forma de pagamento, " +
-                    "pois ela já existe no restaurante.");
+    public <T extends IdentificavelParaAdicionarOuRemover> void remover(T entidade) {
+        validarSePossui(entidade, false);
+        boolean naoRemovido = !removido(entidade);
+        validarAdicionadoOuRemovido(naoRemovido, entidade, "removido(a)");
+    }
+
+    private <T extends IdentificavelParaAdicionarOuRemover> boolean adicionado(T entidade) {
+        boolean adicionado = false;
+        if (entidade instanceof Produto) {
+            adicionado = this.produtos.add((Produto) entidade);
+        } else if (entidade instanceof FormaPagamento) {
+            adicionado = this.formasPagamento.add((FormaPagamento) entidade);
+        } else if (entidade instanceof Usuario) {
+            adicionado = this.usuariosResponsaveis.add((Usuario) entidade);
         }
-        boolean adicionado = this.formasPagamento.add(formasPagamento);
-        validarSeFormaPagamentoFoiAdicionado(adicionado);
+        return adicionado;
     }
 
-    public void retirarFormaPagamento(FormasPagamento formasPagamento) {
-        if (isNaoExiste(formasPagamento)) {
-            throw new NegocioException("Não é possível remover a forma de pagamento, " +
-                    "pois ela não existe no restaurante.");
+    private <T extends IdentificavelParaAdicionarOuRemover> boolean removido(T entidade) {
+        boolean removido = false;
+        if (entidade instanceof Produto) {
+            removido = this.produtos.removeIf(p -> p.getId().equals(entidade.getId()));
+        } else if (entidade instanceof FormaPagamento) {
+            removido = this.formasPagamento.removeIf(p -> p.getId().equals(entidade.getId()));
+        } else if (entidade instanceof Usuario) {
+            removido = this.usuariosResponsaveis.removeIf(p -> p.getId().equals(entidade.getId()));
         }
-        boolean removido = this.formasPagamento.remove(formasPagamento);
-        validarSeFormaPagamentoFoiRemovido(removido);
+        return removido;
     }
 
-    private void validarSeFormaPagamentoFoiAdicionado(boolean adicionado) {
-        if (!adicionado) {
-            throw new NegocioException("Forma de pagamento não foi adicionada, verifique os dados " +
-                    "informados e tente novamente. Se o problema persistir, contate o administrador.");
-        }
-    }
-
-    private void validarSeFormaPagamentoFoiRemovido(boolean removido) {
-        if (!removido) {
-            throw new NegocioException("Forma de pagamento não foi removida, verifique os dados " +
-                    "informados e tente novamente. Se o problema persistir, contate o administrador.");
+    private <T extends IdentificavelParaAdicionarOuRemover> void validarSePossui(T entidade, boolean possui) {
+        boolean contem = isContem(entidade);
+        if (possui && contem) {
+            throw new NegocioException(mensagemDeErro(entidade, "já existe"));
+        } else if (!possui && !contem) {
+            throw new FormaPagamentoNaoEncontradoException(mensagemDeErro(entidade, "não existe"));
         }
     }
 
-    private boolean isExiste(FormasPagamento formasPagamento) {
-        return this.formasPagamento.contains(formasPagamento);
+    private <T extends IdentificavelParaAdicionarOuRemover> boolean isContem(T entidade) {
+        boolean contem = false;
+        if (entidade instanceof FormaPagamento) {
+            contem = this.formasPagamento.contains(entidade);
+        } else if (entidade instanceof Usuario) {
+            contem = this.usuariosResponsaveis.contains(entidade);
+        }
+        return contem;
     }
 
-    private boolean isNaoExiste(FormasPagamento formasPagamento) {
-        return !isExiste(formasPagamento);
+    private <T extends IdentificavelParaAdicionarOuRemover> void validarAdicionadoOuRemovido(
+            boolean condicao,
+            T entidade,
+            String msg
+    ) {
+        if (condicao) {
+            throw new NegocioException(mensagemDeErro(entidade, "não foi ".concat(msg)));
+        }
+    }
+
+    /**
+     * @param <T>      o objeto deve ser subtipo de IdentificavelParaAdicionarOuRemover
+     * @param entidade é o objeto (instância).
+     * @param acao     é o que tentou-se realizar e falhou. Ex: adicionado; removido, etc.
+     * @return mensagem de erro formatada
+     */
+    private <T extends IdentificavelParaAdicionarOuRemover> String mensagemDeErro(T entidade, String acao) {
+        String nome = entidade.getClass().getSimpleName();
+        return ("%s %s (id %s) %s no restaurante %s (id %s), verifique os dados informados e tente " +
+                "novamente. Se o problema persistir, contate o administrador.")
+                .formatted(formatarNomeClasse(nome), entidade.getNome(),
+                        entidade.getId(), acao, getNome(), getId());
+    }
+
+    public void validarFormaPagamento(FormaPagamento formaPagamento) {
+        this.formasPagamento.stream()
+                .filter(fp -> fp.equals(formaPagamento))
+                .findFirst()
+                .orElseThrow(() -> new NegocioException(("A forma de pagamento %s com ID %s não está disponível no " +
+                        "restaurante com ID %s").formatted(formaPagamento.getNome(), formaPagamento.getId(), id)));
+
+    }
+
+    public void validarSeAberto() {
+        if (this.isFechado()) {
+            throw new NegocioException(("O restaurante com ID %s está fechado e não receber seu pedido" +
+                    "no momento. Tente novamente mais tarde, obrigado!")
+                    .formatted(id));
+        }
+    }
+
+    public void validarResponsaveis() {
+        if (getUsuariosResponsaveis().isEmpty()) {
+            throw new NegocioException("O restaurante %s não possui responsável cadastrado no momento."
+                    .formatted(getNome()));
+        }
     }
 }

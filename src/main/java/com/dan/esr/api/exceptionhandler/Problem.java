@@ -1,22 +1,19 @@
 package com.dan.esr.api.exceptionhandler;
 
-import com.dan.esr.core.util.MessagesUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NonNull;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static com.dan.esr.core.util.MessagesUtil.formatarNomeEntidadeInput;
+import static com.dan.esr.core.util.MensagensUtil.formatarNomeEntidadeInput;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter

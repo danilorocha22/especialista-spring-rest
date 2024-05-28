@@ -1,65 +1,103 @@
 package com.dan.esr.api.controllers.restaurante;
 
-import com.dan.esr.api.models.output.RestauranteOutput;
-import com.dan.esr.api.models.output.RestauranteProdutosOutput;
-import com.dan.esr.api.models.output.RestauranteSummaryOutput;
+import com.dan.esr.api.models.output.produto.ProdutoOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteResponsaveisOutput;
+import com.dan.esr.api.models.output.view.RestauranteView;
+import com.dan.esr.core.assemblers.ProdutoAssembler;
 import com.dan.esr.core.assemblers.RestauranteModelAssembler;
+import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
-
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/restaurantes")
 public class ConsultaRestauranteController {
     private final RestauranteConsultaService restauranteConsulta;
     private final RestauranteModelAssembler restauranteModelAssembler;
+    private final ProdutoAssembler produtoAssembler;
 
     @GetMapping("/{id}")
     public RestauranteOutput buscarPorId(@PathVariable Long id) {
-        validarCampoObrigatorio(id, "ID");
-        Restaurante restauranteRegistro = this.restauranteConsulta.buscarPor(id);
-        return this.restauranteModelAssembler.toModel(restauranteRegistro);
+        Restaurante restaurante = this.restauranteConsulta.buscarPor(id);
+        return this.restauranteModelAssembler.toModel(restaurante);
     }
 
-    @GetMapping("/{id}/produtos")
-    public RestauranteProdutosOutput buscarComProdutos(@PathVariable Long id) {
-        Restaurante restauranteRegistro = this.restauranteConsulta.buscarComProdutos(id);
-        return this.restauranteModelAssembler.toModelProdutos(restauranteRegistro);
+    @GetMapping("/{restauranteId}/produtos")
+    public RestauranteProdutosOutput buscarProdutos(@PathVariable("restauranteId") Long id) {
+        Restaurante restaurante = this.restauranteConsulta.buscarComProdutos(id);
+        return this.restauranteModelAssembler.toModelComProdutos(restaurante);
     }
 
-    @GetMapping
-    public List<RestauranteSummaryOutput> listarTodos() {
+    @GetMapping("/{restauranteId}/responsaveis")
+    public RestauranteResponsaveisOutput buscarResponsaveis(@PathVariable("restauranteId") Long id) {
+        Restaurante restaurante = this.restauranteConsulta.buscarComResponsaveis(id);
+        return this.restauranteModelAssembler.toModelComResponsaveis(restaurante);
+    }
+
+    @GetMapping("/{restauranteId}/produtos/{produtoId}")
+    public ProdutoOutput buscarProduto(
+            @PathVariable Long restauranteId,
+            @PathVariable Long produtoId
+    ) {
+        Restaurante restaurante = this.restauranteConsulta.buscarPor(restauranteId);
+        Produto produto = this.restauranteConsulta.buscarProduto(restaurante.getId(), produtoId);
+        return this.produtoAssembler.toModel(produto);
+    }
+
+    /*@GetMapping
+    @JsonView(RestauranteView.Resumo.class)
+    public List<RestauranteOutput> todos() {
         return this.restauranteModelAssembler.toCollectionModel(this.restauranteConsulta.buscarTodos());
     }
 
+    @GetMapping(params = "projecao=completo")
+    public List<RestauranteOutput> todosCompleto() {
+        return this.restauranteModelAssembler.toCollectionModel(this.restauranteConsulta.buscarTodos());
+    }*/
+
+    @GetMapping
+    public MappingJacksonValue todos(@RequestParam(required = false) String projecao) {
+        List<Restaurante> restaurantes = this.restauranteConsulta.buscarTodos();
+        List<RestauranteOutput> restaurantesModel = restauranteModelAssembler.toCollectionModel(restaurantes);
+        MappingJacksonValue restaurantesWrapper = new MappingJacksonValue(restaurantesModel);
+        restaurantesWrapper.setSerializationView(RestauranteView.Resumo.class);
+
+        if ("status".equals(projecao)) {
+            restaurantesWrapper.setSerializationView(RestauranteView.Status.class);
+        } else if ("completo".equals(projecao)) {
+            restaurantesWrapper.setSerializationView(null);
+        }
+
+        return restaurantesWrapper;
+    }
+
     @GetMapping("/por-taxa")
-    public List<RestauranteSummaryOutput> buscarValorFreteEntre(BigDecimal taxaInicial, BigDecimal taxaFinal) {
-        validarCampoObrigatorio(taxaInicial, "Taxa Inicial");
-        validarCampoObrigatorio(taxaFinal, "Taxa Final");
+    @JsonView(RestauranteView.Resumo.class)
+    public List<RestauranteOutput> buscarValorFreteEntre(BigDecimal taxaInicial, BigDecimal taxaFinal) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarFreteEntre(taxaInicial, taxaFinal);
         return this.restauranteModelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/por-nome-e-cozinha")
-    public List<RestauranteSummaryOutput> buscarNomeContendoEcozinha(String nome, Long cozinhaId) {
-        validarCampoObrigatorio(nome, "Nome");
-        validarCampoObrigatorio(cozinhaId, "ID da cozinha");
+    @JsonView(RestauranteView.Resumo.class)
+    public List<RestauranteOutput> buscarNomeContendoEcozinha(String nome, Long cozinhaId) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarNomeContendoEcozinhaId(nome, cozinhaId);
         return this.restauranteModelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/por-nome-e-frete")
-    public List<RestauranteSummaryOutput> buscarNomeContendoOuFreteEntre(
+    @JsonView(RestauranteView.Resumo.class)
+    public List<RestauranteOutput> buscarNomeContendoOuFreteEntre(
             String nome,
             BigDecimal freteInicial,
             BigDecimal freteFinal
@@ -72,41 +110,38 @@ public class ConsultaRestauranteController {
 
     @GetMapping("/primeiro-por-nome")
     public RestauranteOutput buscarPrimeiroNomeContendo(String nome) {
-        validarCampoObrigatorio(nome, "Nome");
         Restaurante restaurante = this.restauranteConsulta.buscarPrimeiroNomeContendo(nome);
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 
     @GetMapping("/top2-por-nome")
-    public List<RestauranteSummaryOutput> buscarTop2NomeContendo(String nome) {
-        validarCampoObrigatorio(nome, "Nome");
+    @JsonView(RestauranteView.Resumo.class)
+    public List<RestauranteOutput> buscarTop2NomeContendo(String nome) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarTop2NomeContendo(nome);
         return this.restauranteModelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/count-por-cozinha")
     public int quantidadePorCozinha(Long cozinhaId) {
-        validarCampoObrigatorio(cozinhaId, "ID da cozinha");
         return this.restauranteConsulta.contarPorCozinhaId(cozinhaId);
     }
 
     @GetMapping("/com-frete-gratis")
-    public List<RestauranteSummaryOutput> buscarNomeContendoEfreteGratis(String nome) {
-        validarCampoObrigatorio(nome, "Nome");
+    @JsonView(RestauranteView.Resumo.class)
+    public List<RestauranteOutput> buscarNomeContendoEfreteGratis(String nome) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarNomeContendoEfreteGratis(nome);
         return this.restauranteModelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/com-nome-semelhante")
-    public List<RestauranteSummaryOutput> buscarNomeContendo(String nome) {
-        validarCampoObrigatorio(nome, "Nome");
+    @JsonView(RestauranteView.Resumo.class)
+    public List<RestauranteOutput> buscarNomeContendo(String nome) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarNomeContendo(nome);
         return this.restauranteModelAssembler.toCollectionModel(restaurantes);
     }
 
     @GetMapping("/com-nome-igual")
     public RestauranteOutput buscarPorNomeIgual(String nome) {
-        validarCampoObrigatorio(nome, "Nome");
         Restaurante restaurante = this.restauranteConsulta.buscarPorNomeIgual(nome);
         return this.restauranteModelAssembler.toModel(restaurante);
     }

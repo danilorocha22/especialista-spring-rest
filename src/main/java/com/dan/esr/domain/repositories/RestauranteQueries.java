@@ -8,13 +8,13 @@ import java.util.Optional;
 
 public interface RestauranteQueries {
     /*****************   CONSULTAS   ****************/
-    Optional<Restaurante> buscarPorId(Long id);
+    Optional<Restaurante> porId(Long id);
 
     Optional<Restaurante> buscarRestauranteComProdutos(Long id);
 
     List<Restaurante> buscar(String nome, BigDecimal freteInicial, BigDecimal freteFinal);
 
-    List<Restaurante> buscarTodosRestaurantes();
+    List<Restaurante> todos();
 
     List<Restaurante> buscarComNomeContendoEfreteGratis(String nome);
 

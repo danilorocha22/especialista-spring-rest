@@ -1,11 +1,13 @@
 package com.dan.esr.domain.services.usuario;
 
+import com.dan.esr.domain.entities.Grupo;
 import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.usuario.UsuarioNaoEncontradoException;
 import com.dan.esr.domain.repositories.UsuarioRepository;
+import com.dan.esr.domain.services.grupo.GrupoService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class UsuarioCadastroService {
     private final UsuarioConsultaService usuarioConsulta;
     private final UsuarioRepository usuarioRepository;
+    private final GrupoService grupoService;
 
     @Transactional
     public Usuario salvarOuAtualizar(Usuario usuario) {
@@ -59,5 +62,21 @@ public class UsuarioCadastroService {
                                 .formatted(usuario.getEmail()));
                     }
                 });
+    }
+
+    @Transactional
+    public Usuario adicionarGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = this.usuarioConsulta.buscarPor(usuarioId);
+        Grupo grupo = this.grupoService.buscarPor(grupoId);
+        usuario.adicionar(grupo);
+        return usuario;
+    }
+
+    @Transactional
+    public Usuario removerGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = this.usuarioConsulta.buscarPor(usuarioId);
+        Grupo grupo = this.grupoService.buscarPor(grupoId);
+        usuario.remover(grupo);
+        return usuario;
     }
 }

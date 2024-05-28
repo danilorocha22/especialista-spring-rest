@@ -91,9 +91,8 @@ public class CustomBaseJpaRepositoryImpl<T, ID>
     @Override
     public Optional<T> comNomeIgual(String nome) {
         try {
-            String jpql = ("SELECT CASE WHEN COUNT(r.nome) > 0 THEN TRUE ELSE FALSE END " +
-                    "FROM %s r " +
-                    "WHERE LOWER(r.nome) = LOWER(:nome)").formatted(nomeEntidade());
+            String jpql = "FROM %s e WHERE LOWER(e.nome) = LOWER(:nome)"
+                    .formatted(nomeEntidade());
 
             T entity = this.entityManager.createQuery(jpql, getDomainClass())
                     .setParameter("nome", nome.trim().toLowerCase())

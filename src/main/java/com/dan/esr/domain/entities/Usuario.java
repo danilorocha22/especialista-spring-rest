@@ -1,6 +1,7 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.domain.exceptions.NegocioException;
+import com.dan.esr.domain.exceptions.grupo.GrupoNaoEncontradoException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,9 +9,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Table(name = "usuarios", schema = "dan_food")
-public class Usuario implements Serializable {
+public class Usuario implements Serializable, IdentificavelParaAdicionarOuRemover {
     @Serial private static final long serialVersionUID = 1L;
 
     @Id
@@ -52,23 +53,23 @@ public class Usuario implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "grupo_id",
                     foreignKey = @ForeignKey(name = "fk_usuario_grupo_grupo"),
                     referencedColumnName = "id"))
-    private List<Grupo> grupos = new ArrayList<>();
+    private Set<Grupo> grupos = new HashSet<>();
 
     public boolean isNovo() {
         return getId() == null;
     }
 
     public void validarSenhaAtual(String senha) {
-        if (isSenhaNaoConfere(senha)) {
+        if (isNaoConfere(senha)) {
             throw new NegocioException("A senha atual não confere.");
         }
     }
 
-    public boolean isSenhaNaoConfere(String senha) {
-        return !isSenhaConfere(senha);
+    public boolean isNaoConfere(String senha) {
+        return !isConfere(senha);
     }
 
-    public boolean isSenhaConfere(String senha) {
+    public boolean isConfere(String senha) {
         return getSenha().equals(senha);
     }
 
@@ -78,5 +79,37 @@ public class Usuario implements Serializable {
 
     public boolean isIgual(Usuario usuario) {
         return Objects.equals(getId(), usuario.getId());
+    }
+
+    public void adicionar(Grupo grupo) {
+        validarUsuarioPossui(grupo, true);
+        boolean naoAdicionado = !this.grupos.add(grupo);
+        validarAdicionadoOuRemovido(naoAdicionado, grupo, "adicionado");
+    }
+
+    public void remover(Grupo grupo) {
+        validarUsuarioPossui(grupo, false);
+        boolean naoRemovido = !this.grupos.remove(grupo);
+        validarAdicionadoOuRemovido(naoRemovido, grupo, "removido");
+    }
+
+    private void validarUsuarioPossui(Grupo grupo, boolean possui) {
+        boolean contem = this.grupos.contains(grupo);
+        if (possui && contem) {
+            throw new NegocioException(mensagemErro(grupo, "já existe"));
+        } else if (!possui && !contem) {
+            throw new GrupoNaoEncontradoException(mensagemErro(grupo, "não existe"));
+        }
+    }
+
+    private void validarAdicionadoOuRemovido(boolean condicao, Grupo grupo, String msg) {
+        if (condicao) {
+            throw new NegocioException(mensagemErro(grupo, "não foi ".concat(msg)));
+        }
+    }
+
+    private String mensagemErro(Grupo grupo, String msg) {
+        return (("O grupo com ID %s %s no usuário %s, verifique os dados informados e tente novamente. Se o " +
+                "problema persistir, contate o administrador.").formatted(grupo.getId(), msg, this.getNome()));
     }
 }

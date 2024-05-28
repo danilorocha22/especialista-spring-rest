@@ -1,63 +1,64 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.domain.entities.enums.StatusPedido;
+import com.dan.esr.domain.exceptions.NegocioException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import static com.dan.esr.domain.entities.enums.StatusPedido.*;
 
 @Getter
-@ToString
-@AllArgsConstructor
-@EqualsAndHashCode(of = {"id"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Setter
 @Entity
+@ToString
+@EqualsAndHashCode(of = "id")
 @Table(name = "pedidos", schema = "dan_food")
 public class Pedido implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String codigo;
 
     @Column(name = "sub_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
 
-    @Setter
     @Column(name = "taxa_frete", nullable = false, precision = 10, scale = 2)
     private BigDecimal taxaFrete;
 
     @Column(name = "valor_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal valorTotal;
 
-    @Setter
     @CreationTimestamp
     @Column(name = "data_criacao", columnDefinition = "datetime", nullable = false)
-    private LocalDateTime dataCriacao;
+    private OffsetDateTime dataCriacao;
 
-    @Setter
     @Column(name = "data_confirmacao", columnDefinition = "datetime")
-    private LocalDateTime dataConfirmacao;
+    private OffsetDateTime dataConfirmacao;
 
-    @Setter
     @Column(name = "data_cancelamento", columnDefinition = "datetime")
-    private LocalDateTime dataCancelamento;
+    private OffsetDateTime dataCancelamento;
 
-    @Setter
     @Column(name = "data_entrega", columnDefinition = "datetime")
-    private LocalDateTime dataEntrega;
+    private OffsetDateTime dataEntrega;
 
-    @Setter
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id",
@@ -65,63 +66,101 @@ public class Pedido implements Serializable {
             referencedColumnName = "id")
     private Endereco endereco;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 10)
-    private StatusPedido statusPedido;
+    private StatusPedido status = CRIADO;
 
-    @Setter
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_usuario"),
             referencedColumnName = "id")
     private Usuario usuario;
 
-    @Setter
     @ManyToOne
     @JoinColumn(name = "restaurante_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_restaurante"),
             referencedColumnName = "id")
     private Restaurante restaurante;
 
-    @Setter
     @ManyToOne
     @JoinColumn(name = "formas_pagamento_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_formas_pagamento"),
             referencedColumnName = "id")
-    private FormasPagamento formasPagamento;
+    private FormaPagamento formaPagamento;
 
-    @Setter
-    @OneToMany(mappedBy = "pedido",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
     @ToString.Exclude
-    private List<ItemPedido> itensPedidos = new ArrayList<>();
+    @OneToMany(mappedBy = "pedido",
+            cascade = CascadeType.ALL)
+    private List<ItemPedido> itensPedido = new ArrayList<>();
 
-    /*##########################################     MÉTODOS      ####################################################*/
-    public Pedido() {
-        this.calcularValorSubtotal();
-        this.calcularValorTotal();
+    /*############################     MÉTODOS     ############################*/
+    public void calcularTaxaFrete() {
+        if (isTaxaFreteValida()) {
+            setTaxaFrete(this.restaurante.getTaxaFrete());
+        } else {
+            setTaxaFrete(BigDecimal.ZERO);
+        }
     }
 
-    public double getValorTotalDouble() {
-        return this.getValorTotal().doubleValue();
+    private boolean isTaxaFreteValida() {
+        return !(Objects.isNull(this.restaurante) || this.restaurante.getTaxaFrete() == null);
     }
 
-    public void adicionarItem(ItemPedido item) {
-        this.getItensPedidos().add(item);
-    }
-
-    private void calcularValorSubtotal() {
-        double subTotal = this.itensPedidos.stream()
+    public void calcularSubtotal() {
+        double subTotal = this.itensPedido.stream()
                 .mapToDouble(ItemPedido::getValorTotalDouble)
                 .sum();
-        this.subtotal = BigDecimal.valueOf(subTotal);
+        setSubtotal(BigDecimal.valueOf(subTotal));
     }
 
-    private void calcularValorTotal() {
-        if(this.getSubtotal() != null && this.getTaxaFrete() != null) {
-            this.valorTotal = getSubtotal().add(getTaxaFrete());
+    public void calcularTotal() {
+        if (this.getSubtotal() != null && this.getTaxaFrete() != null) {
+            BigDecimal total = getSubtotal().add(getTaxaFrete());
+            setValorTotal(total);
         }
+    }
+
+    public void confirmar() {
+        setStatus(CONFIRMADO);
+        setDataConfirmacao(OffsetDateTime.now());
+    }
+
+    public void entregar() {
+        setStatus(ENTREGUE);
+        setDataEntrega(OffsetDateTime.now());
+    }
+
+    public void cancelar() {
+        setStatus(CANCELADO);
+        setDataCancelamento(OffsetDateTime.now());
+    }
+
+    @PrePersist
+    private void gerarCodigoPedido() {
+        setCodigo(UUID.randomUUID().toString());
+    }
+
+    private void setStatus(StatusPedido novoStatus) {
+        if (getStatus().isStatusNaoPermitido(novoStatus)) {
+            throw new NegocioException("O status do pedido nº %s não pode ser alterado de %s para %s."
+                    .formatted(getCodigo(), getStatus().name(), novoStatus.name()));
+        }
+        this.status = novoStatus;
+    }
+
+    private void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    private void setSubtotal(BigDecimal valor) {
+        this.subtotal = valor;
+    }
+
+    private void setTaxaFrete(BigDecimal valor) {
+        this.taxaFrete = valor;
+    }
+
+    private void setValorTotal(BigDecimal valor) {
+        this.valorTotal = valor;
     }
 }

@@ -1,16 +1,23 @@
 package com.dan.esr.domain.repositories;
 
+import com.dan.esr.domain.entities.FormaPagamento;
 import com.dan.esr.domain.entities.Restaurante;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
 
 public interface RestauranteRepository extends
         RestauranteQueries,
         CustomBaseJpaRepository<Restaurante, Long>,
         JpaSpecificationExecutor<Restaurante> {
 
-    void removeById(Long id);
+    @Query("from Restaurante r left join fetch r.produtos p where r.id = :id order by p.id asc")
+    Optional<Restaurante> buscarComProdutos(Long id);
 
-    boolean existsByNomeIgnoreCase(String nome);
+    @Query("FROM Restaurante r LEFT JOIN FETCH r.usuariosResponsaveis u WHERE r.id = :id order by u.id asc")
+    Optional<Restaurante> buscarComUsuariosResponsaveis(@Param("id") Long restauranteId);
 }
 
 

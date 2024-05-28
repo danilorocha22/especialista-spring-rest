@@ -1,7 +1,8 @@
 package com.dan.esr.core.assemblers;
 
 import com.dan.esr.api.models.input.grupo.GrupoInput;
-import com.dan.esr.api.models.output.GrupoOutput;
+import com.dan.esr.api.models.output.grupo.GrupoOutput;
+import com.dan.esr.api.models.output.grupo.GrupoPermissoesOutput;
 import com.dan.esr.domain.entities.Grupo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,10 @@ public class GrupoAssembler {
 
     public GrupoOutput toModel(Grupo grupo) {
         return mapper.map(grupo, GrupoOutput.class);
+    }
+
+    public GrupoPermissoesOutput toModelGrupoPermissoes(Grupo grupo) {
+        return mapper.map(grupo, GrupoPermissoesOutput.class);
     }
 
     public List<GrupoOutput> toCollectionModel(List<Grupo> grupos) {

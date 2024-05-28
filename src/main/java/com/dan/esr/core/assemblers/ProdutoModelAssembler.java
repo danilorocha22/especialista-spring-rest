@@ -1,6 +1,6 @@
 package com.dan.esr.core.assemblers;
 
-import com.dan.esr.api.models.output.ProdutoOutput;
+import com.dan.esr.api.models.output.produto.ProdutoOutput;
 import com.dan.esr.domain.entities.Produto;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

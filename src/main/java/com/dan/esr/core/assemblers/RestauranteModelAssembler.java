@@ -1,10 +1,9 @@
 package com.dan.esr.core.assemblers;
 
 import com.dan.esr.api.models.input.restaurante.RestauranteInput;
-import com.dan.esr.api.models.output.RestauranteOutput;
-import com.dan.esr.api.models.output.RestauranteProdutosOutput;
-import com.dan.esr.api.models.output.RestauranteStatusOutput;
-import com.dan.esr.api.models.output.RestauranteSummaryOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteResponsaveisOutput;
 import com.dan.esr.domain.entities.Restaurante;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -12,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Component
+@AllArgsConstructor
 public class RestauranteModelAssembler {
     private ModelMapper mapper;
 
@@ -21,25 +20,21 @@ public class RestauranteModelAssembler {
         return this.mapper.map(restaurante, RestauranteOutput.class);
     }
 
-    public RestauranteStatusOutput toModelStatus(Restaurante restaurante) {
-        return this.mapper.map(restaurante, RestauranteStatusOutput.class);
-    }
-
-    public RestauranteSummaryOutput toModelSummary(Restaurante restaurante) {
-        return this.mapper.map(restaurante, RestauranteSummaryOutput.class);
-    }
-
     public RestauranteInput toModelInput(Restaurante restaurante) {
         return this.mapper.map(restaurante, RestauranteInput.class);
     }
 
-    public RestauranteProdutosOutput toModelProdutos(Restaurante restaurante) {
+    public RestauranteResponsaveisOutput toModelComResponsaveis(Restaurante restaurante) {
+        return this.mapper.map(restaurante, RestauranteResponsaveisOutput.class);
+    }
+
+    public RestauranteProdutosOutput toModelComProdutos(Restaurante restaurante) {
         return this.mapper.map(restaurante, RestauranteProdutosOutput.class);
     }
 
-    public List<RestauranteSummaryOutput> toCollectionModel(List<Restaurante> restaurantes) {
+    public List<RestauranteOutput> toCollectionModel(List<Restaurante> restaurantes) {
         return restaurantes.stream()
-                .map(this::toModelSummary)
+                .map(this::toModel)
                 .toList();
     }
 }

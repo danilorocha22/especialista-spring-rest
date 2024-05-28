@@ -1,14 +1,11 @@
 package com.dan.esr.infrastructure.repositories.impl;
 
-import com.dan.esr.api.models.output.ProdutoOutput;
-import com.dan.esr.api.models.output.RestauranteProdutosOutput;
+import com.dan.esr.api.models.output.produto.ProdutoOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
 import com.dan.esr.core.assemblers.ProdutoModelAssembler;
 import com.dan.esr.core.assemblers.RestauranteEntityAssembler;
 import com.dan.esr.core.util.LoggerHelper;
-import com.dan.esr.domain.entities.Cidade;
-import com.dan.esr.domain.entities.Endereco;
-import com.dan.esr.domain.entities.Produto;
-import com.dan.esr.domain.entities.Restaurante;
+import com.dan.esr.domain.entities.*;
 import com.dan.esr.domain.exceptions.PersistenciaException;
 import com.dan.esr.domain.exceptions.restaurante.RestauranteNaoEncontradoException;
 import com.dan.esr.domain.repositories.RestauranteQueries;
@@ -29,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.dan.esr.core.util.MessagesUtil.MSG_ERRO_BANCO_DE_DADOS;
+import static com.dan.esr.core.util.MensagensUtil.MSG_ERRO_BANCO_DE_DADOS;
 import static com.dan.esr.infrastructure.spec.RestauranteSpecs.*;
 import static java.util.Comparator.comparing;
 
@@ -64,16 +61,17 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
 
     @Override
     public Optional<Restaurante> buscarRestauranteComProdutos(Long restauranteId) {
-        String jpql = "SELECT new com.dan.esr.api.models.output.RestauranteProdutosOutput(r.id, r.nome) FROM " +
-                "Restaurante r WHERE r.id = :id";
+        String jpql = "SELECT new com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput(r.id, r.nome) " +
+                "FROM Restaurante r WHERE r.id = :id";
 
-        List<Produto> produtos = entityManager.createQuery(
-                        "SELECT p FROM Produto p WHERE p.restaurante.id = :id AND p.ativo = true", Produto.class)
+        List<Produto> produtos = entityManager.createQuery("SELECT p FROM Produto p " +
+                        "WHERE p.restaurante.id = :id AND p.ativo = true", Produto.class)
                 .setParameter("id", restauranteId)
                 .getResultList();
 
         try {
-            RestauranteProdutosOutput restauranteOutput = entityManager.createQuery(jpql, RestauranteProdutosOutput.class)
+            RestauranteProdutosOutput restauranteOutput = entityManager.createQuery(jpql,
+                            RestauranteProdutosOutput.class)
                     .setParameter("id", restauranteId)
                     .getSingleResult();
 
@@ -98,14 +96,15 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
     }
 
     @Override
-    public Optional<Restaurante> buscarPorId(Long id) {
+    public Optional<Restaurante> porId(Long id) {
         try {
             var jpql = ("FROM %s r " +
                     "JOIN FETCH r.cozinha " +
-                    "LEFT JOIN FETCH r.formasPagamento " +
+                    "LEFT JOIN FETCH r.formasPagamento fp " +
                     "LEFT JOIN FETCH r.endereco e " +
                     "LEFT JOIN FETCH e.cidade c " +
                     "LEFT JOIN FETCH c.estado " +
+                    "LEFT JOIN FETCH r.usuariosResponsaveis " +
                     "WHERE r.id = :id").formatted(Restaurante.class.getSimpleName());
 
             Restaurante restaurante = this.entityManager.createQuery(jpql, Restaurante.class)
@@ -135,18 +134,19 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
     }
 
     @Override
-    public List<Restaurante> buscarTodosRestaurantes() {
+    public List<Restaurante> todos() {
         var criteria = getCriteria();
         var root = criteria.from(Restaurante.class);
 
         root.fetch("cozinha", JoinType.INNER);
+        root.fetch("formasPagamento", JoinType.LEFT);
         Fetch<Restaurante, Endereco> enderecoFetch = root.fetch("endereco", JoinType.LEFT);
         Fetch<Endereco, Cidade> cidadeFetch = enderecoFetch.fetch("cidade", JoinType.LEFT);
         cidadeFetch.fetch("estado", JoinType.LEFT);
         criteria.select(root);
         List<Restaurante> restaurantes = entityManager.createQuery(criteria).getResultList();
-
         restaurantes.sort(comparing(Restaurante::getId));
+
         return restaurantes;
     }
 

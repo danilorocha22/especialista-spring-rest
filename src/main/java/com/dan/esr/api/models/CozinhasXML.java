@@ -1,7 +1,6 @@
 package com.dan.esr.api.models;
 
-import com.dan.esr.api.models.output.CozinhaOutput;
-import com.dan.esr.domain.entities.Cozinha;
+import com.dan.esr.api.models.output.cozinha.CozinhaOutput;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;

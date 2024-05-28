@@ -8,11 +8,11 @@ public class EntidadeNaoEncontradaException extends NegocioException {
     private static final long serialVersionUID = 1L;
 
     public EntidadeNaoEncontradaException() {
-        super();
+        this("Nenhuma entidade encontrada.");
     }
 
     public EntidadeNaoEncontradaException(String message) {
-        super(message);
+        this(message, null);
     }
 
     public EntidadeNaoEncontradaException(String message, Throwable causa) {

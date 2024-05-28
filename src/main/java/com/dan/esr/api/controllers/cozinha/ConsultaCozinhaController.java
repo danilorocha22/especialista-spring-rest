@@ -1,7 +1,7 @@
 package com.dan.esr.api.controllers.cozinha;
 
 import com.dan.esr.api.models.CozinhasXML;
-import com.dan.esr.api.models.output.CozinhaOutput;
+import com.dan.esr.api.models.output.cozinha.CozinhaOutput;
 import com.dan.esr.core.assemblers.CozinhaAssembler;
 import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoEncontradaException;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.dan.esr.core.util.ValidacaoUtil.isCampoVazio;
 import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
 
 @RestController
@@ -27,21 +26,20 @@ public class ConsultaCozinhaController {
 
     @GetMapping("/{id}")
     public CozinhaOutput buscarPorId(@PathVariable Long id) {
-        validarCampoObrigatorio(id, "ID");
-        Cozinha cozinha = this.cozinhaConsultaService.buscarPor(id);
-        return this.cozinhaAssembler.toModel(cozinha);
+        return this.cozinhaAssembler.toModel(
+                this.cozinhaConsultaService.buscarPor(id)
+        );
     }
 
     @GetMapping("/primeira")
     public CozinhaOutput buscarPrimeiraCozinha() {
-        Cozinha cozinha = this.cozinhaConsultaService.buscarPrimeira();
-        return this.cozinhaAssembler.toModel(cozinha);
+        return this.cozinhaAssembler.toModel(
+                this.cozinhaConsultaService.buscarPrimeira()
+        );
     }
 
-    //@ResponseStatus(HttpStatus.OK) //retorna 200
     @GetMapping("/primeira-com-nome-semelhante")
     public CozinhaOutput buscarPrimeiraCozinhaComNomeSemelhante(String nome) {
-        if (isCampoVazio(nome)) nome = null;
         validarCampoObrigatorio(nome, "Nome");
         Cozinha cozinha = this.cozinhaConsultaService.buscarPrimeiraComNomeSemelhante(nome);
         return this.cozinhaAssembler.toModel(cozinha);
@@ -49,7 +47,6 @@ public class ConsultaCozinhaController {
 
     @GetMapping("/por-nome-igual")
     public CozinhaOutput buscarPorNomeIgual(String nome) {
-        if (isCampoVazio(nome)) nome = null;
         validarCampoObrigatorio(nome, "Nome");
         Cozinha cozinha = this.cozinhaConsultaService.buscarPorNomeIgual(nome);
         return this.cozinhaAssembler.toModel(cozinha);
@@ -57,7 +54,6 @@ public class ConsultaCozinhaController {
 
     @GetMapping("/por-nome-semelhante")
     public List<CozinhaOutput> buscarTodasComNomeSemelhante(String nome) {
-        if (isCampoVazio(nome)) nome = null;
         validarCampoObrigatorio(nome, "Nome");
         List<Cozinha> cozinhas = this.cozinhaConsultaService.buscarTodasComNomeSemelhante(nome);
         return this.cozinhaAssembler.toModelList(cozinhas);
@@ -71,7 +67,6 @@ public class ConsultaCozinhaController {
 
     @GetMapping("/existe")
     public boolean existe(String nome) {
-        if (isCampoVazio(nome)) nome = null;
         validarCampoObrigatorio(nome, "Nome");
         return cozinhaConsultaService.existePorNomeIgual(nome);
     }
@@ -84,5 +79,4 @@ public class ConsultaCozinhaController {
         }
         return new CozinhasXML(this.cozinhaAssembler.toModelList(cozinhas));
     }
-
 }

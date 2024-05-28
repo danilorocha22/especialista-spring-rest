@@ -1,7 +1,7 @@
 package com.dan.esr.core.assemblers;
 
 import com.dan.esr.api.models.input.cidade.CidadeInput;
-import com.dan.esr.api.models.output.CidadeOutput;
+import com.dan.esr.api.models.output.cidade.CidadeOutput;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.entities.Estado;
 import lombok.AllArgsConstructor;

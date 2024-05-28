@@ -8,16 +8,12 @@ public class UsuarioNaoEncontradoException extends EntidadeNaoEncontradaExceptio
         this("Nenhum usuário encontrado.");
     }
 
+    public UsuarioNaoEncontradoException(Long id) {
+        this("Nenhum usuário encontrado com o ID %s".formatted(id), null);
+    }
+
     public UsuarioNaoEncontradoException(String message) {
         this(message, null);
-    }
-
-    public UsuarioNaoEncontradoException(Long id) {
-        this(id, null);
-    }
-
-    public UsuarioNaoEncontradoException(Long id, Throwable cause) {
-        this("Nenhum usuário encontrado com o ID %s".formatted(id), cause);
     }
 
     public UsuarioNaoEncontradoException(String message, Throwable causa) {

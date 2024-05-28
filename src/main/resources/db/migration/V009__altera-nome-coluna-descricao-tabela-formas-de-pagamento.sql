@@ -1,0 +1,1 @@
+ALTER TABLE formas_de_pagamento CHANGE COLUMN descricao nome VARCHAR(60) NOT NULL;

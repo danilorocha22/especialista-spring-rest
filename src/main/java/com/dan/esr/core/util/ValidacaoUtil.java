@@ -1,25 +1,40 @@
 package com.dan.esr.core.util;
 
+import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.PropriedadeIlegalException;
 
+import java.util.List;
 import java.util.Objects;
 
 public final class ValidacaoUtil {
-    public static final String MSG_PROPRIEDADE_NAO_PODE_SER_NULA = "Não é permitido propriedade nula";
 
     private ValidacaoUtil() {
     }
 
-    public static void validarCampoObrigatorio(Object obj, String msg) {
+    public static void validarCampoObrigatorio(String nomeCampo, String msg) {
+        nomeCampo = atribuirNulo(nomeCampo);
+
         try {
-            Objects.requireNonNull(obj, "%s é obrigatório ser informado.".formatted(msg));
-        } catch (NullPointerException e) {
-            throw new PropriedadeIlegalException(e.getMessage());
+            Objects.requireNonNull(nomeCampo, "%s é obrigatório ser informado."
+                    .formatted(msg));
+        } catch (NullPointerException ex) {
+            throw new PropriedadeIlegalException(ex.getMessage());
         }
     }
 
-    public static boolean isCampoVazio(String nome) {
-        return nome != null && nome.isBlank();
+    private static String atribuirNulo(String nomeCampo) {
+        if (isVazio(nomeCampo))
+            nomeCampo = null;
+        return nomeCampo;
     }
 
+    private static boolean isVazio(String nomeCampo) {
+        return nomeCampo != null && nomeCampo.isBlank();
+    }
+
+    public static void validarSeVazio(List<?> objetos) {
+        if (objetos.isEmpty()) {
+            throw new EntidadeNaoEncontradaException();
+        }
+    }
 }

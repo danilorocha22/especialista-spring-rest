@@ -1,14 +1,20 @@
 package com.dan.esr.api.controllers.restaurante;
 
+import com.dan.esr.api.models.input.produto.ProdutoInput;
 import com.dan.esr.api.models.input.restaurante.RestauranteInput;
-import com.dan.esr.api.models.output.RestauranteOutput;
-import com.dan.esr.api.models.output.RestauranteStatusOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
+import com.dan.esr.api.models.output.restaurante.RestauranteResponsaveisOutput;
+import com.dan.esr.api.models.output.view.RestauranteView;
+import com.dan.esr.core.assemblers.ProdutoAssembler;
 import com.dan.esr.core.assemblers.RestauranteEntityAssembler;
 import com.dan.esr.core.assemblers.RestauranteModelAssembler;
+import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.ValidacaoException;
 import com.dan.esr.domain.services.restaurante.RestauranteCadastroService;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,29 +31,43 @@ import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/restaurantes")
 public class CadastroRestauranteController {
     private final RestauranteCadastroService restauranteCadastro;
     private final RestauranteConsultaService restauranteConsulta;
     private final RestauranteModelAssembler restauranteModelAssembler;
     private final RestauranteEntityAssembler restauranteEntityAssembler;
+    private final ProdutoAssembler produtoAssembler;
     private final SmartValidator validator;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RestauranteOutput salvar(@RequestBody @Valid RestauranteInput restauranteInput) {
+    public RestauranteOutput novoRestaurante(@RequestBody @Valid RestauranteInput restauranteInput) {
         Restaurante restaurante = this.restauranteEntityAssembler.toDomain(restauranteInput);
         restaurante = this.restauranteCadastro.salvarOuAtualizar(restaurante);
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 
+    @PostMapping("/{id}/produtos")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RestauranteProdutosOutput novoProduto(
+            @PathVariable("id") Long restauranteId,
+            @RequestBody @Valid ProdutoInput produtoInput
+    ) {
+        Produto produto = this.produtoAssembler.toDomain(produtoInput);
+        Restaurante restaurante = this.restauranteConsulta.buscarPor(restauranteId);
+        restaurante = this.restauranteCadastro.novoProduto(restaurante, produto);
+        return this.restauranteModelAssembler.toModelComProdutos(restaurante);
+    }
+
     @PutMapping("/{id}")
-    public RestauranteOutput atualizar(
+    public RestauranteOutput atualizarRestaurante(
             @PathVariable Long id,
             @RequestBody @Valid RestauranteInput restauranteInput
     ) {
@@ -59,9 +79,22 @@ public class CadastroRestauranteController {
     }
 
     @PutMapping("/{id}/ativo")
-    public RestauranteStatusOutput ativar(@PathVariable Long id) {
+    @JsonView(RestauranteView.Status.class)
+    public RestauranteOutput ativarRestaurante(@PathVariable Long id) {
         Restaurante restauranteAtivo = this.restauranteCadastro.ativar(id);
-        return restauranteModelAssembler.toModelStatus(restauranteAtivo);
+        return restauranteModelAssembler.toModel(restauranteAtivo);
+    }
+
+    @PutMapping("/{id}/abertura")
+    public RestauranteOutput abertura(@PathVariable Long id) {
+        Restaurante restaurante = this.restauranteCadastro.abrir(id);
+        return this.restauranteModelAssembler.toModel(restaurante);
+    }
+
+    @PutMapping("/{id}/fechamento")
+    public RestauranteOutput fechamento(@PathVariable Long id) {
+        Restaurante restaurante = this.restauranteCadastro.fechar(id);
+        return this.restauranteModelAssembler.toModel(restaurante);
     }
 
     @PutMapping("/{restauranteId}/formas-pagamento/{formasPagamentoId}")
@@ -72,6 +105,21 @@ public class CadastroRestauranteController {
         Restaurante restaurante = this.restauranteCadastro.adicionarFormaPagamento(
                 restauranteId, formasPagamentoId);
         return this.restauranteModelAssembler.toModel(restaurante);
+    }
+
+    @PutMapping("/{restauranteId}/responsaveis/{usuarioId}")
+    public RestauranteResponsaveisOutput adicionarResponsavel(
+            @PathVariable Long restauranteId,
+            @PathVariable Long usuarioId
+    ) {
+        Restaurante restaurante = this.restauranteCadastro.adicionarResponsavel(restauranteId, usuarioId);
+        return this.restauranteModelAssembler.toModelComResponsaveis(restaurante);
+    }
+
+    @PutMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void ativacoes(@RequestBody List<Long> ids) {
+        this.restauranteCadastro.ativacoes(ids);
     }
 
     @PatchMapping("/{id}")
@@ -87,25 +135,41 @@ public class CadastroRestauranteController {
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {
         this.restauranteCadastro.remover(id);
     }
 
     @DeleteMapping("/{id}/ativo")
-    public RestauranteStatusOutput inativar(@PathVariable Long id) {
+    @JsonView(RestauranteView.Status.class)
+    public RestauranteOutput inativar(@PathVariable Long id) {
         Restaurante restauranteInativo = this.restauranteCadastro.desativar(id);
-        return restauranteModelAssembler.toModelStatus(restauranteInativo);
+        return restauranteModelAssembler.toModel(restauranteInativo);
     }
 
-    @DeleteMapping("/{restauranteId}/formas-pagamento/{formasPagamentoId}")
+    @DeleteMapping("/{restauranteId}/formas-pagamento/{formaPagamentoId}")
     public RestauranteOutput removerFormaPagamento(
             @PathVariable Long restauranteId,
-            @PathVariable Long formasPagamentoId
+            @PathVariable Long formaPagamentoId
     ) {
-        Restaurante restaurante = this.restauranteCadastro.retirarFormaPagamento(restauranteId, formasPagamentoId);
+        Restaurante restaurante = this.restauranteCadastro.removerFormaPagamento(restauranteId, formaPagamentoId);
         return this.restauranteModelAssembler.toModel(restaurante);
+    }
+
+    @DeleteMapping("/{restauranteId}/responsaveis/{usuarioId}")
+    public RestauranteResponsaveisOutput removerResponsavel(
+            @PathVariable Long restauranteId,
+            @PathVariable Long usuarioId
+    ) {
+        Restaurante restaurante = this.restauranteCadastro.removerResponsavel(restauranteId, usuarioId);
+        return this.restauranteModelAssembler.toModelComResponsaveis(restaurante);
+    }
+
+    @DeleteMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void desativacoes(@RequestBody List<Long> ids) {
+        this.restauranteCadastro.desativacoes(ids);
     }
 
     private void mesclarCampos(

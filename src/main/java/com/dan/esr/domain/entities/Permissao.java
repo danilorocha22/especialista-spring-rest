@@ -3,20 +3,19 @@ package com.dan.esr.domain.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity
+@EqualsAndHashCode(of = "id")
+@Entity @Getter @Setter
 @Table(name = "permissoes", schema = "dan_food")
 public class Permissao implements Serializable {
-    @Serial
-    private static final  long serialVersionUID = 1L;
+    @Serial private static final  long serialVersionUID = 1L;
 
     @Id
-    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -26,4 +25,7 @@ public class Permissao implements Serializable {
     @Column(nullable = false, length = 80)
     private String descricao;
 
+    public boolean isNova() {
+        return getId() == null;
+    }
 }

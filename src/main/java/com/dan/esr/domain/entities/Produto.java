@@ -1,23 +1,23 @@
 package com.dan.esr.domain.entities;
 
+import com.dan.esr.domain.exceptions.NegocioException;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode(of = "id")
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@ToString
+@Getter @Setter
+@EqualsAndHashCode(of = "id")
 @Table(name = "produtos", schema = "dan_food")
-public class Produto implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class Produto implements Serializable, IdentificavelParaAdicionarOuRemover {
+    @Serial private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,12 +33,22 @@ public class Produto implements Serializable {
     private BigDecimal preco;
 
     @Column(nullable = false)
-    private boolean ativo;
+    private boolean ativo = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "restaurante_id",
             foreignKey = @ForeignKey(name = "fk_produto_restaurante"),
             referencedColumnName = "id")
     private Restaurante restaurante;
 
+    public void validarDisponibilidade() {
+        if (isIndisponivel()) {
+            throw new NegocioException("O produto com ID %s, não está disponível no momento."
+                    .formatted(id));
+        }
+    }
+
+    private boolean isIndisponivel() {
+        return !ativo;
+    }
 }
