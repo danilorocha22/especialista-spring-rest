@@ -2,7 +2,11 @@ package com.dan.esr.api.models.output.view;
 
 public interface RestauranteView {
 
-    public interface Resumo{}
+    interface Resumo{}
 
-    public interface Status{}
+    interface Status{}
+
+    interface Aberto{}
+
+    interface FormaPagamento{}
 }

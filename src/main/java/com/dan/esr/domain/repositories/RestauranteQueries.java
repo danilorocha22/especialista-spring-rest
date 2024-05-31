@@ -10,7 +10,7 @@ public interface RestauranteQueries {
     /*****************   CONSULTAS   ****************/
     Optional<Restaurante> porId(Long id);
 
-    Optional<Restaurante> buscarRestauranteComProdutos(Long id);
+    //Optional<Restaurante> buscarRestauranteComProdutos(Long id);
 
     List<Restaurante> buscar(String nome, BigDecimal freteInicial, BigDecimal freteFinal);
 

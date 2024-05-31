@@ -25,7 +25,7 @@ public class RestauranteEntityAssembler {
      * Cozinha e Cidade para evitar problemas de alteração de identificador:
      * org.hibernate.HibernateException: identifier of an instance of Cozinha/Cidade was altered from 1 to 2
      */
-    public void copyToRestauranteDomain(RestauranteInput restauranteInput, Restaurante restaurante) {
+    public void copyToRestaurante(RestauranteInput restauranteInput, Restaurante restaurante) {
         resetCozinha(restaurante);
         resetCidade(restaurante);
         mapper.map(restauranteInput, restaurante);

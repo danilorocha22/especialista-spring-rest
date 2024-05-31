@@ -28,7 +28,7 @@ public class RestauranteModelAssembler {
         return this.mapper.map(restaurante, RestauranteResponsaveisOutput.class);
     }
 
-    public RestauranteProdutosOutput toModelComProdutos(Restaurante restaurante) {
+    public RestauranteProdutosOutput toModelProdutos(Restaurante restaurante) {
         return this.mapper.map(restaurante, RestauranteProdutosOutput.class);
     }
 

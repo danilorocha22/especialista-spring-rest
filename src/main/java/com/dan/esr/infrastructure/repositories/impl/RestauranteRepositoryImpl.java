@@ -41,11 +41,11 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
     @Autowired
     private RestauranteRepository restauranteRepository;
 
-    @Autowired
+    /*@Autowired
     private ProdutoModelAssembler produtoModelAssembler;
 
     @Autowired
-    private RestauranteEntityAssembler restauranteEntityAssembler;
+    private RestauranteEntityAssembler restauranteEntityAssembler;*/
 
     /*###################################### CONSULTAS ######################################*/
 
@@ -59,7 +59,7 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
         return restauranteRepository.findAll(comTaxaFreteEntre(taxaInicial, taxaFinal));
     }
 
-    @Override
+    /*@Override
     public Optional<Restaurante> buscarRestauranteComProdutos(Long restauranteId) {
         String jpql = "SELECT new com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput(r.id, r.nome) " +
                 "FROM Restaurante r WHERE r.id = :id";
@@ -82,7 +82,7 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
         } catch (NoResultException ex) {
             return Optional.empty();
         }
-    }
+    }*/
 
     @Override
     public List<Restaurante> buscarComNomeContendoEcozinhaId(String nome, Long cozinhaId) {

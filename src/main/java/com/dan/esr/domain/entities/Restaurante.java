@@ -186,6 +186,10 @@ public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRe
         validarAdicionadoOuRemovido(naoAdicionado, entidade, "adicionado(a)");
     }
 
+    public <T extends IdentificavelParaAdicionarOuRemover> void adicionarTodos(List<T> entidades) {
+        entidades.forEach(this::adicionar);
+    }
+
     public <T extends IdentificavelParaAdicionarOuRemover> void remover(T entidade) {
         validarSePossui(entidade, false);
         boolean naoRemovido = !removido(entidade);

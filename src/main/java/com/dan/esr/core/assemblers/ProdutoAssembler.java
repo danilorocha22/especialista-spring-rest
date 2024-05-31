@@ -27,4 +27,8 @@ public class ProdutoAssembler {
                 .map(this::toModel)
                 .toList();
     }
+
+    public void copyToDomain(ProdutoInput produtoInput, Produto produto) {
+        mapper.map(produtoInput, produto);
+    }
 }
