@@ -1,57 +1,54 @@
 package com.dan.esr.infrastructure.spec;
 
-import com.dan.esr.domain.entities.Produto;
-import com.dan.esr.domain.entities.Restaurante;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
+import com.dan.esr.domain.entities.Pedido;
+import com.dan.esr.domain.repositories.filter.PedidoFiltro;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Objects.nonNull;
 
 public class PedidoSpecs {
 
-    /*public static Specification<Restaurante> todos() {
+    public static Specification<Pedido> filtrar(PedidoFiltro filtro) {
         return (root, query, builder) -> {
-            root.fetch("cozinha", JoinType.LEFT);
-            root.fetch("formasDePagamento", JoinType.LEFT);
-            query.distinct(true);
-            query.getOrderList();
-            return null;
-        };
-    }*/
-
-    public static Specification<Restaurante> comFreteGratis() {
-        return (root, query, builder) -> builder.equal(root.get("taxaFrete"), BigDecimal.ZERO);
-    }
-
-    public static Specification<Restaurante> comNomeSemelhante(String nome) {
-        return (root, query, builder) -> builder.like(root.get("nome"), "%" + nome + "%");
-    }
-
-    public static Specification<Restaurante> comProdutosAtivos(Long id) {
-        return (root, query, builder) -> {
-            Join<Restaurante, Produto> joinProdutos = root.join("produtos", JoinType.LEFT);
-            root.fetch("produtos", JoinType.LEFT);
-            query.distinct(true);
-
-            return builder.or(
-                    builder.equal(root.get("id"), id),
-                    builder.isTrue(joinProdutos.get("ativo"))
-            );
+            configurarFetchs(root);
+            var predicates = new ArrayList<>(getPredicates(filtro, root, builder));
+            return builder.and(predicates.toArray(new Predicate[0]));
         };
     }
 
-    public static Specification<Restaurante> comTaxaFreteEntre(BigDecimal taxaInicial, BigDecimal taxaFinal) {
-        return (root, query, builder) -> builder.between(root.get("taxaFrete"), taxaInicial, taxaFinal);
+    private static void configurarFetchs(Root<Pedido> root) {
+        root.fetch("usuario");
+        root.fetch("itensPedido");
+        root.fetch("formaPagamento");
+        root.fetch("endereco").fetch("cidade").fetch("estado");
+        root.fetch("restaurante").fetch("produtos").fetch("restaurante")
+                .fetch("cozinha");
     }
 
-    public static Specification<Restaurante> comCozinhaId(Long cozinhaId) {
-        return ((root, query, builder) -> builder.equal(root.get("cozinha").get("id"), cozinhaId));
+    private static List<Predicate> getPredicates(
+            PedidoFiltro filtro,
+            Root<Pedido> root,
+            CriteriaBuilder builder
+    ) {
+        return new ArrayList<>() {{
+            if (nonNull(filtro.getClienteId()))
+                add(builder.equal(root.get("usuario").get("id"), filtro.getClienteId()));
+
+            if (nonNull(filtro.getRestauranteId()))
+                add(builder.equal(root.get("restaurante").get("id"), filtro.getRestauranteId()));
+
+            if (nonNull(filtro.getDataCriacaoDe()))
+                add(builder.greaterThanOrEqualTo(root.get("dataCriacao"), filtro.getDataCriacaoDe()));
+
+            if (nonNull(filtro.getDataCriacaoAte()))
+                add(builder.lessThanOrEqualTo(root.get("dataCriacao"), filtro.getDataCriacaoAte()));
+
+        }};
     }
-
-    public static Specification<Restaurante> countByCozinhaId(Long cozinhaId) {
-        return ((root, query, builder) -> builder.equal(root.join("cozinha").get("id"), cozinhaId));
-    }
-
-
 }

@@ -4,11 +4,12 @@ import com.dan.esr.api.models.input.pedido.PedidoInput;
 import com.dan.esr.api.models.output.pedido.PedidoOutput;
 import com.dan.esr.api.models.output.pedido.PedidoResumoOutput;
 import com.dan.esr.api.models.output.pedido.PedidoStatusOutput;
-import com.dan.esr.core.assemblers.EnderecoAssembler;
-import com.dan.esr.core.assemblers.ItemPedidoAssembler;
+import com.dan.esr.api.models.output.view.PedidoView;
 import com.dan.esr.core.assemblers.PedidoAssembler;
 import com.dan.esr.domain.entities.Pedido;
+import com.dan.esr.domain.repositories.filter.PedidoFiltro;
 import com.dan.esr.domain.services.pedido.PedidoService;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import jakarta.validation.Valid;
@@ -34,15 +35,16 @@ public class PedidoController {
     }
 
     @GetMapping
-    public List<PedidoResumoOutput> todos() {
-        List<Pedido> pedidos = this.pedidoService.todos();
+    @JsonView(PedidoView.Resumo.class)
+    public List<PedidoOutput> pesquisaComplexa(PedidoFiltro filtro) {
+        List<Pedido> pedidos = this.pedidoService.filtrarPor(filtro);
         return this.pedidoAssembler.toCollection(pedidos);
     }
 
     @GetMapping("/filtrados")
     public MappingJacksonValue todos(@RequestParam(required = false) String campos) {
         List<Pedido> pedidos = this.pedidoService.todos();
-        List<PedidoResumoOutput> pedidosModel = this.pedidoAssembler.toCollection(pedidos);
+        List<PedidoResumoOutput> pedidosModel = this.pedidoAssembler.toCollectionResumo(pedidos);
 
         MappingJacksonValue pedidoMapping = new MappingJacksonValue(pedidosModel);
         SimpleFilterProvider filterProvider = new SimpleFilterProvider();

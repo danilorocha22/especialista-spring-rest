@@ -1,16 +1,20 @@
 package com.dan.esr.domain.services.pedido;
 
 import com.dan.esr.core.util.LoggerHelper;
+import com.dan.esr.core.util.ValidacaoUtil;
 import com.dan.esr.domain.entities.*;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.pedido.PedidoNaoEncontrado;
 import com.dan.esr.domain.repositories.PedidoRepository;
+import com.dan.esr.domain.repositories.filter.PedidoFiltro;
 import com.dan.esr.domain.services.cidade.CidadeService;
 import com.dan.esr.domain.services.formaspagamento.FormaPagamentoService;
+import com.dan.esr.domain.services.produto.ProdutoService;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import com.dan.esr.domain.services.usuario.UsuarioConsultaService;
+import com.dan.esr.infrastructure.spec.PedidoSpecs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,7 @@ public class PedidoService {
     private final FormaPagamentoService formaPagamentoService;
     private final CidadeService cidadeService;
     private final UsuarioConsultaService usuarioConsulta;
+    private final ProdutoService produtoService;
     private final PedidoRepository pedidoRepository;
 
     public Pedido buscarPor(String codigoPedido) {
@@ -34,9 +39,19 @@ public class PedidoService {
                 .orElseThrow(() -> new PedidoNaoEncontrado(codigoPedido));
     }
 
-    public List<Pedido> todos() {
-        List<Pedido> pedidos = this.pedidoRepository.todos();
+    public List<Pedido> filtrarPor(PedidoFiltro pedidoFiltro) {
         try {
+            List<Pedido> pedidos = this.pedidoRepository.findAll(PedidoSpecs.filtrar(pedidoFiltro));
+            validarSeVazio(pedidos);
+            return pedidos;
+        } catch (EntidadeNaoEncontradaException ex) {
+            throw new NegocioException("Nenhum pedido encontrado.");
+        }
+    }
+
+    public List<Pedido> todos() {
+        try {
+            List<Pedido> pedidos = this.pedidoRepository.todos();
             validarSeVazio(pedidos);
             return pedidos;
         } catch (EntidadeNaoEncontradaException ex) {
@@ -81,7 +96,7 @@ public class PedidoService {
         pedido.getItensPedido().forEach(item -> {
             Long produtoId = item.getProduto().getId();
             Long restauranteId = pedido.getRestaurante().getId();
-            Produto produto = this.restauranteConsulta.buscarProduto(restauranteId, produtoId);
+            Produto produto = this.produtoService.buscarPor(restauranteId, produtoId);
             produto.validarDisponibilidade();
             item.setPedido(pedido);
             item.setProduto(produto);
