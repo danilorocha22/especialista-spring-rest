@@ -9,4 +9,6 @@ public interface RestauranteView {
     interface Aberto{}
 
     interface FormaPagamento{}
+
+    interface Pedido{}
 }

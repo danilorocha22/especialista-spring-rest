@@ -25,13 +25,17 @@ public class PedidoAssembler {
     }
 
     public PedidoResumoOutput toModelResumo(Pedido pedido) {
-        return this.mapper.map(
-                pedido,
-                PedidoResumoOutput.class
+        return this.mapper.map(pedido, PedidoResumoOutput.class
         );
     }
 
-    public List<PedidoResumoOutput> toCollection(List<Pedido> pedidos) {
+    public List<PedidoOutput> toCollection(List<Pedido> pedidos) {
+        return pedidos.stream()
+                .map(this::toModel)
+                .toList();
+    }
+
+    public List<PedidoResumoOutput> toCollectionResumo(List<Pedido> pedidos) {
         return pedidos.stream()
                 .map(this::toModelResumo)
                 .toList();
@@ -39,9 +43,5 @@ public class PedidoAssembler {
 
     public Pedido toDomain(PedidoInput pedidoInput) {
         return this.mapper.map(pedidoInput, Pedido.class);
-    }
-
-    public void copyToDomainObject(PedidoInput pedidoInput, Pedido pedido) {
-        this.mapper.map(pedidoInput, pedido);
     }
 }

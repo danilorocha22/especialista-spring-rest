@@ -93,7 +93,9 @@ public class Pedido implements Serializable {
             cascade = CascadeType.ALL)
     private List<ItemPedido> itensPedido = new ArrayList<>();
 
-    /*############################     MÉTODOS     ############################*/
+
+    /*########################################     MÉTODOS     ########################################*/
+
     public void calcularTaxaFrete() {
         if (isTaxaFreteValida()) {
             setTaxaFrete(this.restaurante.getTaxaFrete());

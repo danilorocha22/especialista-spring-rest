@@ -51,6 +51,4 @@ public class RestauranteSpecs {
     public static Specification<Restaurante> countByCozinhaId(Long cozinhaId) {
         return ((root, query, builder) -> builder.equal(root.join("cozinha").get("id"), cozinhaId));
     }
-
-
 }

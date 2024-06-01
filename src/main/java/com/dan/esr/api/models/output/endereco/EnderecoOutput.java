@@ -3,11 +3,9 @@ package com.dan.esr.api.models.output.endereco;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
-public class EnderecoOutput implements Serializable {
+public class EnderecoOutput {
     private String logradouro;
     private String numero;
     private String complemento;

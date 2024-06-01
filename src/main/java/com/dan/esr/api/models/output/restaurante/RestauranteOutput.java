@@ -15,12 +15,12 @@ import java.util.List;
 @Setter
 public class RestauranteOutput {
 
-    @JsonView({RestauranteView.Resumo.class, RestauranteView.Status.class,
+    @JsonView({RestauranteView.Resumo.class, RestauranteView.Status.class, RestauranteView.Pedido.class,
             RestauranteView.FormaPagamento.class, RestauranteView.Aberto.class})
     private Long id;
 
-    @JsonProperty("restaurante")
-    @JsonView({RestauranteView.Resumo.class, RestauranteView.Status.class,
+    //@JsonProperty("restaurante")
+    @JsonView({RestauranteView.Resumo.class, RestauranteView.Status.class, RestauranteView.Pedido.class,
             RestauranteView.FormaPagamento.class, RestauranteView.Aberto.class})
     private String nome;
 
