@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cozinhas")
-public class CadastroCozinhaController {
+public class CozinhaCadastroController {
     private final CozinhaCadastroService cozinhaCadastro;
     private final CozinhaConsultaService  cozinhaConsulta;
     private final CozinhaAssembler cozinhaAssembler;

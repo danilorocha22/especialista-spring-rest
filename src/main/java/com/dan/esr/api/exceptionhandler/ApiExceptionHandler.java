@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -41,7 +43,7 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final LoggerHelper logger = new LoggerHelper(ApiExceptionHandler.class);
+    //private static final LoggerHelper logger = new LoggerHelper(ApiExceptionHandler.class);
     private MessageSource messageSource;
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
@@ -54,7 +56,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(ex.getMessage())
                 .build();
 
-        logger.error("handleEntidadeNaoEncontradaException() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        //logger.error("handleEntidadeNaoEncontradaException() -> Erro: {}",ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -68,7 +70,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(ex.getMessage())
                 .build();
 
-        logger.error("handleEntidadeNaoPersistidaException() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        //logger.error("handleEntidadeNaoPersistidaException() -> Erro: {}",ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -82,7 +84,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(ex.getMessage())
                 .build();
 
-        logger.error("handleEntidadeEmUsoException() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        //logger.error("handleEntidadeEmUsoException() -> Erro: {}",ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -97,8 +99,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .objects(getProblemObjects(ex.getBindingResult().getAllErrors(), this.messageSource))
                 .build();*/
 
-        logger.error("handleValidacaoException() -> Erro: {}",ex.getLocalizedMessage(), ex);
-        return handleValidationInternal(ex, ex.getBindingResult(), new HttpHeaders(), BAD_REQUEST, req);
+        //logger.error("handleValidacaoException() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        return handleValidationInternal(ex, new HttpHeaders(), BAD_REQUEST, req, ex.getBindingResult());
     }
 
     @ExceptionHandler(PropriedadeIlegalException.class)
@@ -111,7 +113,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(ex.getMessage())
                 .build();
 
-        logger.error("handlePropriedadeIlegalException() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        //logger.error("handlePropriedadeIlegalException() -> Erro: {}",ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -125,7 +127,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(ex.getMessage())
                 .build();
 
-        logger.error("handleEntidadeExistenteException() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        //logger.error("handleEntidadeExistenteException() -> Erro: {}",ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -139,7 +141,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(ex.getMessage())
                 .build();
 
-        logger.error("handlePersistenciaException() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        //logger.error("handlePersistenciaException() -> Erro: {}",ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -154,7 +156,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(detail)
                 .build();
 
-        logger.error("handleIllegalArgumentException() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        //logger.error("handleIllegalArgumentException() -> Erro: {}",ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -165,7 +167,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(ex.getMessage())
                 .build();
 
-        logger.error("handleNegocioException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handleNegocioException() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -176,7 +178,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(MSG_ERRO_GENERICO_SERVIDOR)
                 .build();
 
-        logger.error("handlerException() -> Erro {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handlerException() -> Erro {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 
@@ -192,8 +194,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .objects(getProblemObjects(ex.getAllErrors(), this.messageSource))
                 .build();*/
 
-        logger.error("handleMethodArgumentNotValid() -> Erro: {}", ex.getLocalizedMessage(), ex);
-        return handleValidationInternal(ex, ex.getBindingResult(), headers, status, req);
+        //logger.error("handleMethodArgumentNotValid() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        return handleValidationInternal(ex, headers, status, req, ex.getBindingResult());
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleServletRequestBindingException(
+            @NonNull ServletRequestBindingException ex,
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status,
+            @NonNull WebRequest req
+    ) {
+        //logger.error("handleServletRequestBindingException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        return handleExceptionInternal(ex,ex.getBody(), headers, status, req);
     }
 
     @Override
@@ -208,7 +221,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(detail)
                 .build();
 
-        logger.error("handleNoHandlerFoundException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handleNoHandlerFoundException() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
@@ -223,7 +236,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             return handleMethodArgumentTypeMismatch(ex, headers, status, req);
         }
 
-        logger.error("handleTypeMismatch() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handleTypeMismatch() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return super.handleTypeMismatch(ex, headers, status, req);
     }
 
@@ -241,7 +254,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(MSG_ERRO_GENERICO_CLIENTE)
                 .build();
 
-        logger.error("handleMethodArgumentTypeMismatch() -> Erro: {}",ex.getLocalizedMessage(), ex);
+        //logger.error("handleMethodArgumentTypeMismatch() -> Erro: {}",ex.getLocalizedMessage(), ex);
 
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
@@ -293,7 +306,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(MSG_ERRO_GENERICO_CLIENTE)
                 .build();
 
-        logger.error("handleInvalidFormatException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handleInvalidFormatException() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
@@ -310,7 +323,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(detail)
                 .build();
 
-        logger.error("handleIgnoredPropertyException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handleIgnoredPropertyException() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
@@ -326,7 +339,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(detail)
                 .build();
 
-        logger.error("handleUnrecognizedPropertyException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handleUnrecognizedPropertyException() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
@@ -340,7 +353,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage("Caractere inesperado: %s.".formatted(ex.getChar()))
                 .build();
 
-        logger.error("handleWstxUnexpectedCharException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handleWstxUnexpectedCharException() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
@@ -357,7 +370,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(MSG_ERRO_GENERICO_CLIENTE)
                 .build();
 
-        logger.error("handleJsonParseException() -> Erro: {}", detail, ex);
+        //logger.error("handleJsonParseException() -> Erro: {}", detail, ex);
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
@@ -375,16 +388,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(MSG_ERRO_GENERICO_CLIENTE)
                 .build();
 
-        logger.error("handleMismatchedInputException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        //logger.error("handleMismatchedInputException() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, headers, status, req);
     }
 
     private ResponseEntity<Object> handleValidationInternal(
             @NonNull Exception ex,
-            @NonNull BindingResult bindingResult,
             @NonNull HttpHeaders headers,
             @NonNull HttpStatusCode status,
-            @NonNull WebRequest req
+            @NonNull WebRequest req,
+            @NonNull BindingResult bindingResult
     ) {
         Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, MSG_PROPRIEDADE_INVALIDA)
                 .userMessage(MSG_PROPRIEDADE_INVALIDA)
