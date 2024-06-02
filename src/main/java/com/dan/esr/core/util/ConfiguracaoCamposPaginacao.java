@@ -7,8 +7,8 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Map;
 
-public final class PaginacaoCamposOrdenados {
-    public PaginacaoCamposOrdenados() {
+public final class ConfiguracaoCamposPaginacao {
+    public ConfiguracaoCamposPaginacao() {
     }
 
     public static Pageable novaPaginacaoCamposConfigurados(Pageable pageable, Map<String, String> campos) {

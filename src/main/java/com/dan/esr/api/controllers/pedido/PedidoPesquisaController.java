@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-import static com.dan.esr.core.util.PaginacaoCamposOrdenados.novaPaginacaoCamposConfigurados;
+import static com.dan.esr.core.util.ConfiguracaoCamposPaginacao.novaPaginacaoCamposConfigurados;
 
 @RestController
 @RequiredArgsConstructor
