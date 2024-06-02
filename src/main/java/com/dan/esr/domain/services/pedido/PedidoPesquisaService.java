@@ -28,7 +28,7 @@ public class PedidoPesquisaService {
                 .orElseThrow(() -> new PedidoNaoEncontrado(codigoPedido));
     }
 
-    public Page<Pedido> filtrarPor(Pageable pageable, PedidoFiltro filtro) {
+    public Page<Pedido> filtrarPor(PedidoFiltro filtro, Pageable pageable) {
         try {
             Page<Pedido> pedidoPage = this.pedidoRepository.findAll(filtrarPedido(filtro), pageable);
             validarSeVazio(pedidoPage.getContent());

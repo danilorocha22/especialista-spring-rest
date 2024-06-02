@@ -30,17 +30,18 @@ public class PedidoPesquisaController {
 
     @GetMapping("/{codigoPedido}")
     public PedidoOutput pedido(@PathVariable String codigoPedido) {
-        Pedido pedido = this.pedidoPesquisaService.buscarPor(codigoPedido);
-        return this.pedidoAssembler.toModel(pedido);
+        return this.pedidoAssembler.toModel(
+                this.pedidoPesquisaService.buscarPor(codigoPedido)
+        );
     }
 
     @GetMapping
     @JsonView(PedidoView.Resumo.class)
     public Page<PedidoOutput> pesquisaComplexa(
-            @PageableDefault(size = 5) Pageable pageable,
-            PedidoFiltro filtro
+            PedidoFiltro filtro,
+            @PageableDefault(size = 5) Pageable pageable
     ) {
-        Page<Pedido> pedidoPage = this.pedidoPesquisaService.filtrarPor(pageable, filtro);
+        Page<Pedido> pedidoPage = this.pedidoPesquisaService.filtrarPor(filtro, pageable);
         List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidoPage.getContent());
         return new PageImpl<>(pedidosOutput, pageable, pedidoPage.getTotalElements());
     }

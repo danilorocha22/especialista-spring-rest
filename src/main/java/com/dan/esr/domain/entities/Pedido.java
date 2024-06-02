@@ -14,10 +14,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static com.dan.esr.domain.entities.enums.StatusPedido.*;
 
@@ -91,7 +88,7 @@ public class Pedido implements Serializable {
     @ToString.Exclude
     @OneToMany(mappedBy = "pedido",
             cascade = CascadeType.ALL)
-    private List<ItemPedido> itensPedido = new ArrayList<>();
+    private Set<ItemPedido> itensPedido = new HashSet<>();
 
 
     /*########################################     MÉTODOS     ########################################*/
