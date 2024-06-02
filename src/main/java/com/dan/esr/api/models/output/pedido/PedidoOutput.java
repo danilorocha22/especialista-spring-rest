@@ -57,6 +57,9 @@ public class PedidoOutput {
     @JsonView(PedidoView.Resumo.class)
     private UsuarioOutput usuario;
 
+    /*@JsonProperty("cliente")
+    private String nomeUsuario;*/
+
     @JsonProperty("enderecoEntrega")
     private EnderecoOutput endereco;
 

@@ -13,7 +13,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class ItemPedidoOutput {
     private Long produtoId;
-    private String produtoNome;
+    private String nomeProduto;
     private Integer quantidade;
     private BigDecimal precoUnitario;
     private BigDecimal precoTotal;
