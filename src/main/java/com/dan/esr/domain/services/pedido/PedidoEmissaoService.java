@@ -1,64 +1,29 @@
 package com.dan.esr.domain.services.pedido;
 
 import com.dan.esr.core.util.LoggerHelper;
-import com.dan.esr.core.util.ValidacaoUtil;
 import com.dan.esr.domain.entities.*;
-import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 import com.dan.esr.domain.exceptions.NegocioException;
-import com.dan.esr.domain.exceptions.pedido.PedidoNaoEncontrado;
 import com.dan.esr.domain.repositories.PedidoRepository;
-import com.dan.esr.domain.repositories.filter.PedidoFiltro;
 import com.dan.esr.domain.services.cidade.CidadeService;
 import com.dan.esr.domain.services.formaspagamento.FormaPagamentoService;
 import com.dan.esr.domain.services.produto.ProdutoService;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import com.dan.esr.domain.services.usuario.UsuarioConsultaService;
-import com.dan.esr.infrastructure.spec.PedidoSpecs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.dan.esr.core.util.ValidacaoUtil.validarSeVazio;
-
 @Service
 @RequiredArgsConstructor
-public class PedidoService {
-    private static final LoggerHelper logger = new LoggerHelper(PedidoService.class);
+public class PedidoEmissaoService {
+    private static final LoggerHelper logger = new LoggerHelper(PedidoEmissaoService.class);
     private final RestauranteConsultaService restauranteConsulta;
     private final FormaPagamentoService formaPagamentoService;
     private final CidadeService cidadeService;
     private final UsuarioConsultaService usuarioConsulta;
     private final ProdutoService produtoService;
     private final PedidoRepository pedidoRepository;
-
-    public Pedido buscarPor(String codigoPedido) {
-        return this.pedidoRepository.porCodigo(codigoPedido)
-                .orElseThrow(() -> new PedidoNaoEncontrado(codigoPedido));
-    }
-
-    public List<Pedido> filtrarPor(PedidoFiltro pedidoFiltro) {
-        try {
-            List<Pedido> pedidos = this.pedidoRepository.findAll(PedidoSpecs.filtrar(pedidoFiltro));
-            validarSeVazio(pedidos);
-            return pedidos;
-        } catch (EntidadeNaoEncontradaException ex) {
-            throw new NegocioException("Nenhum pedido encontrado.");
-        }
-    }
-
-    public List<Pedido> todos() {
-        try {
-            List<Pedido> pedidos = this.pedidoRepository.todos();
-            validarSeVazio(pedidos);
-            return pedidos;
-        } catch (EntidadeNaoEncontradaException ex) {
-            logger.error("todos() -> Erro: {}", ex.getLocalizedMessage(), ex);
-            throw new PedidoNaoEncontrado(ex.getMessage(), ex);
-        }
-    }
 
     @Transactional
     public Pedido emitir(Pedido pedido) {
@@ -103,23 +68,5 @@ public class PedidoService {
             item.definirPrecoUnitario();
             item.calcularValor();
         });
-    }
-
-    @Transactional
-    public Pedido confirmar(Pedido pedido) {
-        pedido.confirmar();
-        return pedido;
-    }
-
-    @Transactional
-    public Pedido entregar(Pedido pedido) {
-        pedido.entregar();
-        return pedido;
-    }
-
-    @Transactional
-    public Pedido cancelar(Pedido pedido) {
-        pedido.cancelar();
-        return pedido;
     }
 }
