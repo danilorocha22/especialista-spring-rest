@@ -11,15 +11,16 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+
+import static com.dan.esr.core.util.PaginacaoCamposOrdenados.novaPaginacaoCamposConfigurados;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +42,7 @@ public class PedidoPesquisaController {
             PedidoFiltro filtro,
             @PageableDefault(size = 5) Pageable pageable
     ) {
+        pageable = novaPaginacaoCamposConfigurados(pageable, camposMapeados());
         Page<Pedido> pedidoPage = this.pedidoPesquisaService.filtrarPor(filtro, pageable);
         List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidoPage.getContent());
         return new PageImpl<>(pedidosOutput, pageable, pedidoPage.getTotalElements());
@@ -62,5 +64,20 @@ public class PedidoPesquisaController {
         }
 
         return pedidoMapping;
+    }
+
+    private static Map<String, String> camposMapeados() {
+        return Map.of(
+                "codigo", "codigo",
+                "codigoPedido", "codigo",
+                "nomeProduto", "produto.nome",
+                "produtoNome", "produto.nome",
+                "restaurante.nome", "restaurante.nome",
+                "restauranteNome", "restaurante.nome",
+                "nomeRestaurante", "restaurante.nome",
+                "nomeCliente", "usuario.nome",
+                "cliente.nome", "usuario.nome",
+                "nomeUsuario", "usuario.nome"
+        );
     }
 }
