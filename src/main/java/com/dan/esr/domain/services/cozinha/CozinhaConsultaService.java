@@ -1,17 +1,18 @@
 package com.dan.esr.domain.services.cozinha;
 
 import com.dan.esr.domain.entities.Cozinha;
+import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.dan.esr.core.util.MensagensUtil.MSG_COZINHA_NAO_ENCONTRADA;
 import static com.dan.esr.core.util.MensagensUtil.MSG_COZINHA_NAO_ENCONTRADA_COM_NOME;
+import static com.dan.esr.core.util.ValidacaoUtil.validarSeVazio;
 
 @Service
 @RequiredArgsConstructor
@@ -43,24 +44,26 @@ public class CozinhaConsultaService {
     }
 
     public List<Cozinha> buscarTodasComNomeSemelhante(String nome) {
-        List<Cozinha> cozinhas = this.cozinhaRepository.comNomeSemelhante(nome);
-        validar(cozinhas);
-        return cozinhas;
+        try {
+            List<Cozinha> cozinhas = this.cozinhaRepository.comNomeSemelhante(nome);
+            validarSeVazio(cozinhas);
+            return cozinhas;
+        } catch (EntidadeNaoEncontradaException ex) {
+            throw new CozinhaNaoEncontradaException();
+        }
     }
 
-    public List<Cozinha> buscarTodos() {
-        List<Cozinha> cozinhas = this.cozinhaRepository.todos();
-        validar(cozinhas);
-        return cozinhas;
+    public List<Cozinha> todosPaginados(Pageable pageable) {
+        try {
+            List<Cozinha> cozinhas = this.cozinhaRepository.findAll(pageable).getContent();
+            validarSeVazio(cozinhas);
+            return cozinhas;
+        } catch (EntidadeNaoEncontradaException ex) {
+            throw new NegocioException("Nenhuma cozinha encontrada");
+        }
     }
 
     public boolean existePorNomeIgual(String nome) {
         return this.cozinhaRepository.existsByNomeIgnoreCase(nome);
-    }
-
-    private void validar(List<Cozinha> cozinhas) {
-        if (cozinhas.isEmpty()) {
-            throw new CozinhaNaoEncontradaException(MSG_COZINHA_NAO_ENCONTRADA);
-        }
     }
 }

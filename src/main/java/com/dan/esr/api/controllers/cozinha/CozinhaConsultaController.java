@@ -7,6 +7,10 @@ import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.services.cozinha.CozinhaConsultaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +24,7 @@ import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cozinhas")
-public class ConsultaCozinhaController {
+public class CozinhaConsultaController {
     private final CozinhaConsultaService cozinhaConsultaService;
     private final CozinhaAssembler cozinhaAssembler;
 
@@ -60,9 +64,11 @@ public class ConsultaCozinhaController {
     }
 
     @GetMapping
-    public List<CozinhaOutput> listar() {
-        List<Cozinha> cozinhas = this.cozinhaConsultaService.buscarTodos();
-        return this.cozinhaAssembler.toModelList(cozinhas);
+    public Page<CozinhaOutput> cozinhas(@PageableDefault(size = 5) Pageable pageable) {
+        List<CozinhaOutput> cozinhasOutput = this.cozinhaAssembler.toModelList(
+                this.cozinhaConsultaService.todosPaginados(pageable)
+        );
+        return new PageImpl<>(cozinhasOutput, pageable, cozinhasOutput.size());
     }
 
     @GetMapping("/existe")
@@ -72,8 +78,8 @@ public class ConsultaCozinhaController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    public CozinhasXML listarXml() {
-        List<Cozinha> cozinhas = this.cozinhaConsultaService.buscarTodos();
+    public CozinhasXML listarXml(Pageable pageable) {
+        List<Cozinha> cozinhas = this.cozinhaConsultaService.todosPaginados(pageable);
         if (cozinhas.isEmpty()) {
             throw new CozinhaNaoEncontradaException("Nenhuma cozinha encontrada");
         }
