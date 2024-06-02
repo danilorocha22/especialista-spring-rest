@@ -29,7 +29,7 @@ public class PedidoAssembler {
         );
     }
 
-    public List<PedidoOutput> toCollection(List<Pedido> pedidos) {
+    public List<PedidoOutput> toCollectionModel(List<Pedido> pedidos) {
         return pedidos.stream()
                 .map(this::toModel)
                 .toList();

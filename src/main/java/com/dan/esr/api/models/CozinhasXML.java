@@ -11,14 +11,13 @@ import lombok.Data;
 import java.util.List;
 
 //@JsonRootName("cozinhas")
-@JacksonXmlRootElement(localName = "cozinhas") //a anotação @JsonRootName("cozinhas") pode ser usada no lugar desta
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
+@JacksonXmlRootElement(localName = "cozinhas") //a anotação @JsonRootName("cozinhas") pode ser usada no lugar desta
 public class CozinhasXML {
 
-    @JacksonXmlElementWrapper(useWrapping = false) //esta anotação elimina a duplicata de nomes 'cozinhas' no xml
-    @JsonProperty("cozinha") //corrige o nome dos itens da lista no xml
     @NotNull
+    @JsonProperty("cozinha") //corrige o nome dos itens da lista no xml
+    @JacksonXmlElementWrapper(useWrapping = false) //esta anotação elimina a duplicata de nomes 'cozinhas' no xml
     private List<CozinhaOutput> cozinhas;
 }
-

@@ -6,6 +6,7 @@ import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.repositories.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -53,11 +54,11 @@ public class CozinhaConsultaService {
         }
     }
 
-    public List<Cozinha> todosPaginados(Pageable pageable) {
+    public Page<Cozinha> todosPaginados(Pageable pageable) {
         try {
-            List<Cozinha> cozinhas = this.cozinhaRepository.findAll(pageable).getContent();
-            validarSeVazio(cozinhas);
-            return cozinhas;
+            Page<Cozinha> cozinhaPage = this.cozinhaRepository.findAll(pageable);
+            validarSeVazio(cozinhaPage.getContent());
+            return cozinhaPage;
         } catch (EntidadeNaoEncontradaException ex) {
             throw new NegocioException("Nenhuma cozinha encontrada");
         }

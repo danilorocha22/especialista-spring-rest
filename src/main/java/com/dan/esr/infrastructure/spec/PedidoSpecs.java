@@ -14,9 +14,11 @@ import static java.util.Objects.nonNull;
 
 public class PedidoSpecs {
 
-    public static Specification<Pedido> filtrar(PedidoFiltro filtro) {
+    public static Specification<Pedido> filtrarPedido(PedidoFiltro filtro) {
         return (root, query, builder) -> {
-            configurarFetchs(root);
+            if (Pedido.class.equals(query.getResultType())) {
+                configurarFetchs(root);
+            }
             var predicates = new ArrayList<>(getPredicates(filtro, root, builder));
             return builder.and(predicates.toArray(new Predicate[0]));
         };
@@ -24,8 +26,8 @@ public class PedidoSpecs {
 
     private static void configurarFetchs(Root<Pedido> root) {
         root.fetch("usuario");
-        root.fetch("itensPedido");
         root.fetch("formaPagamento");
+        root.fetch("itensPedido").fetch("produto");
         root.fetch("endereco").fetch("cidade").fetch("estado");
         root.fetch("restaurante").fetch("produtos").fetch("restaurante")
                 .fetch("cozinha");

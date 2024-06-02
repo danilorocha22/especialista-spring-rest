@@ -11,6 +11,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +36,13 @@ public class PedidoPesquisaController {
 
     @GetMapping
     @JsonView(PedidoView.Resumo.class)
-    public List<PedidoOutput> pesquisaComplexa(PedidoFiltro filtro) {
-        List<Pedido> pedidos = this.pedidoPesquisaService.filtrarPor(filtro);
-        return this.pedidoAssembler.toCollection(pedidos);
+    public Page<PedidoOutput> pesquisaComplexa(
+            @PageableDefault(size = 5) Pageable pageable,
+            PedidoFiltro filtro
+    ) {
+        Page<Pedido> pedidoPage = this.pedidoPesquisaService.filtrarPor(pageable, filtro);
+        List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidoPage.getContent());
+        return new PageImpl<>(pedidosOutput, pageable, pedidoPage.getTotalElements());
     }
 
     @GetMapping("/filtrados")

@@ -4,7 +4,6 @@ import com.dan.esr.api.models.CozinhasXML;
 import com.dan.esr.api.models.output.cozinha.CozinhaOutput;
 import com.dan.esr.core.assemblers.CozinhaAssembler;
 import com.dan.esr.domain.entities.Cozinha;
-import com.dan.esr.domain.exceptions.cozinha.CozinhaNaoEncontradaException;
 import com.dan.esr.domain.services.cozinha.CozinhaConsultaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +23,7 @@ import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cozinhas")
-public class CozinhaConsultaController {
+public class CozinhaPesquisaController {
     private final CozinhaConsultaService cozinhaConsultaService;
     private final CozinhaAssembler cozinhaAssembler;
 
@@ -65,10 +64,9 @@ public class CozinhaConsultaController {
 
     @GetMapping
     public Page<CozinhaOutput> cozinhas(@PageableDefault(size = 5) Pageable pageable) {
-        List<CozinhaOutput> cozinhasOutput = this.cozinhaAssembler.toModelList(
-                this.cozinhaConsultaService.todosPaginados(pageable)
-        );
-        return new PageImpl<>(cozinhasOutput, pageable, cozinhasOutput.size());
+        Page<Cozinha> cozinhaPage = this.cozinhaConsultaService.todosPaginados(pageable);
+        List<CozinhaOutput> cozinhasOutput = this.cozinhaAssembler.toModelList(cozinhaPage.getContent());
+        return new PageImpl<>(cozinhasOutput, pageable, cozinhaPage.getTotalElements());
     }
 
     @GetMapping("/existe")
@@ -79,10 +77,8 @@ public class CozinhaConsultaController {
 
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
     public CozinhasXML listarXml(Pageable pageable) {
-        List<Cozinha> cozinhas = this.cozinhaConsultaService.todosPaginados(pageable);
-        if (cozinhas.isEmpty()) {
-            throw new CozinhaNaoEncontradaException("Nenhuma cozinha encontrada");
-        }
-        return new CozinhasXML(this.cozinhaAssembler.toModelList(cozinhas));
+        Page<Cozinha> cozinhaPage = this.cozinhaConsultaService.todosPaginados(pageable);
+        List<CozinhaOutput> cozinhasOutput = this.cozinhaAssembler.toModelList(cozinhaPage.getContent());
+        return new CozinhasXML(cozinhasOutput);
     }
 }

@@ -44,6 +44,7 @@ public class PedidoOutput {
     private RestauranteIdNomeOutput restaurante;
 
     @JsonProperty("formaPagamento")
+    @JsonView(PedidoView.Resumo.class)
     private String nomeFormaPagamento;
 
     @JsonProperty("cliente")
