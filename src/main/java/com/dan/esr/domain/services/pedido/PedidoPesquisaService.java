@@ -6,7 +6,7 @@ import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.pedido.PedidoNaoEncontrado;
 import com.dan.esr.domain.repositories.PedidoRepository;
-import com.dan.esr.domain.repositories.filter.PedidoFiltro;
+import com.dan.esr.domain.filter.PedidoFiltro;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.dan.esr.core.util.ValidacaoUtil.validarSeVazio;
-import static com.dan.esr.infrastructure.spec.PedidoSpecs.filtrarPedido;
+import static com.dan.esr.infrastructure.repositories.spec.PedidoSpecs.filtrarPedido;
 
 @Service
 @RequiredArgsConstructor

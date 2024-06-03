@@ -1,4 +1,4 @@
-package com.dan.esr.domain.repositories.filter;
+package com.dan.esr.domain.filter;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -5,7 +5,7 @@ import com.dan.esr.api.models.output.pedido.PedidoResumoOutput;
 import com.dan.esr.api.models.output.view.PedidoView;
 import com.dan.esr.core.assemblers.PedidoAssembler;
 import com.dan.esr.domain.entities.Pedido;
-import com.dan.esr.domain.repositories.filter.PedidoFiltro;
+import com.dan.esr.domain.filter.PedidoFiltro;
 import com.dan.esr.domain.services.pedido.PedidoPesquisaService;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;

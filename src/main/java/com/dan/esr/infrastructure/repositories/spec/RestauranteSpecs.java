@@ -1,4 +1,4 @@
-package com.dan.esr.infrastructure.spec;
+package com.dan.esr.infrastructure.repositories.spec;
 
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;

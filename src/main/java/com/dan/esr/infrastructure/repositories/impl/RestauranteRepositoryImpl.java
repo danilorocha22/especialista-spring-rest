@@ -1,16 +1,12 @@
 package com.dan.esr.infrastructure.repositories.impl;
 
-import com.dan.esr.api.models.output.produto.ProdutoOutput;
-import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
-import com.dan.esr.core.assemblers.ProdutoModelAssembler;
-import com.dan.esr.core.assemblers.RestauranteEntityAssembler;
 import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.entities.*;
 import com.dan.esr.domain.exceptions.PersistenciaException;
 import com.dan.esr.domain.exceptions.restaurante.RestauranteNaoEncontradoException;
 import com.dan.esr.domain.repositories.RestauranteQueries;
 import com.dan.esr.domain.repositories.RestauranteRepository;
-import com.dan.esr.infrastructure.spec.RestauranteSpecs;
+import com.dan.esr.infrastructure.repositories.spec.RestauranteSpecs;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -27,7 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.dan.esr.core.util.MensagensUtil.MSG_ERRO_BANCO_DE_DADOS;
-import static com.dan.esr.infrastructure.spec.RestauranteSpecs.*;
+import static com.dan.esr.infrastructure.repositories.spec.RestauranteSpecs.*;
 import static java.util.Comparator.comparing;
 
 @Repository

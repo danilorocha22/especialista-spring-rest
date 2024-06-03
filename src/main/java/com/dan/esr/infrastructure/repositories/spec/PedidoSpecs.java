@@ -1,7 +1,7 @@
-package com.dan.esr.infrastructure.spec;
+package com.dan.esr.infrastructure.repositories.spec;
 
 import com.dan.esr.domain.entities.Pedido;
-import com.dan.esr.domain.repositories.filter.PedidoFiltro;
+import com.dan.esr.domain.filter.PedidoFiltro;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -19,8 +19,8 @@ public class PedidoSpecs {
             if (Pedido.class.equals(query.getResultType())) {
                 configurarFetchs(root);
             }
-            var predicates = new ArrayList<>(getPredicates(filtro, root, builder));
-            return builder.and(predicates.toArray(new Predicate[0]));
+            var predicates = getPredicates(filtro, root, builder).toArray(new Predicate[0]);
+            return builder.and(predicates);
         };
     }
 
