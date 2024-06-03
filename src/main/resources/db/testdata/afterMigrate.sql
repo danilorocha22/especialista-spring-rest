@@ -99,17 +99,23 @@ insert into usuarios_grupos (usuario_id, grupo_id) values (1, 1), (1, 2), (2, 2)
 insert into restaurantes_usuarios_responsaveis (restaurante_id, usuario_id) values (1, 5), (3, 5);
 
 insert into pedidos (id, codigo, restaurante_id, usuario_id, formas_pagamento_id, endereco_id, status, data_criacao,
-                     sub_total, taxa_frete, valor_total)
-values (1, '953b3e39-a35a-4aa9-bfbb-474192f7b825', 1, 1, 1, 1, 'CRIADO', utc_timestamp, 298.90, 10, 308.90);
+                     data_confirmacao, data_entrega, sub_total, taxa_frete, valor_total)
+values (1, '953b3e39-a35a-4aa9-bfbb-474192f7b825', 1, 1, 1, 1, 'CRIADO', utc_timestamp, null, null, 298.90, 10, 308.90),
+       (2, '3b75fd6e-4a14-4721-8b19-b563c725302e', 4, 1, 2, 1, 'CRIADO', utc_timestamp, null, null, 79, 0, 79),
+       (3, 'f9981ca4-5a5e-4da3-af04-933861df3e55', 2, 1, 1, 1, 'CONFIRMADO', DATE_ADD(utc_timestamp(), INTERVAL 1 DAY), DATE_ADD(utc_timestamp(), INTERVAL 2 DAY), null, 298.90, 10, 308.90),
+       (4, 'd178b637-a785-4768-a3cb-aa1ce5a8cdab', 4, 1, 2, 1, 'CONFIRMADO', DATE_ADD(utc_timestamp(), INTERVAL 3 DAY), DATE_ADD(utc_timestamp(), INTERVAL 4 DAY), null, 79, 0, 79),
+       (5, 'b5741512-8fbc-47fa-9ac1-b530354fc0ff', 1, 1, 1, 1, 'ENTREGUE', DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), 110, 10, 120),
+       (6, '5c621c9a-ba61-4454-8631-8aabefe58dc2', 3, 2, 1, 1, 'ENTREGUE', DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 9 DAY), 174.4, 5, 179.4),
+       (7, '8d774bcf-b238-42f3-aef1-5fb388754d63', 4, 3, 2, 1, 'ENTREGUE',  DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 9 DAY), 87.2, 10, 97.2);
+
 
 insert into itens_pedido (id, pedido_id, produto_id, quantidade, preco_unit, valor_total, observacao)
 values (1, 1, 1, 1, 78.9, 78.9, null),
-       (2, 1, 2, 2, 110, 220, 'Menos picante, por favor');
-
-
-insert into pedidos (id, codigo, restaurante_id, usuario_id, formas_pagamento_id, endereco_id, status, data_criacao,
-                     sub_total, taxa_frete, valor_total)
-values (2, '3b75fd6e-4a14-4721-8b19-b563c725302e', 4, 1, 2, 1, 'CRIADO', utc_timestamp, 79, 0, 79);
-
-insert into itens_pedido (id, pedido_id, produto_id, quantidade, preco_unit, valor_total, observacao)
-values (3, 2, 6, 1, 79, 79, 'Ao ponto');
+       (2, 1, 2, 2, 110, 220, 'Menos picante, por favor'),
+       (3, 2, 1, 1, 78.9, 78.9, null),
+       (4, 2, 6, 1, 79, 79, 'Ao ponto'),
+       (5, 3, 6, 1, 79, 79, 'Ao ponto'),
+       (6, 3, 2, 2, 110, 220, 'Menos picante, por favor'),
+       (7, 5, 2, 1, 110, 110, null),
+       (8, 6, 3, 2, 87.2, 174.4, null),
+       (9, 7, 3, 1, 87.2, 87.2, null);
