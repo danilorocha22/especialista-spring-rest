@@ -2,7 +2,6 @@ package com.dan.esr.infrastructure.service;
 
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.entities.dto.VendaDiaria;
-import com.dan.esr.domain.entities.enums.StatusPedido;
 import com.dan.esr.domain.filter.VendaDiariaFiltro;
 import com.dan.esr.domain.services.VendaDiariaQueryService;
 import jakarta.persistence.EntityManager;
@@ -25,11 +24,11 @@ public class VendaDiariaQueryImpl implements VendaDiariaQueryService {
     private EntityManager entityManager;
 
     @Override
-    public List<VendaDiaria> consultarVendasDiaria(VendaDiariaFiltro filtro) {
+    public List<VendaDiaria> consultarVendasDiaria(VendaDiariaFiltro filtro, String timeOffset) {
         var builder = this.entityManager.getCriteriaBuilder();
         var query = builder.createQuery(VendaDiaria.class);
         var root = query.from(Pedido.class);
-        var dataCriacao = getFunctionDate(builder, root);
+        var dataCriacao = functionDataCriacao(builder, root, timeOffset);
         var selection = getConstruct(builder, dataCriacao, root);
         var predicates = getPredicates(builder, root, filtro).toArray(new Predicate[0]);
 
@@ -40,11 +39,29 @@ public class VendaDiariaQueryImpl implements VendaDiariaQueryService {
         return this.entityManager.createQuery(query).getResultList();
     }
 
-    private static Expression<LocalDate> getFunctionDate(CriteriaBuilder builder, Root<Pedido> root) {
+    private static Expression<LocalDate> functionDataCriacao(
+            CriteriaBuilder builder,
+            Root<Pedido> root,
+            String timeOffset
+    ) {
         return builder.function(
                 "date",
                 LocalDate.class,
-                root.get("dataCriacao")
+                functionConvertTzDataCriacao(builder, root, timeOffset)
+        );
+    }
+
+    private static Expression<LocalDate> functionConvertTzDataCriacao(
+            CriteriaBuilder builder,
+            Root<Pedido> root,
+            String timeOffset
+    ) {
+        return builder.function(
+                "convert_tz",
+                LocalDate.class,
+                root.get("dataCriacao"),
+                builder.literal("+00:00"),
+                builder.literal(timeOffset)
         );
     }
 
