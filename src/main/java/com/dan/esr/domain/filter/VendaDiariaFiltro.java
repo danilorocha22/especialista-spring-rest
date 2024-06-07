@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Date;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 

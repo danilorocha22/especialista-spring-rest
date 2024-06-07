@@ -174,7 +174,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handlerException(Exception ex, WebRequest req) {
         HttpStatusCode status = INTERNAL_SERVER_ERROR;
-        Problem problem = createProblemBuilder(ERRO_INTERNO_DO_SISTEMA, status, MSG_ERRO_GENERICO_SERVIDOR)
+        Problem problem = createProblemBuilder(ERRO_INTERNO_DO_SISTEMA, status, ex.getMessage())
                 .userMessage(MSG_ERRO_GENERICO_SERVIDOR)
                 .build();
 

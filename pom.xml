@@ -22,6 +22,10 @@
         <rest-assured.version>5.4.0</rest-assured.version>
         <specification-arg.version>3.1.0</specification-arg.version>
         <snake-yaml.version>2.2</snake-yaml.version>
+        <jasper-reports.version>6.21.3</jasper-reports.version>
+        <commons-beansutils.version>1.9.4</commons-beansutils.version>
+        <commons-digester.version>2.1</commons-digester.version>
+        <commons-collections4.version>4.5.0-M1</commons-collections4.version>
     </properties>
 
     <dependencies>
@@ -111,12 +115,71 @@
             <version>${model-mapper.version}</version>
         </dependency>
 
+        <!--Jasper Reports-->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>${jasper-reports.version}</version>
+            <!--<exclusions>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-digester</groupId>
+                    <artifactId>commons-digester</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>-->
+        </dependency>
+
+        <!--As libs commons-beanutils, commons-digester e commons-collections4 resolvem problema de
+        vulnerabilidades na lib jasperreports-->
+        <!--<dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beansutils.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
+
+       <!-- <dependency>
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+            <version>${commons-digester.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version> &lt;!&ndash; Verifique a versão mais recente disponível &ndash;&gt;
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
+        </dependency>-->
+
+        <!--Jasper Functions-->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-functions</artifactId>
+            <version>${jasper-reports.version}</version>
+        </dependency>
+
         <!--<dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
             <version>2.17.1</version>
         </dependency>-->
-
 
         <!--Testes da API-->
         <dependency>
@@ -152,5 +215,12 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
 
 </project>

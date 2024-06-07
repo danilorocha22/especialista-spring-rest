@@ -1,4 +1,4 @@
-package com.dan.esr.infrastructure.service;
+package com.dan.esr.infrastructure.services.queries;
 
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.entities.dto.VendaDiaria;

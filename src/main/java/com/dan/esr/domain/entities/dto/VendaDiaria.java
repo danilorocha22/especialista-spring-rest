@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class VendaDiaria {
-    private LocalDate data;
+    private LocalDate dataVenda;
     private Long quantidadeVendas;
     private BigDecimal valorTotal;
 }
