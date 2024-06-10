@@ -2,13 +2,11 @@ package com.dan.esr.core.mapper;
 
 import com.dan.esr.api.models.input.itempedido.ItemPedidoInput;
 import com.dan.esr.api.models.input.pedido.PedidoInput;
+import com.dan.esr.api.models.input.produto.FotoProdutoInput;
 import com.dan.esr.api.models.output.cidade.CidadeNomeOutput;
 import com.dan.esr.api.models.output.restaurante.RestauranteOutput;
 import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
-import com.dan.esr.domain.entities.Cidade;
-import com.dan.esr.domain.entities.ItemPedido;
-import com.dan.esr.domain.entities.Pedido;
-import com.dan.esr.domain.entities.Restaurante;
+import com.dan.esr.domain.entities.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +35,13 @@ public class ModelMapperConfig {
 
         mapper.createTypeMap(ItemPedidoInput.class, ItemPedido.class)
                 .addMappings(mapping -> mapping.skip(ItemPedido::setId));
+
+        mapper.createTypeMap(FotoProdutoInput.class, FotoProduto.class)
+                .addMappings(mapping -> {
+                    mapping.map(FotoProdutoInput::getNomeArquivo, FotoProduto::setNomeArquivo);
+                    mapping.map(FotoProdutoInput::getContentType, FotoProduto::setContentType);
+                    mapping.map(FotoProdutoInput::getTamanho, FotoProduto::setTamanho);
+                });
 
         return mapper;
     }
