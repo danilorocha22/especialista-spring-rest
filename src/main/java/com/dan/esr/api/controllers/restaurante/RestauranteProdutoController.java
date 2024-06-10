@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Set;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -81,21 +82,18 @@ public class RestauranteProdutoController {
     }
 
     @PutMapping(value = "/{produtoId}/foto", consumes = MULTIPART_FORM_DATA_VALUE)
-    public FotoProdutoOutput atualizarFoto(
+    public FotoProdutoOutput atualizarFotoProduto(
             @PathVariable Long restauranteId,
             @PathVariable Long produtoId,
             @Valid FotoProdutoInput fotoProdutoInput
-    ) {
-        if (this.albumProdutoService.existeFoto(produtoId)) {
-            this.albumProdutoService.removerFoto(produtoId);
-        }
+    ) throws IOException {
         FotoProduto foto = this.fotoProdutoAssembler.toDomain(fotoProdutoInput);
         foto.getProduto().setId(produtoId);
         foto.getProduto().setRestaurante(new Restaurante());
         foto.getProduto().getRestaurante().setId(restauranteId);
 
         return this.fotoProdutoAssembler.toModel(
-                this.albumProdutoService.salvarOuAtualizar(foto)
+                this.albumProdutoService.salvarOuAtualizar(foto, fotoProdutoInput.getInputStream())
         );
     }
 }
