@@ -7,10 +7,15 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Getter @Setter
+@Getter
+@Setter
 public class ProdutoInput {
-    @NotBlank private String nome;
-    @NotBlank private String descricao;
-    @NotNull private BigDecimal preco;
-    @NotNull private boolean ativo;
+    @NotBlank
+    private String nome, descricao;
+
+    @NotNull
+    private BigDecimal preco;
+
+    @NotNull
+    private boolean ativo;
 }

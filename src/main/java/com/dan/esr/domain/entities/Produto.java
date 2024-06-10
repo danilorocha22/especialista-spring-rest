@@ -35,7 +35,7 @@ public class Produto implements Serializable, IdentificavelParaAdicionarOuRemove
     @Column(nullable = false)
     private boolean ativo = true;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurante_id",
             foreignKey = @ForeignKey(name = "fk_produto_restaurante"),
             referencedColumnName = "id")
