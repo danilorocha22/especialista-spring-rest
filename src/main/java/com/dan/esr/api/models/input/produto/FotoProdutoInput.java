@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import static org.springframework.http.MediaType.*;
 
 @Getter
@@ -31,5 +34,9 @@ public class FotoProdutoInput {
 
     public Long getTamanho() {
         return this.arquivo.getSize();
+    }
+
+    public InputStream getInputStream() throws IOException {
+        return this.arquivo.getInputStream();
     }
 }
