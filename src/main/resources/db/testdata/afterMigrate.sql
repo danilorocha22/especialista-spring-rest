@@ -19,6 +19,7 @@ delete from usuarios where true;
 delete from usuarios_grupos where true;
 delete from pedidos where true;
 delete from itens_pedido where true;
+delete from album where true;
 
 ## Cria os registros novamente
 set foreign_key_checks = 1; # Habilita as chaves estrangeiras para poder criar os registros

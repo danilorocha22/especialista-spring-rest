@@ -1,12 +1,17 @@
 package com.dan.esr.api.controllers.restaurante;
 
+import com.dan.esr.api.models.input.produto.FotoProdutoInput;
 import com.dan.esr.api.models.input.produto.ProdutoInput;
+import com.dan.esr.api.models.output.produto.FotoProdutoOutput;
 import com.dan.esr.api.models.output.produto.ProdutoOutput;
 import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
+import com.dan.esr.core.assemblers.FotoProdutoAssembler;
 import com.dan.esr.core.assemblers.ProdutoAssembler;
 import com.dan.esr.core.assemblers.RestauranteModelAssembler;
+import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
+import com.dan.esr.domain.services.produto.AlbumProdutoService;
 import com.dan.esr.domain.services.produto.ProdutoService;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import jakarta.validation.Valid;
@@ -16,14 +21,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/restaurantes/{restauranteId}/produtos")
 public class RestauranteProdutoController {
     private final RestauranteConsultaService restauranteConsulta;
     private final ProdutoService produtoService;
+    private final AlbumProdutoService albumProdutoService;
     private final RestauranteModelAssembler restauranteModelAssembler;
     private final ProdutoAssembler produtoAssembler;
+    private final FotoProdutoAssembler fotoProdutoAssembler;
 
     @GetMapping("/{produtoId}")
     public ProdutoOutput produto(
@@ -69,5 +78,24 @@ public class RestauranteProdutoController {
         this.produtoAssembler.copyToDomain(produtoInput, produto);
         produto = this.produtoService.salvar(produto);
         return this.restauranteModelAssembler.toModelProdutos(produto.getRestaurante());
+    }
+
+    @PutMapping(value = "/{produtoId}/foto", consumes = MULTIPART_FORM_DATA_VALUE)
+    public FotoProdutoOutput atualizarFoto(
+            @PathVariable Long restauranteId,
+            @PathVariable Long produtoId,
+            @Valid FotoProdutoInput fotoProdutoInput
+    ) {
+        if (this.albumProdutoService.existeFoto(produtoId)) {
+            this.albumProdutoService.removerFoto(produtoId);
+        }
+        FotoProduto foto = this.fotoProdutoAssembler.toDomain(fotoProdutoInput);
+        foto.getProduto().setId(produtoId);
+        foto.getProduto().setRestaurante(new Restaurante());
+        foto.getProduto().getRestaurante().setId(restauranteId);
+
+        return this.fotoProdutoAssembler.toModel(
+                this.albumProdutoService.salvarOuAtualizar(foto)
+        );
     }
 }
