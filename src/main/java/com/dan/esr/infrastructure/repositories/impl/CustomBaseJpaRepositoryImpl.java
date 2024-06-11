@@ -48,7 +48,7 @@ public class CustomBaseJpaRepositoryImpl<T, ID>
     }*/
 
     @Override
-    public Optional<T> buscarPor(Long id) {
+    public Optional<T> com(Long id) {
         try {
             var jpql = "FROM %s WHERE id = :id".formatted(nomeEntidade());
             T entity = this.entityManager.createQuery(jpql, getDomainClass())

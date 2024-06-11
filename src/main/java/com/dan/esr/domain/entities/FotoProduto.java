@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "album", schema = "dan_food")
 @EqualsAndHashCode(of = "id")
@@ -29,4 +31,8 @@ public class FotoProduto implements Serializable {
     @MapsId // configura para que a propriedade produto seja mapeada por produto_id
     @OneToOne(fetch = FetchType.LAZY)
     private Produto produto;
+
+    public Restaurante getRestaurante() {
+        return this.produto.getRestaurante();
+    }
 }

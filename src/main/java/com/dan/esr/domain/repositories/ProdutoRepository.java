@@ -1,5 +1,6 @@
 package com.dan.esr.domain.repositories;
 
+import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,8 @@ public interface ProdutoRepository extends
     //Set<Produto> todosPor(@Param("ativo") boolean ativo, Restaurante restaurante);
     @Query("from Produto p where (:ativo IS NULL OR p.ativo = :ativo) and p.restaurante = :restaurante")
     Set<Produto> todosPor(@Param("ativo") Boolean ativo, @Param("restaurante") Restaurante restaurante);
+
+    @Query("select fp from FotoProduto fp join fp.produto p where p.restaurante.id = :restauranteId and " +
+            "fp.produto.id = :produtoId")
+    Optional<FotoProduto> findFotoBy(Long restauranteId, Long produtoId);
 }

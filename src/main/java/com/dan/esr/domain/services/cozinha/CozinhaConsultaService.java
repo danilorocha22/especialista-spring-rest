@@ -21,7 +21,7 @@ public class CozinhaConsultaService {
     private final CozinhaRepository cozinhaRepository;
 
     public Cozinha buscarPor(Long id) {
-        return this.cozinhaRepository.buscarPor(id)
+        return this.cozinhaRepository.com(id)
                 .orElseThrow(() -> new CozinhaNaoEncontradaException(id));
     }
 

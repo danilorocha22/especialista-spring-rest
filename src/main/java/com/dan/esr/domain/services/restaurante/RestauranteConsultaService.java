@@ -21,7 +21,7 @@ public class RestauranteConsultaService {
 
     public Restaurante buscarPor(Long id) {
         try {
-            return this.restauranteRepository.buscarPor(id)
+            return this.restauranteRepository.com(id)
                     .orElseThrow();
         } catch (EntidadeNaoEncontradaException ex) {
             throw new RestauranteNaoEncontradoException(id);

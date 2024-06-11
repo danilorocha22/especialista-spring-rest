@@ -18,7 +18,7 @@ public class FormaPagamentoService {
     private final FormasPagamentoRepository formasPagamentoRepository;
 
     public FormaPagamento buscarPor(Long id) {
-        return formasPagamentoRepository.buscarPor(id)
+        return formasPagamentoRepository.com(id)
                 .orElseThrow(() -> new FormaPagamentoNaoEncontradoException(id));
     }
 

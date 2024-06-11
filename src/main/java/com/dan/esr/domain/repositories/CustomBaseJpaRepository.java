@@ -19,7 +19,7 @@ public interface CustomBaseJpaRepository<T, ID> extends JpaRepository<T, ID> {
     //void remover(T t);
 
     /*****************   CONSULTAS   ****************/
-    Optional<T> buscarPor(Long id);
+    Optional<T> com(Long id);
 
     Optional<T> comNomeIgual(String nome);
     

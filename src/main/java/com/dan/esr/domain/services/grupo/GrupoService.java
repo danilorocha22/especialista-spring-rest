@@ -21,7 +21,7 @@ public class GrupoService {
     private final PermissaoService permissaoService;
 
     public Grupo buscarPor(Long id) {
-        return grupoRepository.buscarPor(id)
+        return grupoRepository.com(id)
                 .orElseThrow(() -> new GrupoNaoEncontradoException(id));
     }
 

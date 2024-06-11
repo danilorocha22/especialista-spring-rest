@@ -18,7 +18,7 @@ public class PermissaoService {
     private final PermissaoRepository permissaoRepository;
 
     public Permissao buscarPor(Long id) {
-        return permissaoRepository.buscarPor(id)
+        return permissaoRepository.com(id)
                 .orElseThrow(() -> new PermissaoNaoEncontradoException(id));
     }
 

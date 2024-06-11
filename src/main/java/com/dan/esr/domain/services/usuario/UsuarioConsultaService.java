@@ -14,7 +14,7 @@ public class UsuarioConsultaService {
     private final UsuarioRepository usuarioRepository;
 
     public Usuario buscarPor(Long id) {
-        return usuarioRepository.buscarPor(id)
+        return usuarioRepository.com(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(id));
     }
 
