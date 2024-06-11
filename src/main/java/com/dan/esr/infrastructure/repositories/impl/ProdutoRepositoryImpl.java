@@ -32,14 +32,21 @@ public class ProdutoRepositoryImpl implements ProdutoQueries {
         }
     }
 
+    @Override
+    public Optional<FotoProduto> findFotoBy(Long fotoId) {
+        FotoProduto fotoProduto = this.entityManager.find(FotoProduto.class, fotoId);
+        return Optional.ofNullable(fotoProduto);
+    }
+
     @Transactional
     @Override
-    public void removerFoto(Long fotoId) {
-        var criteria = this.entityManager.getCriteriaBuilder();
+    public void removerFoto(FotoProduto foto) {
+        this.entityManager.remove(foto);
+        /*var criteria = this.entityManager.getCriteriaBuilder();
         var delete = criteria.createCriteriaDelete(FotoProduto.class);
         var root = delete.from(FotoProduto.class);
         delete.where(criteria.equal(root.get("id"), fotoId));
-        this.entityManager.createQuery(delete).executeUpdate();
+        this.entityManager.createQuery(delete).executeUpdate();*/
     }
 
     @Override

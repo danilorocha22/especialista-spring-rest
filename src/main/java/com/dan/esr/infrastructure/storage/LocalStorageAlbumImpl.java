@@ -30,6 +30,19 @@ public class LocalStorageAlbumImpl implements LocalStorageAlbumService {
         }
     }
 
+    @Override
+    public void excluir(String nomeArquivo) {
+        try {
+            Path caminhoArquivo = getArquivoPath(nomeArquivo);
+            Files.deleteIfExists(caminhoArquivo);
+        } catch (Exception ex) {
+            logger.error("excluir(String nomeArquivo) -> Erro: {}", ex.getLocalizedMessage(), ex);
+
+            throw new StorageException("Ocorreu um erro ao tentar excluir o arquivo %s do disco."
+                    .formatted(nomeArquivo), ex);
+        }
+    }
+
     private Path getArquivoPath(String nomeArquivo) {
         return diretorioFotos.resolve(Path.of(nomeArquivo));
     }

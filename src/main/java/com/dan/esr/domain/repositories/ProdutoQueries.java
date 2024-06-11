@@ -7,6 +7,7 @@ import java.util.Optional;
 public interface ProdutoQueries {
 
     Optional<FotoProduto> salvarOuAtualizar(FotoProduto foto);
-    void removerFoto(Long fotoId);
+    Optional<FotoProduto> findFotoBy(Long fotoId);
+    void removerFoto(FotoProduto foto);
     boolean existeFoto(Long fotoId);
 }

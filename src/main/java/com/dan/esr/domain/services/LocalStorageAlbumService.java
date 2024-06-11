@@ -6,12 +6,23 @@ import lombok.Getter;
 import java.io.InputStream;
 import java.util.UUID;
 
+import static java.util.Objects.nonNull;
+
 public interface LocalStorageAlbumService {
 
     void armazenar(NovaFoto novaFoto);
+    void excluir(String nomeArquivo);
 
     default String gerarNomeArquivo(String nomeOriginal) {
         return UUID.randomUUID() + "_" + nomeOriginal;
+    }
+
+    default void substituir(String nomeArquivoExistente, NovaFoto novaFoto) {
+        this.armazenar(novaFoto);
+
+        if (nonNull(nomeArquivoExistente)) {
+            this.excluir(nomeArquivoExistente);
+        }
     }
 
     @Getter
