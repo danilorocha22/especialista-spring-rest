@@ -6,7 +6,6 @@ import com.dan.esr.domain.services.VendaDiariaQueryService;
 import com.dan.esr.domain.services.VendaDiariaReportsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,10 +38,9 @@ public class EstatisticasController {
             @RequestParam(required = false, defaultValue = "+00:00") String timeOffset
     ) {
         byte[] bytesPdf = this.reportsService.emitirRelatorioVendasDiaria(filtro, timeOffset);
-        var headers = getHeaders();
         return ResponseEntity.ok()
                 .contentType(APPLICATION_PDF)
-                .headers(headers)
+                .headers(getHeaders())
                 .body(bytesPdf);
     }
 

@@ -11,10 +11,9 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-@ToString
 @Entity
-@Table(name = "album", schema = "dan_food")
 @EqualsAndHashCode(of = "id")
+@Table(name = "album", schema = "dan_food")
 public class FotoProduto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
