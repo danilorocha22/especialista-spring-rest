@@ -2,6 +2,7 @@ package com.dan.esr.domain.services.produto;
 
 import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Produto;
+import com.dan.esr.domain.exceptions.produto.FotoProdutoNaoEncontradaException;
 import com.dan.esr.domain.repositories.ProdutoRepository;
 import com.dan.esr.domain.services.LocalStorageAlbumService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class AlbumProdutoService {
 
     public FotoProduto buscarPor(Long restauranteId, Long produtoId) {
         return this.produtoRepository.findFotoBy(restauranteId, produtoId)
-                .orElse(null);
+                .orElseThrow(() -> new FotoProdutoNaoEncontradaException(restauranteId, produtoId));
     }
 
     public FotoProduto buscarPor(Long produtoId) {
@@ -30,9 +31,14 @@ public class AlbumProdutoService {
                 .orElse(null);
     }
 
+    public InputStream baixarFoto(Long restauranteId, Long produtoId) {
+        FotoProduto fotoProduto = this.buscarPor(restauranteId, produtoId);
+        return this.localStorageService.baixar(fotoProduto.getNomeArquivo());
+    }
+
     @Transactional
     public FotoProduto salvarOuAtualizar(FotoProduto foto, InputStream inputStream) {
-        FotoProduto fotoProduto = this.buscarPor(foto.getRestaurante().getId(), foto.getProduto().getId());
+        FotoProduto fotoProduto = this.buscarPor(foto.getProduto().getId());
         String nomeArquivoExistente = null;
 
         if (nonNull(fotoProduto)) {
@@ -51,21 +57,19 @@ public class AlbumProdutoService {
         return novaFoto;
     }
 
-    public void armazenarFoto(FotoProduto foto, InputStream inputStream, String nomeArquivoExistente) {
+    private void validarFotoProduto(FotoProduto foto) {
+        Produto produto = this.produtoService.buscarPor(foto.getRestaurante().getId(), foto.getProduto().getId());
+        String novoNome = this.localStorageService.gerarNovoNomeArquivo(foto.getNomeArquivo());
+        foto.setProduto(produto);
+        foto.setNomeArquivo(novoNome);
+    }
+
+    private void armazenarFoto(FotoProduto foto, InputStream inputStream, String nomeArquivoExistente) {
         NovaFoto novaFoto = NovaFoto.builder()
                 .nomeArquivo(foto.getNomeArquivo())
                 .inputStream(inputStream)
                 .build();
         this.localStorageService.substituir(nomeArquivoExistente, novaFoto);
-    }
-
-    private void validarFotoProduto(FotoProduto foto) {
-        Long produtoId = foto.getProduto().getId();
-        Long restauranteId = foto.getProduto().getRestaurante().getId();
-        Produto produto = this.produtoService.buscarPor(restauranteId, produtoId);
-        String novoNome = this.localStorageService.gerarNomeArquivo(foto.getNomeArquivo());
-        foto.setProduto(produto);
-        foto.setNomeArquivo(novoNome);
     }
 
     @Transactional

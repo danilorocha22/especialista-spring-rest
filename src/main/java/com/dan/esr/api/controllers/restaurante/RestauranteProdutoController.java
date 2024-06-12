@@ -11,18 +11,22 @@ import com.dan.esr.core.assemblers.RestauranteModelAssembler;
 import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
+import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.services.produto.AlbumProdutoService;
 import com.dan.esr.domain.services.produto.ProdutoService;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,6 +57,29 @@ public class RestauranteProdutoController {
         Set<Produto> produtos = this.produtoService.buscarTodosPor(ativos, restaurante);
         restaurante.setProdutos(produtos);
         return this.restauranteModelAssembler.toModelProdutos(restaurante);
+    }
+
+    @GetMapping(path = "/{produtoId}/foto", produces = APPLICATION_JSON_VALUE)
+    public FotoProdutoOutput buscarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
+        return this.fotoProdutoAssembler.toModel(
+                this.albumProdutoService.buscarPor(restauranteId, produtoId)
+        );
+    }
+
+    @GetMapping(path = "/{produtoId}/foto", produces = {IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE})
+    public ResponseEntity<InputStreamResource> baixarFotoProduto(
+            @PathVariable Long restauranteId,
+            @PathVariable Long produtoId
+    ) {
+        try {
+            InputStream inputStream = this.albumProdutoService.baixarFoto(restauranteId, produtoId);
+            return ResponseEntity.ok()
+                    .contentType(IMAGE_JPEG)
+                    .contentType(IMAGE_PNG)
+                    .body(new InputStreamResource(inputStream));
+        } catch (EntidadeNaoEncontradaException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping

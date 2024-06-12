@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @Service
 public class LocalStorageAlbumImpl implements LocalStorageAlbumService {
@@ -33,6 +35,7 @@ public class LocalStorageAlbumImpl implements LocalStorageAlbumService {
     @Override
     public void excluir(String nomeArquivo) {
         try {
+            Objects.requireNonNull(nomeArquivo, "Nome do arquivo da foto é obrigatório");
             Path caminhoArquivo = getArquivoPath(nomeArquivo);
             Files.deleteIfExists(caminhoArquivo);
         } catch (Exception ex) {
@@ -40,6 +43,20 @@ public class LocalStorageAlbumImpl implements LocalStorageAlbumService {
 
             throw new StorageException("Ocorreu um erro ao tentar excluir o arquivo %s do disco."
                     .formatted(nomeArquivo), ex);
+        }
+    }
+
+    @Override
+    public InputStream baixar(String nomeArquivo) {
+        try {
+            Objects.requireNonNull(nomeArquivo, "Nome do arquivo da foto é obrigatório");
+            Path caminhoArquivo = getArquivoPath(nomeArquivo);
+            return Files.newInputStream(caminhoArquivo);
+        } catch (Exception ex) {
+            logger.error("baixar(String nomeArquivo) -> Erro: {}", ex.getLocalizedMessage(), ex);
+
+            throw new StorageException("Ocorreu um erro ao tentar baixar o arquivo %s."
+                    .formatted(nomeArquivo),ex);
         }
     }
 
