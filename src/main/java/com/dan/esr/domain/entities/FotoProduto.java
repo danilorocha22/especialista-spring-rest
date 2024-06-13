@@ -4,10 +4,14 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+import org.springframework.http.MediaType;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
+
+import static org.springframework.http.MediaType.*;
 
 @Getter
 @Setter
@@ -33,5 +37,18 @@ public class FotoProduto implements Serializable {
 
     public Restaurante getRestaurante() {
         return this.produto.getRestaurante();
+    }
+
+    public void validarMediaType(String acceptHeader) throws HttpMediaTypeNotAcceptableException {
+        MediaType mediaTypeFoto = parseMediaType(this.getContentType());
+        List<MediaType> mediaTypesRequeridas = parseMediaTypes(acceptHeader);
+        if (!isMediasTypeCompativeis(mediaTypeFoto, mediaTypesRequeridas)) {
+            throw new HttpMediaTypeNotAcceptableException(List.of(mediaTypeFoto));
+        }
+    }
+
+    private boolean isMediasTypeCompativeis(MediaType mediaTypeFoto, List<MediaType> mediaTypesRequeridas) {
+        return mediaTypesRequeridas.stream()
+                .anyMatch(mediaType -> mediaType.isCompatibleWith(mediaTypeFoto));
     }
 }
