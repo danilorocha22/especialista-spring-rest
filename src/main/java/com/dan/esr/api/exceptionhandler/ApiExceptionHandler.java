@@ -1,7 +1,6 @@
 package com.dan.esr.api.exceptionhandler;
 
 import com.ctc.wstx.exc.WstxUnexpectedCharException;
-import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.exceptions.*;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -9,18 +8,17 @@ import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -183,6 +181,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(
+            @NonNull HttpMediaTypeNotAcceptableException ex,
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status,
+            @NonNull WebRequest request
+    ) {
+        return ResponseEntity.status(status).headers(headers).build();
+    }
+
+    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             @NonNull MethodArgumentNotValidException ex,
             @NonNull HttpHeaders headers,
@@ -206,7 +214,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             @NonNull WebRequest req
     ) {
         //logger.error("handleServletRequestBindingException() -> Erro: {}", ex.getLocalizedMessage(), ex);
-        return handleExceptionInternal(ex,ex.getBody(), headers, status, req);
+        return handleExceptionInternal(ex, ex.getBody(), headers, status, req);
     }
 
     @Override
