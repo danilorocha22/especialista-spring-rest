@@ -14,7 +14,7 @@ public interface LocalStorageAlbumService {
     void excluir(String nomeArquivo);
     InputStream baixar(String nomeArquivo);
 
-    default String gerarNovoNomeArquivo(String nomeOriginal) {
+    default String gerarNovoNomeFoto(String nomeOriginal) {
         return UUID.randomUUID() + "_" + nomeOriginal;
     }
 

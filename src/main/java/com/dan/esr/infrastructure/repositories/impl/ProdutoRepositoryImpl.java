@@ -32,12 +32,6 @@ public class ProdutoRepositoryImpl implements ProdutoQueries {
         }
     }
 
-    @Override
-    public Optional<FotoProduto> findFotoBy(Long fotoId) {
-        FotoProduto fotoProduto = this.entityManager.find(FotoProduto.class, fotoId);
-        return Optional.ofNullable(fotoProduto);
-    }
-
     @Transactional
     @Override
     public void removerFoto(FotoProduto foto) {

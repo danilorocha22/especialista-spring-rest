@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.InputStream;
 
 import static com.dan.esr.domain.services.LocalStorageAlbumService.NovaFoto;
-import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -26,55 +25,40 @@ public class AlbumProdutoService {
                 .orElseThrow(() -> new FotoProdutoNaoEncontradaException(restauranteId, produtoId));
     }
 
-    public FotoProduto buscarPor(Long produtoId) {
-        return this.produtoRepository.findFotoBy(produtoId)
-                .orElse(null);
-    }
-
-    public InputStream baixarFoto(Long restauranteId, Long produtoId) {
-        FotoProduto fotoProduto = this.buscarPor(restauranteId, produtoId);
-        return this.localStorageService.baixar(fotoProduto.getNomeArquivo());
-    }
-
     @Transactional
     public FotoProduto salvarOuAtualizar(FotoProduto foto, InputStream inputStream) {
-        FotoProduto fotoProduto = this.buscarPor(foto.getProduto().getId());
-        String nomeArquivoExistente = null;
-
-        if (nonNull(fotoProduto)) {
-            nomeArquivoExistente = fotoProduto.getNomeArquivo();
-            this.removerFoto(fotoProduto);
-        }
+        this.produtoRepository.findFotoBy(foto.getRestaurante().getId(), foto.getProduto().getId())
+                .ifPresent(this::removerFoto);
 
         validarFotoProduto(foto);
         FotoProduto novaFoto = this.produtoRepository.salvarOuAtualizar(foto)
-                .orElseThrow(() ->
-                        new RuntimeException("Ocorreu um erro ao tentar salvar a foto do produto %s: "
-                                .formatted(foto.getDescricao())));
+                .orElseThrow(() -> new RuntimeException("Ocorreu um erro ao tentar salvar a foto do produto %s: "
+                        .formatted(foto.getDescricao())));
 
         this.produtoRepository.flush();
-        this.armazenarFoto(novaFoto, inputStream, nomeArquivoExistente);
+        this.armazenarFoto(novaFoto, inputStream);
         return novaFoto;
     }
 
     private void validarFotoProduto(FotoProduto foto) {
         Produto produto = this.produtoService.buscarPor(foto.getRestaurante().getId(), foto.getProduto().getId());
-        String novoNome = this.localStorageService.gerarNovoNomeArquivo(foto.getNomeArquivo());
+        String novoNome = this.localStorageService.gerarNovoNomeFoto(foto.getNomeArquivo());
         foto.setProduto(produto);
         foto.setNomeArquivo(novoNome);
     }
 
-    private void armazenarFoto(FotoProduto foto, InputStream inputStream, String nomeArquivoExistente) {
+    private void armazenarFoto(FotoProduto foto, InputStream inputStream) {
         NovaFoto novaFoto = NovaFoto.builder()
                 .nomeArquivo(foto.getNomeArquivo())
                 .inputStream(inputStream)
                 .build();
-        this.localStorageService.substituir(nomeArquivoExistente, novaFoto);
+        this.localStorageService.armazenar(novaFoto);
     }
 
     @Transactional
     public void removerFoto(FotoProduto foto) {
         this.produtoRepository.removerFoto(foto);
+        this.localStorageService.excluir(foto.getNomeArquivo());
     }
 
     public boolean existeFoto(Long fotoId) {
