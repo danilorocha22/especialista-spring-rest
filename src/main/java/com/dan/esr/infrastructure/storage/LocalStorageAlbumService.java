@@ -6,7 +6,6 @@ import com.dan.esr.domain.services.StorageAlbumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -49,11 +48,14 @@ public class LocalStorageAlbumService implements StorageAlbumService {
     }
 
     @Override
-    public InputStream baixar(String nomeArquivo) {
+    public FotoRecuperada baixar(String nomeArquivo) {
         try {
             Objects.requireNonNull(nomeArquivo, "Nome do arquivo da foto é obrigatório");
             Path caminhoArquivo = getArquivoPath(nomeArquivo);
-            return Files.newInputStream(caminhoArquivo);
+
+            return FotoRecuperada.builder()
+                    .inputStream(Files.newInputStream(caminhoArquivo))
+                    .build();
         } catch (Exception ex) {
             logger.error("baixar(String nomeArquivo) -> Erro: {}", ex.getLocalizedMessage(), ex);
 
