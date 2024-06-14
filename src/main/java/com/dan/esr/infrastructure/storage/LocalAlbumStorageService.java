@@ -3,7 +3,8 @@ package com.dan.esr.infrastructure.storage;
 import com.dan.esr.core.storage.StorageProperties;
 import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.services.StorageAlbumService;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 
 import java.nio.file.Files;
@@ -11,10 +12,11 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 //@Service
-@RequiredArgsConstructor
-public class LocalStorageAlbumService implements StorageAlbumService {
-    private static final LoggerHelper logger = new LoggerHelper(LocalStorageAlbumService.class);
-    private final StorageProperties storageProperties;
+public class LocalAlbumStorageService implements StorageAlbumService {
+    private static final LoggerHelper logger = new LoggerHelper(LocalAlbumStorageService.class);
+
+    @Autowired
+    private StorageProperties storageProperties;
 
     /*@Value("${danfood.storage.local.diretorio-fotos}")
     private Path diretorioFotos;*/

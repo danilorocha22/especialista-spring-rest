@@ -7,19 +7,24 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dan.esr.core.storage.StorageProperties;
 import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.services.StorageAlbumService;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
 
 import static com.amazonaws.services.s3.model.CannedAccessControlList.PublicRead;
 
-@Service
-@RequiredArgsConstructor
-public class S3StorageAlbumService implements StorageAlbumService {
-    private static final LoggerHelper logger = new LoggerHelper(LocalStorageAlbumService.class);
-    private final AmazonS3 amazonS3;
-    private final StorageProperties storageProperties;
+//@Service
+public class S3AlbumStorageService implements StorageAlbumService {
+    private static final LoggerHelper logger = new LoggerHelper(LocalAlbumStorageService.class);
+
+    @Autowired
+    private AmazonS3 amazonS3;
+
+    @Autowired
+    private StorageProperties storageProperties;
 
     @Override
     public void armazenar(NovaFoto novaFoto) {
