@@ -7,6 +7,7 @@ import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.services.StorageAlbumService;
+import com.dan.esr.domain.services.StorageAlbumService.FotoRecuperada;
 import com.dan.esr.domain.services.produto.AlbumProdutoService;
 import com.dan.esr.infrastructure.storage.StorageException;
 import jakarta.validation.Valid;
@@ -18,8 +19,10 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 
+import static org.springframework.http.HttpHeaders.LOCATION;
+import static org.springframework.http.HttpStatus.FOUND;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.*;
 
 @RestController
@@ -38,7 +41,7 @@ public class RestauranteFotoProdutoController {
     }
 
     @GetMapping
-    public ResponseEntity<InputStreamResource> baixarFoto(
+    public ResponseEntity<?> baixarFoto(
             @PathVariable Long restauranteId,
             @PathVariable Long produtoId,
             @RequestHeader(name = "accept") String acceptHeader
@@ -55,15 +58,27 @@ public class RestauranteFotoProdutoController {
         }
     }
 
-    private ResponseEntity<InputStreamResource> baixar(Long restauranteId, Long produtoId, String acceptHeader)
+    private ResponseEntity<?> baixar(Long restauranteId, Long produtoId, String acceptHeader)
             throws HttpMediaTypeNotAcceptableException {
         FotoProduto fotoProduto = this.albumProdutoService.buscarPor(restauranteId, produtoId);
         fotoProduto.validarMediaType(acceptHeader);
-        InputStream inputStream = this.localStorageService.baixar(fotoProduto.getNomeArquivo());
+        FotoRecuperada fotoRecuperada = this.localStorageService.baixar(fotoProduto.getNomeArquivo());
 
-        return ResponseEntity.ok()
-                .contentType(parseMediaType(fotoProduto.getContentType()))
-                .body(new InputStreamResource(inputStream));
+        return getResponseEntity(fotoRecuperada, fotoProduto);
+    }
+
+    private static ResponseEntity<?> getResponseEntity(FotoRecuperada fotoRecuperada, FotoProduto fotoProduto) {
+        if (fotoRecuperada.temUrl()) {
+            return ResponseEntity
+                    .status(FOUND)
+                    .header(LOCATION, fotoRecuperada.getUrl())
+                    .build();
+        } else {
+            return ResponseEntity
+                    .status(OK)
+                    .contentType(valueOf(fotoProduto.getContentType()))
+                    .body(new InputStreamResource(fotoRecuperada.getInputStream()));
+        }
     }
 
 

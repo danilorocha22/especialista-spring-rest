@@ -1,20 +1,23 @@
 package com.dan.esr.infrastructure.storage;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dan.esr.core.storage.StorageProperties;
+import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.services.StorageAlbumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
+import java.net.URL;
+
+import static com.amazonaws.services.s3.model.CannedAccessControlList.PublicRead;
 
 @Service
 @RequiredArgsConstructor
 public class S3StorageAlbumService implements StorageAlbumService {
+    private static final LoggerHelper logger = new LoggerHelper(LocalStorageAlbumService.class);
     private final AmazonS3 amazonS3;
     private final StorageProperties storageProperties;
 
@@ -22,7 +25,6 @@ public class S3StorageAlbumService implements StorageAlbumService {
     public void armazenar(NovaFoto novaFoto) {
         try {
             String caminhoArquivo = getCaminhoArquivo(novaFoto.getNomeArquivo());
-
             var objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(novaFoto.getContentType());
 
@@ -31,11 +33,13 @@ public class S3StorageAlbumService implements StorageAlbumService {
                     caminhoArquivo,
                     novaFoto.getInputStream(),
                     objectMetadata
-            ).withCannedAcl(CannedAccessControlList.PublicRead);
+            ).withCannedAcl(PublicRead);
 
             this.amazonS3.putObject(putObjectRequest);
+
         } catch (Exception ex) {
-            throw new StorageException("Não foi possível enviar o arquivo para Amazon S3", ex);
+            logger.error("armazenar(NovaFoto novaFoto) -> Erro: {}", ex.getLocalizedMessage(), ex);
+            throw new StorageException("Não foi possível fazer o upload do arquivo da foto do produto.", ex);
         }
     }
 
@@ -48,14 +52,27 @@ public class S3StorageAlbumService implements StorageAlbumService {
             );
 
             this.amazonS3.deleteObject(delObjectRequest);
+
         } catch (Exception ex) {
-            throw new StorageException("Não foi possível excluir o arquivo na Amazon S3", ex);
+            logger.error(" excluir(String nomeArquivo) -> Erro: {}", ex.getLocalizedMessage(), ex);
+            throw new StorageException("Não foi possível excluir o arquivo da foto do produto.", ex);
         }
     }
 
     @Override
-    public InputStream baixar(String nomeArquivo) {
-        return null;
+    public FotoRecuperada baixar(String nomeArquivo) {
+        try {
+            String caminhoArquivo = getCaminhoArquivo(nomeArquivo);
+            URL url = this.amazonS3.getUrl(this.storageProperties.getBucketS3(), caminhoArquivo);
+
+            return FotoRecuperada.builder()
+                    .url(url.toString())
+                    .build();
+
+        } catch (Exception ex) {
+            logger.error(" baixar(String nomeArquivo) -> Erro: {}", ex.getLocalizedMessage(), ex);
+            throw new StorageException("Não foi possível baixar o arquivo da foto do produto.", ex);
+        }
     }
 
     private String getCaminhoArquivo(String nomeArquivo) {

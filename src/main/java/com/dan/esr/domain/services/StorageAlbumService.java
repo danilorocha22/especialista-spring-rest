@@ -12,19 +12,19 @@ public interface StorageAlbumService {
 
     void armazenar(NovaFoto novaFoto);
     void excluir(String nomeArquivo);
-    InputStream baixar(String nomeArquivo);
+    FotoRecuperada baixar(String nomeArquivo);
 
     default String gerarNovoNomeFoto(String nomeOriginal) {
         return UUID.randomUUID() + "_" + nomeOriginal;
     }
 
-    default void substituir(String nomeArquivoExistente, NovaFoto novaFoto) {
+    /*default void substituir(String nomeArquivoExistente, NovaFoto novaFoto) {
         this.armazenar(novaFoto);
 
         if (nonNull(nomeArquivoExistente)) {
             this.excluir(nomeArquivoExistente);
         }
-    }
+    }*/
 
     @Getter
     @Builder
@@ -32,5 +32,20 @@ public interface StorageAlbumService {
         private String nomeArquivo;
         private String contentType;
         private InputStream inputStream;
+    }
+
+    @Getter
+    @Builder
+    class FotoRecuperada {
+        private InputStream inputStream;
+        private String url;
+
+        public boolean temInputStream() {
+            return nonNull(inputStream);
+        }
+
+        public boolean temUrl() {
+            return nonNull(url);
+        }
     }
 }
