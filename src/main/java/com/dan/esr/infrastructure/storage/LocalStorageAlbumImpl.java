@@ -1,8 +1,9 @@
 package com.dan.esr.infrastructure.storage;
 
+import com.dan.esr.core.storage.StorageProperties;
 import com.dan.esr.core.util.LoggerHelper;
 import com.dan.esr.domain.services.LocalStorageAlbumService;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
@@ -12,11 +13,13 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class LocalStorageAlbumImpl implements LocalStorageAlbumService {
     private static final LoggerHelper logger = new LoggerHelper(LocalStorageAlbumImpl.class);
+    private final StorageProperties storageProperties;
 
-    @Value("${danfood.storage.local.diretorio-fotos}")
-    private Path diretorioFotos;
+    /*@Value("${danfood.storage.local.diretorio-fotos}")
+    private Path diretorioFotos;*/
 
     @Override
     public void armazenar(NovaFoto novaFoto) {
@@ -61,6 +64,6 @@ public class LocalStorageAlbumImpl implements LocalStorageAlbumService {
     }
 
     private Path getArquivoPath(String nomeArquivo) {
-        return diretorioFotos.resolve(Path.of(nomeArquivo));
+        return this.storageProperties.diretorioLocalFotos().resolve(Path.of(nomeArquivo));
     }
 }
