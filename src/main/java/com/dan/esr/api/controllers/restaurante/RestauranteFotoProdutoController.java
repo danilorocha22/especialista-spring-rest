@@ -6,7 +6,7 @@ import com.dan.esr.core.assemblers.FotoProdutoAssembler;
 import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
-import com.dan.esr.domain.services.LocalStorageAlbumService;
+import com.dan.esr.domain.services.StorageAlbumService;
 import com.dan.esr.domain.services.produto.AlbumProdutoService;
 import com.dan.esr.infrastructure.storage.StorageException;
 import jakarta.validation.Valid;
@@ -27,7 +27,7 @@ import static org.springframework.http.MediaType.*;
 @RequestMapping("/restaurantes/{restauranteId}/produtos/{produtoId}/foto")
 public class RestauranteFotoProdutoController {
     private final AlbumProdutoService albumProdutoService;
-    private final LocalStorageAlbumService localStorageService;
+    private final StorageAlbumService localStorageService;
     private final FotoProdutoAssembler fotoProdutoAssembler;
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)

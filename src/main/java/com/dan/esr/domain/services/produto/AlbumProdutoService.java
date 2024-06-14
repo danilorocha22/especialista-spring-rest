@@ -4,21 +4,21 @@ import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.exceptions.produto.FotoProdutoNaoEncontradaException;
 import com.dan.esr.domain.repositories.ProdutoRepository;
-import com.dan.esr.domain.services.LocalStorageAlbumService;
+import com.dan.esr.domain.services.StorageAlbumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
 
-import static com.dan.esr.domain.services.LocalStorageAlbumService.NovaFoto;
+import static com.dan.esr.domain.services.StorageAlbumService.NovaFoto;
 
 @Service
 @RequiredArgsConstructor
 public class AlbumProdutoService {
     private final ProdutoRepository produtoRepository;
     private final ProdutoService produtoService;
-    private final LocalStorageAlbumService localStorageService;
+    private final StorageAlbumService localStorageService;
 
     public FotoProduto buscarPor(Long restauranteId, Long produtoId) {
         return this.produtoRepository.findFotoBy(restauranteId, produtoId)
@@ -50,6 +50,7 @@ public class AlbumProdutoService {
     private void armazenarFoto(FotoProduto foto, InputStream inputStream) {
         NovaFoto novaFoto = NovaFoto.builder()
                 .nomeArquivo(foto.getNomeArquivo())
+                .contentType(foto.getContentType())
                 .inputStream(inputStream)
                 .build();
         this.localStorageService.armazenar(novaFoto);

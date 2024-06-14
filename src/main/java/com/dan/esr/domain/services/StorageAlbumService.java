@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 
-public interface LocalStorageAlbumService {
+public interface StorageAlbumService {
 
     void armazenar(NovaFoto novaFoto);
     void excluir(String nomeArquivo);
@@ -30,6 +30,7 @@ public interface LocalStorageAlbumService {
     @Builder
     class NovaFoto {
         private String nomeArquivo;
+        private String contentType;
         private InputStream inputStream;
     }
 }

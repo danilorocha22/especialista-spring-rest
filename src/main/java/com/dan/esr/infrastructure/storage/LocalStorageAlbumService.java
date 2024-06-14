@@ -2,9 +2,8 @@ package com.dan.esr.infrastructure.storage;
 
 import com.dan.esr.core.storage.StorageProperties;
 import com.dan.esr.core.util.LoggerHelper;
-import com.dan.esr.domain.services.LocalStorageAlbumService;
+import com.dan.esr.domain.services.StorageAlbumService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.InputStream;
@@ -12,10 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-@Service
+//@Service
 @RequiredArgsConstructor
-public class LocalStorageAlbumImpl implements LocalStorageAlbumService {
-    private static final LoggerHelper logger = new LoggerHelper(LocalStorageAlbumImpl.class);
+public class LocalStorageAlbumService implements StorageAlbumService {
+    private static final LoggerHelper logger = new LoggerHelper(LocalStorageAlbumService.class);
     private final StorageProperties storageProperties;
 
     /*@Value("${danfood.storage.local.diretorio-fotos}")
@@ -59,11 +58,11 @@ public class LocalStorageAlbumImpl implements LocalStorageAlbumService {
             logger.error("baixar(String nomeArquivo) -> Erro: {}", ex.getLocalizedMessage(), ex);
 
             throw new StorageException("Ocorreu um erro ao tentar baixar o arquivo %s."
-                    .formatted(nomeArquivo),ex);
+                    .formatted(nomeArquivo), ex);
         }
     }
 
     private Path getArquivoPath(String nomeArquivo) {
-        return this.storageProperties.diretorioLocalFotos().resolve(Path.of(nomeArquivo));
+        return this.storageProperties.getDiretorioFotosLocal().resolve(Path.of(nomeArquivo));
     }
 }
