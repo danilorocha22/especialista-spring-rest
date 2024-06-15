@@ -89,11 +89,11 @@ insert into grupos_permissoes (grupo_id, permissao_id)
 values (1, 1), (1, 2), (2, 1), (2, 2), (3, 1);
 
 insert into usuarios(id, nome, email, senha, data_cadastro)
-values (1, 'João da Silva', 'joao.ger@algafood.com', '123', utc_timestamp),
-       (2, 'Maria Joaquina', 'maria.vnd@algafood.com', '123', utc_timestamp),
-       (3, 'José Souza', 'jose.aux@algafood.com', '123', utc_timestamp),
-       (4, 'Sebastião Martins', 'sebastiao.cad@algafood.com', '123', utc_timestamp),
-       (5, 'Manoel Lima', 'manoel.loja@gmail.com', '123', utc_timestamp);
+values (1, 'João da Silva', 'danrocha858585+joao@gmail.com', '123', utc_timestamp),
+       (2, 'Maria Joaquina', 'danrocha858585+maria@gmail.com', '123', utc_timestamp),
+       (3, 'José Souza', 'danrocha858585+jose@gmail.com', '123', utc_timestamp),
+       (4, 'Sebastião Martins', 'danrocha858585+sebastiao@gmail.com', '123', utc_timestamp),
+       (5, 'Manoel Lima', 'danrocha858585+manoel@gmail.com', '123', utc_timestamp);
 
 insert into usuarios_grupos (usuario_id, grupo_id) values (1, 1), (1, 2), (2, 2);
 
