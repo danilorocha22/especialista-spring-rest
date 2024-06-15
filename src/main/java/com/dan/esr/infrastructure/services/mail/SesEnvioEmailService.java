@@ -10,12 +10,10 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import java.util.Locale;
 
-@Service
 public class SesEnvioEmailService implements EnvioEmailService {
     private static final LoggerHelper logger = new LoggerHelper(SesEnvioEmailService.class);
 

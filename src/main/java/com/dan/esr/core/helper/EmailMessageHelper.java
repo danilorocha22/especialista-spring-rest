@@ -1,15 +1,15 @@
 package com.dan.esr.core.helper;
 
 import com.dan.esr.domain.entities.Pedido;
+import com.dan.esr.domain.services.EnvioEmailService;
 import com.dan.esr.domain.services.EnvioEmailService.Email;
-import com.dan.esr.infrastructure.services.mail.SesEnvioEmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class EmailMessageHelper {
-    private final SesEnvioEmailService emailService;
+    private final EnvioEmailService emailService;
 
     public void pedidoEmitido(Pedido pedido) {
         var mensagem = Email.builder()

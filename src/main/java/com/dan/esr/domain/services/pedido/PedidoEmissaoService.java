@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PedidoEmissaoService {
     private static final LoggerHelper logger = new LoggerHelper(PedidoEmissaoService.class);
     private final RestauranteConsultaService restauranteConsulta;
-    private final FormaPagamentoService formaPagamentoService;
     private final CidadeService cidadeService;
     private final UsuarioConsultaService usuarioConsulta;
     private final ProdutoService produtoService;
@@ -36,7 +35,7 @@ public class PedidoEmissaoService {
                     .orElseThrow(() -> new EntidadeNaoPersistidaException("Ocorreu um erro ao tentar emitir o " +
                             "pedido com ID %s".formatted(pedido.getId())));
 
-            //this.emailHelper.pedidoEmitido(pedidoEmitido);
+            this.emailHelper.pedidoEmitido(pedidoEmitido);
             return pedidoEmitido;
 
         } catch (NegocioException ex) {
@@ -48,7 +47,6 @@ public class PedidoEmissaoService {
     private void validarPedido(Pedido pedido) {
         Restaurante restaurante = this.restauranteConsulta.buscarPor(pedido.getRestaurante().getId());
         restaurante.validarSeAberto();
-        //FormaPagamento formaPagamento = this.formaPagamentoService.buscarPor(pedido.getFormaPagamento().getId());
         FormaPagamento formaPagamento = pedido.getFormaPagamento();
         restaurante.validarFormaPagamento(formaPagamento);
         Usuario cliente = this.usuarioConsulta.buscarPor(pedido.getCliente().getId());

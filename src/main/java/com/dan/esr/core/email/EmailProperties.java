@@ -16,4 +16,9 @@ public class EmailProperties {
 
     @NotNull
     private String remetente;
+    private ImplEmail impl = ImplEmail.FAKE;
+
+    public enum ImplEmail {
+        SES_AWS, FAKE
+    }
 }
