@@ -27,6 +27,7 @@
         <commons-digester.version>2.1</commons-digester.version>
         <commons-collections4.version>4.5.0-M1</commons-collections4.version>
         <aws-java-sdk-s3.version>1.12.741</aws-java-sdk-s3.version>
+        <freemarker.version>2.3.33</freemarker.version>
     </properties>
 
     <dependencies>
@@ -155,23 +156,23 @@
             </exclusions>
         </dependency>-->
 
-       <!-- <dependency>
-            <groupId>commons-digester</groupId>
-            <artifactId>commons-digester</artifactId>
-            <version>${commons-digester.version}</version>
-        </dependency>
+        <!-- <dependency>
+             <groupId>commons-digester</groupId>
+             <artifactId>commons-digester</artifactId>
+             <version>${commons-digester.version}</version>
+         </dependency>
 
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2</version> &lt;!&ndash; Verifique a versão mais recente disponível &ndash;&gt;
-        </dependency>
+         <dependency>
+             <groupId>commons-collections</groupId>
+             <artifactId>commons-collections</artifactId>
+             <version>3.2</version> &lt;!&ndash; Verifique a versão mais recente disponível &ndash;&gt;
+         </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>${commons-collections4.version}</version>
-        </dependency>-->
+         <dependency>
+             <groupId>org.apache.commons</groupId>
+             <artifactId>commons-collections4</artifactId>
+             <version>${commons-collections4.version}</version>
+         </dependency>-->
 
         <!--Jasper Functions-->
         <dependency>
@@ -193,6 +194,12 @@
             <version>${aws-java-sdk-s3.version}</version>
         </dependency>
 
+        <!--Templates de e-mail-->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
+        </dependency>
 
         <!--Testes da API-->
         <dependency>

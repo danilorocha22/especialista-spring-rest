@@ -14,9 +14,9 @@ public class EmailMessageHelper {
     public void pedidoEmitido(Pedido pedido) {
         var mensagem = Email.builder()
                 .assunto(pedido.getRestaurante().getNome() + " - Pedido Emitido")
-                .mensagem("O pedido de código <strong> " + pedido.getCodigo() + "</strong> foi emitido e " +
-                        "precisa ainda ser confirmado.")
-                .destinatario(pedido.getUsuario().getEmail())
+                .templateMensagem("pedido-emitido.html")
+                .variavel("pedido", pedido)
+                .destinatario(pedido.getCliente().getEmail())
                 .build();
 
         this.emailService.enviar(mensagem);
@@ -25,8 +25,9 @@ public class EmailMessageHelper {
     public void pedidoConfirmado(Pedido pedido) {
         var mensagem = Email.builder()
                 .assunto(pedido.getRestaurante().getNome() + " - Pedido Confirmado")
-                .mensagem("O pedido de código <strong> " + pedido.getCodigo() + "</strong> foi confirmado.")
-                .destinatario(pedido.getUsuario().getEmail())
+                .templateMensagem("pedido-confirmado.html")
+                .variavel("pedido", pedido)
+                .destinatario(pedido.getCliente().getEmail())
                 .build();
 
         this.emailService.enviar(mensagem);
