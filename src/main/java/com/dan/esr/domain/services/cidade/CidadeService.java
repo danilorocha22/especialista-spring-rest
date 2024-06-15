@@ -1,6 +1,6 @@
 package com.dan.esr.domain.services.cidade;
 
-import com.dan.esr.core.util.LoggerHelper;
+import com.dan.esr.core.helper.LoggerHelper;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.exceptions.*;

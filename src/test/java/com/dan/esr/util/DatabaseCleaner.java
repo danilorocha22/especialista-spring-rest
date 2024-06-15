@@ -10,9 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.dan.esr.core.util.LoggerHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.dan.esr.core.helper.LoggerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

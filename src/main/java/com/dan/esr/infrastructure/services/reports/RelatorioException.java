@@ -1,4 +1,4 @@
-package com.dan.esr.infrastructure.services.relatorios;
+package com.dan.esr.infrastructure.services.reports;
 
 public class RelatorioException extends RuntimeException {
 

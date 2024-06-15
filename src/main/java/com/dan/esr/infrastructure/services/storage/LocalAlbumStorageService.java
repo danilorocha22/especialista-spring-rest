@@ -1,9 +1,8 @@
-package com.dan.esr.infrastructure.storage;
+package com.dan.esr.infrastructure.services.storage;
 
 import com.dan.esr.core.storage.StorageProperties;
-import com.dan.esr.core.util.LoggerHelper;
+import com.dan.esr.core.helper.LoggerHelper;
 import com.dan.esr.domain.services.StorageAlbumService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 

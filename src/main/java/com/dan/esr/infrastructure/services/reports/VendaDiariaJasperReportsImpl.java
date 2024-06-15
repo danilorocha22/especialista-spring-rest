@@ -1,6 +1,6 @@
-package com.dan.esr.infrastructure.services.relatorios;
+package com.dan.esr.infrastructure.services.reports;
 
-import com.dan.esr.core.util.LoggerHelper;
+import com.dan.esr.core.helper.LoggerHelper;
 import com.dan.esr.domain.filter.VendaDiariaFiltro;
 import com.dan.esr.domain.services.VendaDiariaQueryService;
 import com.dan.esr.domain.services.VendaDiariaReportsService;

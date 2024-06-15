@@ -9,7 +9,7 @@ import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.services.StorageAlbumService;
 import com.dan.esr.domain.services.StorageAlbumService.FotoRecuperada;
 import com.dan.esr.domain.services.produto.AlbumProdutoService;
-import com.dan.esr.infrastructure.storage.StorageException;
+import com.dan.esr.infrastructure.services.storage.StorageException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;

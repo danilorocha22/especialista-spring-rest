@@ -1,4 +1,4 @@
-package com.dan.esr.infrastructure.storage;
+package com.dan.esr.infrastructure.services.storage;
 
 public class StorageException extends RuntimeException {
 

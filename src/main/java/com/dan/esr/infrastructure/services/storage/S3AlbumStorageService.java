@@ -1,16 +1,13 @@
-package com.dan.esr.infrastructure.storage;
+package com.dan.esr.infrastructure.services.storage;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dan.esr.core.storage.StorageProperties;
-import com.dan.esr.core.util.LoggerHelper;
+import com.dan.esr.core.helper.LoggerHelper;
 import com.dan.esr.domain.services.StorageAlbumService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.net.URL;
 

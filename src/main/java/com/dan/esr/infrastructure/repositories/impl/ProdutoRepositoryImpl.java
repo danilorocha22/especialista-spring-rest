@@ -1,6 +1,6 @@
 package com.dan.esr.infrastructure.repositories.impl;
 
-import com.dan.esr.core.util.LoggerHelper;
+import com.dan.esr.core.helper.LoggerHelper;
 import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.repositories.ProdutoQueries;
