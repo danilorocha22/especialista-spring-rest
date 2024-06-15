@@ -46,7 +46,7 @@ public class SesEnvioEmailService implements EnvioEmailService {
         }
     }
 
-    private String processarTemplate(@NonNull Email email) {
+    String processarTemplate(@NonNull Email email) {
         try {
             Template template = this.freemarkerConfig.getTemplate(email.getTemplateMensagem(),
                     new Locale("pt", "BR"));
