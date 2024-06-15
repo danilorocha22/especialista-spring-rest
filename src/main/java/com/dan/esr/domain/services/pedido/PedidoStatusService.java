@@ -1,5 +1,6 @@
 package com.dan.esr.domain.services.pedido;
 
+import com.dan.esr.core.helper.EmailMessageHelper;
 import com.dan.esr.domain.entities.Pedido;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,11 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PedidoStatusService {
     private final PedidoPesquisaService pedidoPesquisaService;
+    private final EmailMessageHelper emailHelper;
 
     @Transactional
     public Pedido confirmar(String codigoPedido) {
         Pedido pedido = this.pedidoPesquisaService.buscarPor(codigoPedido);
         pedido.confirmar();
+        this.emailHelper.pedidoConfirmado(pedido);
         return pedido;
     }
 
