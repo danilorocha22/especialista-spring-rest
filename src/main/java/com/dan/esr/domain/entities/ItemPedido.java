@@ -57,7 +57,7 @@ public class ItemPedido implements Serializable {
             referencedColumnName = "id")
     private Pedido pedido;
 
-    /* ###############################   MÉTODOS    ###############################*/
+    /*########################################     MÉTODOS     ########################################*/
     public double getValorTotalDouble() {
         return getValorTotal() != null ? getValorTotal().doubleValue() : 0;
     }
@@ -74,5 +74,9 @@ public class ItemPedido implements Serializable {
             BigDecimal precoUnit = this.produto.getPreco();
             this.setPrecoUnitario(precoUnit);
         }
+    }
+
+    public String nomeProduto() {
+        return this.produto != null ? this.produto.getNome() : null;
     }
 }

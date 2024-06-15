@@ -96,7 +96,7 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
         try {
             var jpql = ("FROM %s r " +
                     "JOIN FETCH r.cozinha " +
-                    "LEFT JOIN FETCH r.formasPagamento fp " +
+                    "LEFT JOIN FETCH r.formasPagamento " +
                     "LEFT JOIN FETCH r.endereco e " +
                     "LEFT JOIN FETCH e.cidade c " +
                     "LEFT JOIN FETCH c.estado " +

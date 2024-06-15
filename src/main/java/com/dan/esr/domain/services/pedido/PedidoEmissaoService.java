@@ -36,7 +36,7 @@ public class PedidoEmissaoService {
                     .orElseThrow(() -> new EntidadeNaoPersistidaException("Ocorreu um erro ao tentar emitir o " +
                             "pedido com ID %s".formatted(pedido.getId())));
 
-            this.emailHelper.pedidoEmitido(pedidoEmitido);
+            //this.emailHelper.pedidoEmitido(pedidoEmitido);
             return pedidoEmitido;
 
         } catch (NegocioException ex) {
@@ -48,14 +48,15 @@ public class PedidoEmissaoService {
     private void validarPedido(Pedido pedido) {
         Restaurante restaurante = this.restauranteConsulta.buscarPor(pedido.getRestaurante().getId());
         restaurante.validarSeAberto();
-        FormaPagamento formaPagamento = this.formaPagamentoService.buscarPor(pedido.getFormaPagamento().getId());
+        //FormaPagamento formaPagamento = this.formaPagamentoService.buscarPor(pedido.getFormaPagamento().getId());
+        FormaPagamento formaPagamento = pedido.getFormaPagamento();
         restaurante.validarFormaPagamento(formaPagamento);
-        Usuario cliente = this.usuarioConsulta.buscarPor(pedido.getUsuario().getId());
+        Usuario cliente = this.usuarioConsulta.buscarPor(pedido.getCliente().getId());
         Cidade cidade = this.cidadeService.buscarPor(pedido.getEndereco().getCidade().getId());
 
         pedido.setRestaurante(restaurante);
         pedido.setFormaPagamento(formaPagamento);
-        pedido.setUsuario(cliente);
+        pedido.setCliente(cliente);
         pedido.getEndereco().setCidade(cidade);
         pedido.calcularTaxaFrete();
         pedido.calcularSubtotal();
@@ -63,7 +64,7 @@ public class PedidoEmissaoService {
     }
 
     private void validarItensPedido(Pedido pedido) {
-        pedido.getItensPedido().forEach(item -> {
+        pedido.getItens().forEach(item -> {
             Long produtoId = item.getProduto().getId();
             Long restauranteId = pedido.getRestaurante().getId();
             Produto produto = this.produtoService.buscarPor(restauranteId, produtoId);

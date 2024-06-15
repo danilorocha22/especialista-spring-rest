@@ -30,7 +30,7 @@ public class PedidoInput {
     @JsonProperty("enderecoEntrega")
     private EnderecoInput endereco;
 
-    private UsuarioIdInput usuario;
+    private UsuarioIdInput cliente;
 
     @Valid
     @NotNull

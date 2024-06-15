@@ -268,7 +268,9 @@ public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRe
                 .filter(fp -> fp.equals(formaPagamento))
                 .findFirst()
                 .orElseThrow(() -> new NegocioException(("A forma de pagamento %s com ID %s não está disponível no " +
-                        "restaurante com ID %s").formatted(formaPagamento.getNome(), formaPagamento.getId(), id)));
+                        "restaurante com ID %s. Formas de Pagamento disponíveis: %s")
+                        .formatted(formaPagamento.getNome(), formaPagamento.getId(), id,
+                                this.getFormasPagamento().stream().toList())));
 
     }
 

@@ -9,6 +9,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 @Entity
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
@@ -24,6 +26,6 @@ public class FormaPagamento implements Serializable, IdentificavelParaAdicionarO
     private String nome;
 
     public boolean isNova() {
-        return Objects.isNull(this.id);
+        return isNull(this.id);
     }
 }

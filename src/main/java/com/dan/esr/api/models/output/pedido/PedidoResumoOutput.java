@@ -22,6 +22,5 @@ public class PedidoResumoOutput {
     private OffsetDateTime dataCriacao;
     private String restauranteId;
     private RestauranteIdNomeOutput restaurante;
-    @JsonProperty("cliente")
-    private UsuarioOutput usuario;
+    private UsuarioOutput cliente;
 }

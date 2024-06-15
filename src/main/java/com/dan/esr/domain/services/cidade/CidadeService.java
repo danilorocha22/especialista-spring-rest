@@ -71,7 +71,7 @@ public class CidadeService {
 
     public Cidade buscarPor(Long id) {
         try {
-            return this.cidadeRepository.com(id)
+            return this.cidadeRepository.por(id)
                     .orElse(null);
 
         } catch (EmptyResultDataAccessException | DataIntegrityViolationException ex) {

@@ -3,7 +3,9 @@ package com.dan.esr.domain.entities;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.grupo.GrupoNaoEncontradoException;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serial;
@@ -15,14 +17,12 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString(exclude = { "grupos" })
-@EqualsAndHashCode(of = "id")
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@EqualsAndHashCode(of = "id")
 @Table(name = "usuarios", schema = "dan_food")
 public class Usuario implements Serializable, IdentificavelParaAdicionarOuRemover {
-    @Serial private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

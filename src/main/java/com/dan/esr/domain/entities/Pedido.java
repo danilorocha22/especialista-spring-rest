@@ -57,7 +57,7 @@ public class Pedido implements Serializable {
     private OffsetDateTime dataEntrega;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_id",
             foreignKey = @ForeignKey(name = "fk_pedido_endereco"),
             referencedColumnName = "id")
@@ -67,19 +67,19 @@ public class Pedido implements Serializable {
     @Column(name = "status", nullable = false, length = 10)
     private StatusPedido status = CRIADO;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_usuario"),
             referencedColumnName = "id")
-    private Usuario usuario;
+    private Usuario cliente;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurante_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_restaurante"),
             referencedColumnName = "id")
     private Restaurante restaurante;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formas_pagamento_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_formas_pagamento"),
             referencedColumnName = "id")
@@ -88,11 +88,10 @@ public class Pedido implements Serializable {
     @ToString.Exclude
     @OneToMany(mappedBy = "pedido",
             cascade = CascadeType.ALL)
-    private Set<ItemPedido> itensPedido = new HashSet<>();
+    private Set<ItemPedido> itens = new HashSet<>();
 
 
     /*########################################     MÉTODOS     ########################################*/
-
     public void calcularTaxaFrete() {
         if (isTaxaFreteValida()) {
             setTaxaFrete(this.restaurante.getTaxaFrete());
@@ -106,7 +105,7 @@ public class Pedido implements Serializable {
     }
 
     public void calcularSubtotal() {
-        double subTotal = this.itensPedido.stream()
+        double subTotal = this.itens.stream()
                 .mapToDouble(ItemPedido::getValorTotalDouble)
                 .sum();
         setSubtotal(BigDecimal.valueOf(subTotal));
@@ -132,6 +131,18 @@ public class Pedido implements Serializable {
     public void cancelar() {
         setStatus(CANCELADO);
         setDataCancelamento(OffsetDateTime.now());
+    }
+
+    public String nomeCliente() {
+        return this.cliente.getNome();
+    }
+
+    public String nomeRestaurante() {
+        return this.restaurante.getNome();
+    }
+
+    public String nomeFormaPagamento() {
+        return this.formaPagamento.getNome();
     }
 
     @PrePersist
