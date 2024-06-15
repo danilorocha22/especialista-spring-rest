@@ -13,7 +13,8 @@ public interface ProdutoRepository extends
         ProdutoQueries,
         CustomBaseJpaRepository<Produto, Long> {
 
-    @Query("from Produto p inner join p.restaurante where p.id = :produtoId and p.restaurante.id = :restauranteId")
+    @Query("from Produto p inner join fetch p.restaurante r left join fetch r.formasPagamento " +
+            "where p.id = :produtoId and p.restaurante.id = :restauranteId")
     Optional<Produto> por(Long produtoId, Long restauranteId);
 
     //@Query("from Produto p where p.ativo = :ativo and p.restaurante = :restaurante")

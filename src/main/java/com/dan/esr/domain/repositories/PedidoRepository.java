@@ -11,14 +11,16 @@ import java.util.Optional;
 public interface PedidoRepository extends CustomBaseJpaRepository<Pedido, Long>, JpaSpecificationExecutor<Pedido> {
 
     @Query("from Pedido p join fetch p.endereco join fetch p.formaPagamento join fetch p.restaurante r " +
-            "join fetch p.usuario join fetch p.itensPedido ip join fetch r.cozinha join fetch ip.produto " +
+            "join fetch p.cliente join fetch p.itens ip join fetch r.cozinha join fetch ip.produto " +
             "where p.id = :id")
     Optional<Pedido> porId(Long id);
 
     @Query("from Pedido p join fetch p.endereco join fetch p.formaPagamento join fetch p.restaurante r " +
-            "join fetch p.usuario left join fetch r.formasPagamento join fetch r.cozinha")
+            "join fetch p.cliente left join fetch r.formasPagamento join fetch r.cozinha")
     List<Pedido> todosPedidos();
 
-    @Query("from Pedido p where p.codigo = :codigo")
+    @Query("from Pedido p join fetch p.cliente join fetch p.endereco join fetch p.formaPagamento join fetch " +
+            "p.restaurante r left join fetch r.produtos join fetch p.itens i join fetch i.produto " +
+            "where p.codigo = :codigo")
     Optional<Pedido> porCodigo(@Param("codigo") String codigoPedido);
 }
