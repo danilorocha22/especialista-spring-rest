@@ -16,9 +16,20 @@ public class EmailProperties {
 
     @NotNull
     private String remetente;
+    private Sandbox sandbox = new Sandbox();
     private ImplEmail impl = ImplEmail.FAKE;
 
+    public String destinatarioSandbox() {
+        return getSandbox().getDestinatario();
+    }
+
     public enum ImplEmail {
-        SES_AWS, FAKE
+        SMTP_ASW, FAKE, SANDBOX
+    }
+
+    @Getter
+    @Setter
+    public static class Sandbox {
+        private String destinatario;
     }
 }
