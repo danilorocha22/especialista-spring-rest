@@ -5,6 +5,7 @@ import com.dan.esr.core.helper.LoggerHelper;
 import com.dan.esr.domain.services.EnvioEmailService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +30,27 @@ public class SesEnvioEmailService implements EnvioEmailService {
     @Override
     public void enviar(Email email) {
         try {
-            MimeMessage mimeMessage = this.mailSender.createMimeMessage();
-            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-
-            String mensagem = processarTemplate(email);
-            messageHelper.setFrom(emailProperties.getRemetente());
-            messageHelper.setTo(getDestinatarios(email));
-            messageHelper.setSubject(email.getAssunto());
-            messageHelper.setText(mensagem, true);
-            this.mailSender.send(messageHelper.getMimeMessage());
+            MimeMessage mimeMessage = criarMimeMessage(email);
+            this.mailSender.send(mimeMessage);
 
         } catch (Exception ex) {
             logger.error("enviar(email) -> Erro: {}", ex.getLocalizedMessage(), ex);
             throw new EmailException("Não foi possível enviar o e-mail com o assunto: %s."
                     .formatted(email.getAssunto()), ex);
         }
+    }
+
+    MimeMessage criarMimeMessage(Email email) throws MessagingException {
+        String mensagem = processarTemplate(email);
+        MimeMessage mimeMessage = this.mailSender.createMimeMessage();
+
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        messageHelper.setFrom(emailProperties.getRemetente());
+        messageHelper.setTo(getDestinatarios(email));
+        messageHelper.setSubject(email.getAssunto());
+        messageHelper.setText(mensagem, true);
+
+        return mimeMessage;
     }
 
     String processarTemplate(@NonNull Email email) {
