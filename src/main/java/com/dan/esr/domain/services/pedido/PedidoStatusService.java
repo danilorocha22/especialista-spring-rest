@@ -31,6 +31,6 @@ public class PedidoStatusService {
     public Pedido cancelar(String codigoPedido) {
         Pedido pedido = this.pedidoPesquisaService.buscarPor(codigoPedido);
         pedido.cancelar();
-        return pedido;
+        return this.pedidoRepository.save(pedido);
     }
 }

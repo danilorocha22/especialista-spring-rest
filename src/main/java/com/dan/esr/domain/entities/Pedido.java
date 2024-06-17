@@ -1,6 +1,7 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.domain.entities.enums.StatusPedido;
+import com.dan.esr.domain.events.PedidoCanceladoEvent;
 import com.dan.esr.domain.events.PedidoConfirmadoEvent;
 import com.dan.esr.domain.events.PedidoEmitidoEvent;
 import com.dan.esr.domain.exceptions.NegocioException;
@@ -138,6 +139,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
     public void cancelar() {
         setStatus(CANCELADO);
         setDataCancelamento(OffsetDateTime.now());
+        registerEvent(new PedidoCanceladoEvent(this));
     }
 
     public String nomeCliente() {

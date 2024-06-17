@@ -36,4 +36,16 @@ public class EmailEnvioPedidoHelper implements NotificacaoClienteService {
 
         this.emailService.enviar(mensagem);
     }
+
+    @Override
+    public void pedidoCancelado(Pedido pedido) {
+        var mensagem = Email.builder()
+                .assunto(pedido.getRestaurante().getNome() + " - Pedido Cancelado")
+                .templateMensagem("pedido-cancelado.html")
+                .variavel("pedido", pedido)
+                .destinatario(pedido.getCliente().getEmail())
+                .build();
+
+        this.emailService.enviar(mensagem);
+    }
 }

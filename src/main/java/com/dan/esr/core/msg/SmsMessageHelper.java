@@ -33,4 +33,15 @@ public class SmsMessageHelper implements NotificacaoClienteService {
 
         this.smsService.enviar(sms);
     }
+
+    @Override
+    public void pedidoCancelado(Pedido pedido) {
+        var sms = EnvioSmsService.Sms.builder()
+                .destinatario("+559998765432")
+                .assunto(pedido.getRestaurante().getNome() + " - Pedido Cancelado")
+                .mensagem("O pedido nº %s, foi cancelado.".formatted(pedido.getCodigo()))
+                .build();
+
+        this.smsService.enviar(sms);
+    }
 }
