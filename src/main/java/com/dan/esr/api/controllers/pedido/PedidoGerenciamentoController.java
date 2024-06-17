@@ -24,7 +24,6 @@ public class PedidoGerenciamentoController {
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoOutput novoPedido(@RequestBody @Valid PedidoInput pedidoInput) {
         Pedido pedido = this.pedidoAssembler.toDomain(pedidoInput);
-        System.out.printf("Pedido Emitido: %s%n", pedido);
         pedido.getEndereco().setId(null);
         return this.pedidoAssembler.toModel(
                 this.pedidoEmissaoService.emitir(pedido)

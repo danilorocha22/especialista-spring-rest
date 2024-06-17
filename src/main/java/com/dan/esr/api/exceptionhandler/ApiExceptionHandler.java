@@ -276,7 +276,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         Throwable cause = ExceptionUtils.getRootCause(ex);
         String exceptionName = cause.getClass().getSimpleName();
-        System.out.printf("\nEXCEPTION: %s\n\n", exceptionName);
 
         return switch (exceptionName) {
             case ("InvalidFormatException") ->
