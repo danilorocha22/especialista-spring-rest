@@ -1,7 +1,8 @@
 package com.dan.esr.domain.services.pedido;
 
-import com.dan.esr.core.helper.EmailMessageHelper;
 import com.dan.esr.domain.entities.Pedido;
+import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
+import com.dan.esr.domain.repositories.PedidoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,14 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PedidoStatusService {
     private final PedidoPesquisaService pedidoPesquisaService;
-    private final EmailMessageHelper emailHelper;
+    private final PedidoRepository pedidoRepository;
 
     @Transactional
     public Pedido confirmar(String codigoPedido) {
         Pedido pedido = this.pedidoPesquisaService.buscarPor(codigoPedido);
         pedido.confirmar();
-        this.emailHelper.pedidoConfirmado(pedido);
-        return pedido;
+        return this.pedidoRepository.save(pedido);
     }
 
     @Transactional

@@ -1,8 +1,10 @@
 package com.dan.esr.domain.exceptions;
 
+import jakarta.persistence.PersistenceException;
+
 import java.io.Serial;
 
-public class EntidadeNaoPersistidaException extends NegocioException {
+public class EntidadeNaoPersistidaException extends PersistenceException {
     @Serial
     private static final long serialVersionUID = 1L;
 

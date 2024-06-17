@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serial;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Setter
 @Entity
 @EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "nome"})
 @Table(name = "usuarios", schema = "dan_food")
 public class Usuario implements Serializable, IdentificavelParaAdicionarOuRemover {
     @Serial

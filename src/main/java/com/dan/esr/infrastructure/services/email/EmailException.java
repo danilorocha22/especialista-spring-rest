@@ -1,4 +1,4 @@
-package com.dan.esr.infrastructure.services.mail;
+package com.dan.esr.infrastructure.services.email;
 
 public class EmailException extends RuntimeException {
 

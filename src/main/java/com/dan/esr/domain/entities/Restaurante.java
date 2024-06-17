@@ -22,12 +22,11 @@ import java.util.Set;
 import static com.dan.esr.core.util.FormatacaoNomeClasse.formatarNomeClasse;
 
 //@JsonInclude(NON_NULL)
-//@ToString
-@Entity
 @Getter
 @Setter
+@Entity
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = {"formasPagamento"})
+@ToString(of = {"id", "nome"})
 @Table(name = "restaurantes", schema = "dan_food")
 public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRemover {
     @Serial

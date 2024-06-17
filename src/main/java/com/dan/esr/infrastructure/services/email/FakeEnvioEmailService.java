@@ -1,4 +1,4 @@
-package com.dan.esr.infrastructure.services.mail;
+package com.dan.esr.infrastructure.services.email;
 
 import lombok.extern.slf4j.Slf4j;
 

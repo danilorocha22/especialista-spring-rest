@@ -32,10 +32,7 @@ public class StorageConfig {
 
     @Bean
     public StorageAlbumService storageAlbumService() {
-        if (TipoStorage.S3.equals(storageProperties.getTipo())) {
-            return new S3AlbumStorageService();
-        } else {
-            return new LocalAlbumStorageService();
-        }
+        return TipoStorage.S3.equals(storageProperties.getTipo()) ?
+                new S3AlbumStorageService() : new LocalAlbumStorageService();
     }
 }

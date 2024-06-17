@@ -1,19 +1,15 @@
 package com.dan.esr.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 
+//@JsonInclude(Include.NON_NULL)
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonInclude(Include.NON_NULL)
 @Entity
 @Table(name = "enderecos", schema = "dan_food")
 public class Endereco implements Serializable {
@@ -43,5 +39,4 @@ public class Endereco implements Serializable {
     @JoinColumn(name = "cidade_id", nullable = false, foreignKey =
     @ForeignKey(name = "fk_endereco_cidade"), referencedColumnName = "id")
     private Cidade cidade;
-
 }

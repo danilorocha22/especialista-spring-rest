@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 public interface EnvioEmailService {
-
     void enviar(Email email);
 
     @Getter

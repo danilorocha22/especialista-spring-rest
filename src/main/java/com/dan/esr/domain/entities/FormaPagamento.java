@@ -4,19 +4,22 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 import static java.util.Objects.isNull;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
+@ToString(of = "nome")
 @EqualsAndHashCode(of = "id")
 @Table(name = "formas_de_pagamento", schema = "dan_food")
 public class FormaPagamento implements Serializable, IdentificavelParaAdicionarOuRemover {
-    @Serial private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,12 +8,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface PedidoRepository extends CustomBaseJpaRepository<Pedido, Long>, JpaSpecificationExecutor<Pedido> {
-
-    @Query("from Pedido p join fetch p.endereco join fetch p.formaPagamento join fetch p.restaurante r " +
-            "join fetch p.cliente join fetch p.itens ip join fetch r.cozinha join fetch ip.produto " +
-            "where p.id = :id")
-    Optional<Pedido> porId(Long id);
+public interface PedidoRepository extends
+        CustomBaseJpaRepository<Pedido, Long>,
+        JpaSpecificationExecutor<Pedido> {
 
     @Query("from Pedido p join fetch p.endereco join fetch p.formaPagamento join fetch p.restaurante r " +
             "join fetch p.cliente left join fetch r.formasPagamento join fetch r.cozinha")

@@ -1,4 +1,4 @@
-package com.dan.esr.infrastructure.services.mail;
+package com.dan.esr.infrastructure.services.email;
 
 import com.dan.esr.core.email.EmailProperties;
 import jakarta.mail.MessagingException;

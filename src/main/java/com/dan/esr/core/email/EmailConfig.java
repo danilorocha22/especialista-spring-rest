@@ -1,9 +1,9 @@
 package com.dan.esr.core.email;
 
 import com.dan.esr.domain.services.EnvioEmailService;
-import com.dan.esr.infrastructure.services.mail.FakeEnvioEmailService;
-import com.dan.esr.infrastructure.services.mail.SandBoxEmailService;
-import com.dan.esr.infrastructure.services.mail.SesEnvioEmailService;
+import com.dan.esr.infrastructure.services.email.FakeEnvioEmailService;
+import com.dan.esr.infrastructure.services.email.SandBoxEmailService;
+import com.dan.esr.infrastructure.services.email.SesEnvioEmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,12 +15,10 @@ public class EmailConfig {
 
     @Bean
     public EnvioEmailService envioEmailService() {
-        if (EmailProperties.ImplEmail.SMTP_ASW.equals(emailProperties.getImpl())) {
-            return new SesEnvioEmailService();
-        } else if (EmailProperties.ImplEmail.FAKE.equals(emailProperties.getImpl())){
-            return new FakeEnvioEmailService();
-        } else {
-            return new SandBoxEmailService();
-        }
+        return switch (emailProperties.getImpl()) {
+            case SMTP_ASW -> new SesEnvioEmailService();
+            case SANDBOX -> new SandBoxEmailService();
+            default -> new FakeEnvioEmailService();
+        };
     }
 }

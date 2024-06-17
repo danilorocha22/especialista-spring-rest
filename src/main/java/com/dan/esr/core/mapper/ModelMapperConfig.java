@@ -1,5 +1,6 @@
 package com.dan.esr.core.mapper;
 
+import com.dan.esr.api.models.input.endereco.EnderecoInput;
 import com.dan.esr.api.models.input.itempedido.ItemPedidoInput;
 import com.dan.esr.api.models.input.pedido.PedidoInput;
 import com.dan.esr.api.models.input.produto.FotoProdutoInput;
@@ -32,6 +33,9 @@ public class ModelMapperConfig {
 
         mapper.createTypeMap(PedidoInput.class, Pedido.class)
                 .addMappings(mapping -> mapping.skip(Pedido::setId));
+
+        mapper.createTypeMap(EnderecoInput.class, Endereco.class)
+                .addMappings(mapping -> mapping.skip(Endereco::setId));
 
         mapper.createTypeMap(ItemPedidoInput.class, ItemPedido.class)
                 .addMappings(mapping -> mapping.skip(ItemPedido::setId));
