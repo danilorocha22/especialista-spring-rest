@@ -7,6 +7,8 @@ import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/restaurantes")
-public class RestauranteConsultaController {
+public class RestaurantePesquisaController {
     private final RestauranteConsultaService restauranteConsulta;
     private final RestauranteModelAssembler restauranteModelAssembler;
 
@@ -26,10 +28,15 @@ public class RestauranteConsultaController {
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 
-    /*@GetMapping
+   /* @GetMapping
     @JsonView(RestauranteView.Resumo.class)
-    public List<RestauranteOutput> todos() {
-        return this.restauranteModelAssembler.toCollectionModel(this.restauranteConsulta.buscarTodos());
+    public ResponseEntity<List<RestauranteOutput>> todos() {
+        List<RestauranteOutput> collectionModel = this.restauranteModelAssembler.toCollectionModel(
+                this.restauranteConsulta.buscarTodos());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+                .body(collectionModel);
     }
 
     @GetMapping(params = "projecao=completo")
