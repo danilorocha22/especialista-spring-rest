@@ -59,8 +59,8 @@ values ('Toca do Sabor', 10, 1, 1, utc_timestamp, utc_timestamp),
        ('Lanchonete do Tio Sam', 11, 4, null, utc_timestamp, utc_timestamp),
        ('Bar da Maria', 6, 4, null, utc_timestamp, utc_timestamp);
 
-insert into formas_de_pagamento(nome)
-values ('Dinheiro'), ('Pix'), ('Débito'), ('Crédito');
+insert into formas_de_pagamento(nome, data_atualizacao)
+values ('Dinheiro', utc_timestamp), ('Pix', utc_timestamp), ('Débito', utc_timestamp), ('Crédito', utc_timestamp);
 
 insert into permissoes(nome, descricao)
 values ('CONSULTAR_COZINHAS', 'Permite consultar cozinhas'), ('EDITAR_COZINHAS', 'Permite editar cozinhas');

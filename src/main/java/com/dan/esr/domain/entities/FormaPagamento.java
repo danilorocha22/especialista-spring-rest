@@ -5,9 +5,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static java.util.Objects.isNull;
 
@@ -27,6 +30,10 @@ public class FormaPagamento implements Serializable, IdentificavelParaAdicionarO
 
     @Column(nullable = false, length = 20)
     private String nome;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private OffsetDateTime dataAtualizacao;
 
     public boolean isNova() {
         return isNull(this.id);
