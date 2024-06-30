@@ -3,6 +3,7 @@ package com.dan.esr.api.controllers.restaurante;
 import com.dan.esr.api.models.input.produto.ProdutoInput;
 import com.dan.esr.api.models.output.produto.ProdutoOutput;
 import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
+import com.dan.esr.api.openapi.documentation.restaurante.RestauranteProdutoDocumentation;
 import com.dan.esr.core.assemblers.ProdutoAssembler;
 import com.dan.esr.core.assemblers.RestauranteModelAssembler;
 import com.dan.esr.domain.entities.Produto;
@@ -16,15 +17,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/restaurantes/{restauranteId}/produtos")
-public class RestauranteProdutoController {
+@RequestMapping(path = "/restaurantes/{restauranteId}/produtos", produces = APPLICATION_JSON_VALUE)
+public class RestauranteProdutoController implements RestauranteProdutoDocumentation {
     private final RestauranteConsultaService restauranteConsulta;
     private final ProdutoService produtoService;
     private final RestauranteModelAssembler restauranteModelAssembler;
     private final ProdutoAssembler produtoAssembler;
 
+    @Override
     @GetMapping("/{produtoId}")
     public ProdutoOutput produto(
             @PathVariable Long restauranteId,
@@ -35,16 +39,18 @@ public class RestauranteProdutoController {
         return this.produtoAssembler.toModel(produto);
     }
 
+    @Override
     @GetMapping
     public RestauranteProdutosOutput produtos(
             @RequestParam(value = "ativos", required = false) Boolean ativos,
-            @PathVariable("restauranteId") Long id) {
-        Restaurante restaurante = this.restauranteConsulta.buscarPor(id);
+            @PathVariable("restauranteId") Long restauranteId) {
+        Restaurante restaurante = this.restauranteConsulta.buscarPor(restauranteId);
         Set<Produto> produtos = this.produtoService.buscarTodosPor(ativos, restaurante);
         restaurante.setProdutos(produtos);
         return this.restauranteModelAssembler.toModelProdutos(restaurante);
     }
 
+    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteProdutosOutput novoProduto(
@@ -59,6 +65,7 @@ public class RestauranteProdutoController {
         return this.restauranteModelAssembler.toModelProdutos(restaurante);
     }
 
+    @Override
     @PutMapping("/{produtoId}")
     public RestauranteProdutosOutput atualizarProduto(
             @PathVariable Long restauranteId,

@@ -1,11 +1,18 @@
 package com.dan.esr.api.models.input.usuario;
 
+import io.swagger.annotations.ApiModelProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public class UsuarioSenhaInput {
-    @NotBlank private String senha;
-    @NotBlank private String novaSenha;
+    @NotBlank
+    @ApiModelProperty(value = "Deve conter números e letras")
+    private String senha;
+
+    @NotBlank
+    @ApiModelProperty(value = "Deve conter números e letras")
+    private String novaSenha;
 }

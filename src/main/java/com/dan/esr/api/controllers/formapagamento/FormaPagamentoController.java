@@ -2,14 +2,14 @@ package com.dan.esr.api.controllers.formapagamento;
 
 import com.dan.esr.api.models.input.formapagamento.FormaPagamentoInput;
 import com.dan.esr.api.models.output.formapagamento.FormaPagamentoOutput;
+import com.dan.esr.api.openapi.documentation.formapagamento.FormasPagamentoDocumentation;
 import com.dan.esr.core.assemblers.FormaPagamentoAssembler;
 import com.dan.esr.domain.entities.FormaPagamento;
-import com.dan.esr.domain.repositories.FormasPagamentoRepository;
+import com.dan.esr.domain.repositories.FormaPagamentoRepository;
 import com.dan.esr.domain.services.formaspagamento.FormaPagamentoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -19,17 +19,21 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/formas-pagamento")
-public class FormaPagamentoController {
+public class FormaPagamentoController implements FormasPagamentoDocumentation {
     private final FormaPagamentoService formaPagamentoService;
     private final FormaPagamentoAssembler formasDePagamentoAssembler;
-    private final FormasPagamentoRepository formaPagamentoRepository;
+    private final FormaPagamentoRepository formaPagamentoRepository;
 
-
-    @GetMapping("/{id}")
-    public ResponseEntity<FormaPagamentoOutput> formaDePagamento(@PathVariable Long id, ServletWebRequest request) {
+    @Override
+    @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<FormaPagamentoOutput> formaPagamento(@PathVariable Long id, ServletWebRequest request) {
         String eTag = this.getDeepETag(request);
         FormaPagamento formaPagamento = this.formaPagamentoService.buscarPor(id);
         FormaPagamentoOutput pagamentoOutput = this.formasDePagamentoAssembler.toModel(formaPagamento);
@@ -39,8 +43,9 @@ public class FormaPagamentoController {
                 .body(pagamentoOutput);
     }
 
-    @GetMapping
-    public ResponseEntity<List<FormaPagamentoOutput>> formasDePagamentos(ServletWebRequest request) {
+    @Override
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FormaPagamentoOutput>> formasPagamentos(ServletWebRequest request) {
         String eTag = this.getDeepETag(request);
         if (request.checkNotModified(eTag))
             return null;
@@ -67,19 +72,20 @@ public class FormaPagamentoController {
         return String.valueOf(dataAtualizacao.toEpochSecond());
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public FormaPagamentoOutput cadastrarFormaDePagamento(
-            @RequestBody @Valid FormaPagamentoInput FormaPagamentoInput) {
-
+    @Override
+    @ResponseStatus(CREATED)
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
+    public FormaPagamentoOutput novaFormaPagamento(
+            @RequestBody @Valid FormaPagamentoInput FormaPagamentoInput
+    ) {
         FormaPagamento formaPagamento = this.formasDePagamentoAssembler.toDomain(FormaPagamentoInput);
         formaPagamento = this.formaPagamentoService.salvarOuAtualizar(formaPagamento);
         return this.formasDePagamentoAssembler.toModel(formaPagamento);
     }
 
-
-    @PutMapping("/{id}")
-    public FormaPagamentoOutput atualizarFormaDePagamento(
+    @Override
+    @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
+    public FormaPagamentoOutput atualizarFormaPagamento(
             @PathVariable Long id,
             @RequestBody @Valid FormaPagamentoInput FormaPagamentoInput
     ) {
@@ -89,10 +95,10 @@ public class FormaPagamentoController {
         return this.formasDePagamentoAssembler.toModel(formaPagamento);
     }
 
+    @Override
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removerFormaDePagamento(@PathVariable Long id) {
+    @ResponseStatus(NO_CONTENT)
+    public void excluirFormaPagamento(@PathVariable Long id) {
         this.formaPagamentoService.remover(id);
-
     }
 }

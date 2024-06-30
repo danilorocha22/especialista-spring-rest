@@ -37,7 +37,7 @@ public class CozinhaConsultaService {
 
     }
 
-    public Cozinha buscarPorNomeIgual(String nome) {
+    public Cozinha buscarComNomeIgual(String nome) {
         return this.cozinhaRepository.comNomeIgual(nome)
                 .orElseThrow(() -> new NegocioException(
                         MSG_COZINHA_NAO_ENCONTRADA_COM_NOME.formatted(nome)));

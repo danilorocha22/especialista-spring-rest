@@ -5,6 +5,7 @@ import com.dan.esr.api.models.input.usuario.UsuarioInput;
 import com.dan.esr.api.models.input.usuario.UsuarioSenhaInput;
 import com.dan.esr.api.models.output.usuario.UsuarioGruposOutput;
 import com.dan.esr.api.models.output.usuario.UsuarioOutput;
+import com.dan.esr.api.openapi.documentation.usuario.UsuarioCadastroDocumentation;
 import com.dan.esr.core.assemblers.UsuarioAssembler;
 import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.services.usuario.UsuarioCadastroService;
@@ -14,16 +15,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@RequiredArgsConstructor
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/usuarios")
-public class CadastroUsuarioController {
+public class UsuarioCadastroController implements UsuarioCadastroDocumentation {
     private final UsuarioCadastroService usuarioCadastro;
     private final UsuarioConsultaService usuarioConsulta;
     private final UsuarioAssembler usuarioAssembler;
 
-    @PostMapping
+    @Override
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     public UsuarioOutput novoUsuario(@RequestBody @Valid UsuarioInput usuarioInput) {
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioInput);
         this.usuarioCadastro.validarUsuarioComEmailJaCadastrado(usuario);
@@ -32,16 +36,17 @@ public class CadastroUsuarioController {
         );
     }
 
-    @PutMapping("/{id}")
+    @Override
+    @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public UsuarioOutput atualizarUsuario(
-            @PathVariable Long id,
+            @PathVariable("id") Long usuarioId,
             @RequestBody @Valid UsuarioAtualizadoInput usuarioAtualizado
     ) {
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioAtualizado);
-        usuario.setId(id);
+        usuario.setId(usuarioId);
         this.usuarioCadastro.validarUsuarioComEmailJaCadastrado(usuario);
 
-        Usuario usuarioRegistro = this.usuarioConsulta.buscarPor(id);
+        Usuario usuarioRegistro = this.usuarioConsulta.buscarPor(usuarioId);
         this.usuarioAssembler.copyToDomain(usuarioAtualizado, usuarioRegistro);
 
         return this.usuarioAssembler.toModel(
@@ -49,33 +54,22 @@ public class CadastroUsuarioController {
         );
     }
 
-    @PutMapping("/{id}/senha")
+    @Override
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping(path = "/{id}/senha", produces = APPLICATION_JSON_VALUE)
     public void atualizarSenha(
-            @PathVariable Long id,
+            @PathVariable("id") Long usuarioId,
             @RequestBody @Valid UsuarioSenhaInput usuarioNovaSenha
     ) {
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioNovaSenha);
-        usuario.setId(id);
+        usuario.setId(usuarioId);
         this.usuarioCadastro.atualizarSenha(usuario);
     }
 
-    @PutMapping("/{usuarioId}/grupos/{grupoId}")
-    public UsuarioGruposOutput adicionarGrupo(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
-        Usuario usuario = this.usuarioCadastro.adicionarGrupo(usuarioId, grupoId);
-        return this.usuarioAssembler.toModelUsuarioGrupos(usuario);
-    }
-
-    @DeleteMapping("/{usuarioId}/grupos/{grupoId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public UsuarioGruposOutput removerGrupo(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
-        Usuario usuario = this.usuarioCadastro.removerGrupo(usuarioId, grupoId);
-        return this.usuarioAssembler.toModelUsuarioGrupos(usuario);
-    }
-
+    @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void excluirUsuario(@PathVariable Long id) {
-        this.usuarioCadastro.remover(id);
+    public void excluir(@PathVariable("id") Long usuarioId) {
+        this.usuarioCadastro.remover(usuarioId);
     }
 }

@@ -97,7 +97,6 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
             referencedColumnName = "id")
     private FormaPagamento formaPagamento;
 
-    @ToString.Exclude
     @OneToMany(mappedBy = "pedido",
             cascade = CascadeType.ALL)
     private Set<ItemPedido> itens = new HashSet<>();

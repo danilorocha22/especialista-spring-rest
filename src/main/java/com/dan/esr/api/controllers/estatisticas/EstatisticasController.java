@@ -1,5 +1,6 @@
 package com.dan.esr.api.controllers.estatisticas;
 
+import com.dan.esr.api.openapi.documentation.estatisticas.EstatisticasDocumentation;
 import com.dan.esr.domain.entities.dto.VendaDiaria;
 import com.dan.esr.domain.filter.VendaDiariaFiltro;
 import com.dan.esr.domain.services.VendaDiariaQueryService;
@@ -20,10 +21,11 @@ import static org.springframework.http.MediaType.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/estatisticas")
-public class EstatisticasController {
+public class EstatisticasController implements EstatisticasDocumentation {
     private final VendaDiariaQueryService vendaDiariaService;
     private final VendaDiariaReportsService reportsService;
 
+    @Override
     @GetMapping(path = "/vendas-diaria", produces = APPLICATION_JSON_VALUE)
     public List<VendaDiaria> consultarVendasDiaria(
             VendaDiariaFiltro filtro,
@@ -32,6 +34,7 @@ public class EstatisticasController {
         return this.vendaDiariaService.consultarVendasDiaria(filtro, timeOffset);
     }
 
+    @Override
     @GetMapping(path = "/vendas-diaria", produces = APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> consultarVendasDiariaPdf(
             VendaDiariaFiltro filtro,

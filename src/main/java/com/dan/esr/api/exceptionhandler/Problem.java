@@ -1,6 +1,8 @@
 package com.dan.esr.api.exceptionhandler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.context.MessageSource;
@@ -18,19 +20,31 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter
 @Builder
+@ApiModel("Problema")
 @JsonInclude(NON_NULL)
 public final class Problem {
     //Propriedades padrão da especificação RFC 7807
+    @ApiModelProperty(example = "400", position = 1)
     private Integer status;
+
+    @ApiModelProperty(example = "https://danfood.com.br/erro-negocio", position = 10)
     private String type;
+
+    @ApiModelProperty(example = "Violação de regra de negócio", position = 20)
     private String title;
+
+    @ApiModelProperty(example = "Não existe um cadastro de estado com codigo 1", position = 30)
     private String detail;
 
     //Propriedades adicionais
+    @ApiModelProperty(example = "Não existe um cadastro de estado com codigo 1", position = 35)
     private String userMessage;
-    private OffsetDateTime timestamp;
-    private List<Object> objects;
 
+    @ApiModelProperty(example = "2021-11-14T00:12:13", position = 40)
+    private OffsetDateTime timestamp;
+
+    @ApiModelProperty(value = "Lista de objetos ou campos que geraram o erro", position = 50)
+    private List<Object> objects;
 
     /* Métodos da classe Problem */
     public static Problem novoProblema(String msg, HttpStatusCode status) {
@@ -56,8 +70,13 @@ public final class Problem {
 
     @Getter
     @Builder
+    @ApiModel("ObjetoProblema")
     public static class Object {
+
+        @ApiModelProperty(example = "preco")
         private String nome;
+
+        @ApiModelProperty(example = "O preço é obrigatório")
         private String userMessage;
 
         /* Métodos da classe Object*/

@@ -2,6 +2,7 @@ package com.dan.esr.api.controllers.restaurante;
 
 import com.dan.esr.api.models.input.restaurante.RestauranteInput;
 import com.dan.esr.api.models.output.restaurante.RestauranteOutput;
+import com.dan.esr.api.openapi.documentation.restaurante.RestauranteCadastroDocumentation;
 import com.dan.esr.core.assemblers.RestauranteEntityAssembler;
 import com.dan.esr.core.assemblers.RestauranteModelAssembler;
 import com.dan.esr.domain.entities.Restaurante;
@@ -27,17 +28,20 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/restaurantes")
-public class RestauranteCadastroController {
+public class RestauranteCadastroController implements RestauranteCadastroDocumentation {
     private final RestauranteCadastroService restauranteCadastro;
     private final RestauranteConsultaService restauranteConsulta;
     private final RestauranteModelAssembler restauranteModelAssembler;
     private final RestauranteEntityAssembler restauranteEntityAssembler;
     private final SmartValidator validator;
 
-    @PostMapping
+    @Override
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteOutput novoRestaurante(@RequestBody @Valid RestauranteInput restauranteInput) {
         Restaurante restaurante = this.restauranteEntityAssembler.toDomain(restauranteInput);
@@ -45,7 +49,8 @@ public class RestauranteCadastroController {
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 
-    @PutMapping("/{id}")
+    @Override
+    @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public RestauranteOutput atualizarRestaurante(
             @PathVariable Long id,
             @RequestBody @Valid RestauranteInput restauranteInput
@@ -56,7 +61,8 @@ public class RestauranteCadastroController {
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 
-    @PatchMapping("/{id}")
+    @Override
+    @PatchMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public RestauranteOutput atualizarParcial(
             @PathVariable Long id,
             @RequestBody Map<String, Object> campos,
@@ -69,9 +75,10 @@ public class RestauranteCadastroController {
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 
+    @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover(@PathVariable Long id) {
+    public void excluir(@PathVariable Long id) {
         this.restauranteCadastro.remover(id);
     }
 

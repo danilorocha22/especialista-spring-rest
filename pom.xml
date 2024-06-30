@@ -26,9 +26,10 @@
         <commons-beansutils.version>1.9.4</commons-beansutils.version>
         <commons-digester.version>2.1</commons-digester.version>
         <commons-collections4.version>4.5.0-M1</commons-collections4.version>
-        <aws-java-sdk-s3.version>1.12.744</aws-java-sdk-s3.version>
+        <aws-java-sdk-s3.version>1.12.750</aws-java-sdk-s3.version>
         <freemarker.version>2.3.33</freemarker.version>
         <springfox.version>3.0.0</springfox.version>
+        <!--<springfox-swagger2>2.9.2</springfox-swagger2>-->
     </properties>
 
     <dependencies>
@@ -202,12 +203,29 @@
             <version>${freemarker.version}</version>
         </dependency>
 
-        <!--Springfox para documentação automatizada-->
+        <!--Springfox3 para documentação automatizada-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
             <version>${springfox.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-bean-validators</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+
+        <!--Springfox Swagger2 para documentação automatizada-->
+        <!--<dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>-->
 
 
         <!--Testes da API-->

@@ -2,6 +2,7 @@ package com.dan.esr.api.models.input.produto;
 
 import com.dan.esr.core.validation.ArquivoTamanho;
 import com.dan.esr.core.validation.TipoConteudoArquivo;
+import io.swagger.annotations.ApiModelProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -18,10 +19,12 @@ import static org.springframework.http.MediaType.*;
 public class FotoProdutoInput {
     @NotNull
     @ArquivoTamanho(max = "500KB")
+    @ApiModelProperty(hidden = true)
     @TipoConteudoArquivo(tiposPermitidos = {IMAGE_PNG_VALUE, IMAGE_JPEG_VALUE})
     private MultipartFile arquivo;
 
     @NotBlank
+    @ApiModelProperty(value = "Descrição da foto do produto", required = true)
     private String descricao;
 
     public String getNomeArquivo() {

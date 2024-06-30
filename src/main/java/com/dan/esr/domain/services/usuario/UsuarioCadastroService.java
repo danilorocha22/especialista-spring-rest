@@ -65,18 +65,16 @@ public class UsuarioCadastroService {
     }
 
     @Transactional
-    public Usuario adicionarGrupo(Long usuarioId, Long grupoId) {
+    public void adicionarGrupo(Long usuarioId, Long grupoId) {
         Usuario usuario = this.usuarioConsulta.buscarPor(usuarioId);
         Grupo grupo = this.grupoService.buscarPor(grupoId);
         usuario.adicionar(grupo);
-        return usuario;
     }
 
     @Transactional
-    public Usuario removerGrupo(Long usuarioId, Long grupoId) {
+    public void removerGrupo(Long usuarioId, Long grupoId) {
         Usuario usuario = this.usuarioConsulta.buscarPor(usuarioId);
         Grupo grupo = this.grupoService.buscarPor(grupoId);
         usuario.remover(grupo);
-        return usuario;
     }
 }

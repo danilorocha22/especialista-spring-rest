@@ -4,17 +4,16 @@ import com.dan.esr.api.models.input.cidade.CidadeInput;
 import com.dan.esr.api.models.output.cidade.CidadeOutput;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.entities.Estado;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CidadeAssembler {
-
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     public CidadeOutput toModel(
             Cidade cidade,

@@ -4,7 +4,7 @@ import com.dan.esr.domain.entities.FormaPagamento;
 import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
 import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 import com.dan.esr.domain.exceptions.formapagamento.FormaPagamentoNaoEncontradoException;
-import com.dan.esr.domain.repositories.FormasPagamentoRepository;
+import com.dan.esr.domain.repositories.FormaPagamentoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,15 +15,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FormaPagamentoService {
-    private final FormasPagamentoRepository formasPagamentoRepository;
+    private final FormaPagamentoRepository formaPagamentoRepository;
 
     public FormaPagamento buscarPor(Long id) {
-        return formasPagamentoRepository.com(id)
+        return formaPagamentoRepository.com(id)
                 .orElseThrow(() -> new FormaPagamentoNaoEncontradoException(id));
     }
 
     public List<FormaPagamento> buscarTodos() {
-        List<FormaPagamento> formaPagamentos = formasPagamentoRepository.todos();
+        List<FormaPagamento> formaPagamentos = formaPagamentoRepository.todos();
         if (formaPagamentos.isEmpty()) {
             throw new FormaPagamentoNaoEncontradoException();
         }
@@ -32,7 +32,7 @@ public class FormaPagamentoService {
 
     @Transactional
     public FormaPagamento salvarOuAtualizar(FormaPagamento formaPagamento) {
-        return formasPagamentoRepository.salvarOuAtualizar(formaPagamento)
+        return formaPagamentoRepository.salvarOuAtualizar(formaPagamento)
                 .orElseThrow(() -> {
                     String descricao = formaPagamento.getNome();
                     if (formaPagamento.isNova()) {
@@ -49,7 +49,7 @@ public class FormaPagamentoService {
     public void remover(Long id) {
         FormaPagamento formaPagamento = this.buscarPor(id);
         try {
-            this.formasPagamentoRepository.remover(formaPagamento.getId());
+            this.formaPagamentoRepository.remover(formaPagamento.getId());
         } catch (DataIntegrityViolationException ex) {
             throw new EntidadeEmUsoException("Forma de pagamento não pode ser excluída, pois está " +
                     "em uso por outra entidade");

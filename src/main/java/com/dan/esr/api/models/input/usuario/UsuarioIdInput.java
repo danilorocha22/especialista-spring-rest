@@ -1,9 +1,13 @@
 package com.dan.esr.api.models.input.usuario;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public class UsuarioIdInput {
+
+    @ApiModelProperty(example = "1", required = true)
     private Long id;
 }

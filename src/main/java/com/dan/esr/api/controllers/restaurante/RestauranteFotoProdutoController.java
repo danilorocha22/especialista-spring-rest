@@ -2,6 +2,7 @@ package com.dan.esr.api.controllers.restaurante;
 
 import com.dan.esr.api.models.input.produto.FotoProdutoInput;
 import com.dan.esr.api.models.output.produto.FotoProdutoOutput;
+import com.dan.esr.api.openapi.documentation.restaurante.RestauranteFotoProdutoDocumentation;
 import com.dan.esr.core.assemblers.FotoProdutoAssembler;
 import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Restaurante;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -28,11 +30,12 @@ import static org.springframework.http.MediaType.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/restaurantes/{restauranteId}/produtos/{produtoId}/foto")
-public class RestauranteFotoProdutoController {
+public class RestauranteFotoProdutoController implements RestauranteFotoProdutoDocumentation {
     private final AlbumProdutoService albumProdutoService;
     private final StorageAlbumService localStorageService;
     private final FotoProdutoAssembler fotoProdutoAssembler;
 
+    @Override
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public FotoProdutoOutput buscarDadosFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         return this.fotoProdutoAssembler.toModel(
@@ -40,7 +43,8 @@ public class RestauranteFotoProdutoController {
         );
     }
 
-    @GetMapping
+    @Override
+    @GetMapping(produces = {IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE})
     public ResponseEntity<?> baixarFoto(
             @PathVariable Long restauranteId,
             @PathVariable Long produtoId,
@@ -81,12 +85,13 @@ public class RestauranteFotoProdutoController {
         }
     }
 
-
-    @PutMapping(consumes = MULTIPART_FORM_DATA_VALUE)
+    @Override
+    @PutMapping(consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public FotoProdutoOutput atualizarFoto(
             @PathVariable Long restauranteId,
             @PathVariable Long produtoId,
-            @Valid FotoProdutoInput fotoProdutoInput
+            @Valid FotoProdutoInput fotoProdutoInput,
+            @RequestPart MultipartFile arquivo
     ) throws IOException {
         FotoProduto foto = this.fotoProdutoAssembler.toDomain(fotoProdutoInput);
         foto.getProduto().setId(produtoId);
@@ -98,6 +103,7 @@ public class RestauranteFotoProdutoController {
         );
     }
 
+    @Override
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removerFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId) {

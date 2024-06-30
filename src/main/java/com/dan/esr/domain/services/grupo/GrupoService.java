@@ -59,18 +59,16 @@ public class GrupoService {
     }
 
     @Transactional
-    public Grupo adicionarPermissao(Long grupoId, Long permissaoId) {
+    public void adicionarPermissao(Long grupoId, Long permissaoId) {
         Grupo grupo = this.buscarPor(grupoId);
         Permissao permissao = this.permissaoService.buscarPor(permissaoId);
         grupo.adicionar(permissao);
-        return grupo;
     }
 
     @Transactional
-    public Grupo removerPermissao(Long grupoId, Long permissaoId) {
+    public void removerPermissao(Long grupoId, Long permissaoId) {
         Grupo grupo = this.buscarPor(grupoId);
         Permissao permissao = this.permissaoService.buscarPor(permissaoId);
         grupo.remover(permissao);
-        return grupo;
     }
 }

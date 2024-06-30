@@ -1,5 +1,6 @@
 package com.dan.esr.domain.filter;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,8 +12,18 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 @Getter
 @Setter
 public class PedidoFiltro {
-    private Long clienteId, restauranteId;
 
+    @ApiModelProperty(value = "ID de um cliente para filtro da pesquisa", example = "1")
+    private Long clienteId;
+
+    @ApiModelProperty(value = "ID de um restaurante para filtro da pesquisa", example = "2")
+    private Long restauranteId;
+
+    @ApiModelProperty(example = "2019-10-30T00:00:00Z", value = "Data/hora de criação inicial para filtro da pesquisa")
     @DateTimeFormat(iso = DATE_TIME)
-    private OffsetDateTime dataCriacaoDe, dataCriacaoAte;
+    private OffsetDateTime dataCriacaoDe;
+
+    @ApiModelProperty(example = "2019-11-01T10:00:00Z", value = "Data/hora de criação final para filtro da pesquisa")
+    @DateTimeFormat(iso = DATE_TIME)
+    private OffsetDateTime dataCriacaoAte;
 }

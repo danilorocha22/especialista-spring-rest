@@ -2,6 +2,7 @@ package com.dan.esr.api.controllers.restaurante;
 
 import com.dan.esr.api.models.output.restaurante.RestauranteOutput;
 import com.dan.esr.api.models.output.view.RestauranteView;
+import com.dan.esr.api.openapi.documentation.restaurante.RestauranteFormaPagamentoDocumentation;
 import com.dan.esr.core.assemblers.RestauranteModelAssembler;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
@@ -10,14 +11,17 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/restaurantes/{restauranteId}/formas-pagamento")
-public class RestauranteFormaPagamentoController {
+@RequestMapping(value = "/restaurantes/{restauranteId}/formas-pagamento", produces = APPLICATION_JSON_VALUE)
+public class RestauranteFormaPagamentoController implements RestauranteFormaPagamentoDocumentation {
     private final RestauranteFormaPagamentoService restauranteFormaPagamentoService;
     private final RestauranteConsultaService restauranteConsulta;
     private final RestauranteModelAssembler restauranteModelAssembler;
 
+    @Override
     @PutMapping("/{formasPagamentoId}")
     @JsonView(RestauranteView.FormaPagamento.class)
     public RestauranteOutput adicionarFormaPagamento(
@@ -29,6 +33,7 @@ public class RestauranteFormaPagamentoController {
         return this.restauranteModelAssembler.toModel(restaurante);
     }
 
+    @Override
     @DeleteMapping("/{formaPagamentoId}")
     @JsonView(RestauranteView.FormaPagamento.class)
     public RestauranteOutput removerFormaPagamento(
@@ -43,6 +48,7 @@ public class RestauranteFormaPagamentoController {
     }
 
 
+    @Override
     @GetMapping
     @JsonView(RestauranteView.FormaPagamento.class)
     public RestauranteOutput listar(@PathVariable Long restauranteId) {
