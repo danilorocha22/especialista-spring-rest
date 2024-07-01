@@ -9,6 +9,9 @@ import lombok.Setter;
 @Setter
 @ApiModel(value = "Estado")
 public class EstadoOutput {
+    @ApiModelProperty(example = "1")
+    private Long id;
+
     @ApiModelProperty(example = "TO")
     private String sigla;
 }

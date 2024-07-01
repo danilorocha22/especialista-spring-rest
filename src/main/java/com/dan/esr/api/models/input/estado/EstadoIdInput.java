@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EstadoIdInput {
-
     @NotNull
     @ApiModelProperty(example = "1", required = true)
     private Long id;

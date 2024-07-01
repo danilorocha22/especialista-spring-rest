@@ -26,18 +26,18 @@ public class EstadoController implements EstadoDocumentation {
     private final EstadoAssembler estadoAssembler;
 
     @Override
-    @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public List<EstadoOutput> estados() {
-        return this.estadoAssembler.toModelList(
-                this.estadoRepository.findAll()
-        );
-    }
-
-    @Override
     @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public EstadoOutput estado(@PathVariable Long id) {
         return this.estadoAssembler.toModel(
                 this.estadoService.buscarPorId(id)
+        );
+    }
+
+    @Override
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    public List<EstadoOutput> estados() {
+        return this.estadoAssembler.toModelList(
+                this.estadoRepository.findAll()
         );
     }
 

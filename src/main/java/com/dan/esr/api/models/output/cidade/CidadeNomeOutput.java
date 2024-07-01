@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @ApiModel("Cidade")
 public class CidadeNomeOutput extends CidadeOutput {
-
     @ApiModelProperty(example = "1")
     private Long id;
 

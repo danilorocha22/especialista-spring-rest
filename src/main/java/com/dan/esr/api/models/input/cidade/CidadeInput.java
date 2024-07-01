@@ -15,7 +15,7 @@ public class CidadeInput {
     @ApiModelProperty(example = "Palmas", required = true)
     private String nome;
 
+    //@JsonIgnoreProperties(value = "sigla", allowGetters = true)
     @NotNull
-    @JsonIgnoreProperties(value = "sigla", allowGetters = true)
     private EstadoIdInput estado;
 }
