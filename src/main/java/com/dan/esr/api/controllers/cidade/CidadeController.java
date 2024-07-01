@@ -1,5 +1,6 @@
 package com.dan.esr.api.controllers.cidade;
 
+import com.dan.esr.api.helper.ResourceUriHelper;
 import com.dan.esr.api.models.input.cidade.CidadeInput;
 import com.dan.esr.api.models.output.cidade.CidadeEstadoOutput;
 import com.dan.esr.api.models.output.cidade.CidadeNomeOutput;
@@ -44,6 +45,7 @@ public class CidadeController implements CidadeDocumentation {
     public CidadeOutput novaCidade(@RequestBody @Valid CidadeInput cidadeInput) {
         Cidade cidade = this.cidadeAssembler.toDomain(cidadeInput);
         cidade = this.cidadeService.salvarOuAtualizar(cidade);
+        ResourceUriHelper.addUriInResponseHeader(cidade.getId());
         return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
     }
 
