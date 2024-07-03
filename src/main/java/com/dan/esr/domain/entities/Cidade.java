@@ -7,17 +7,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.ConvertGroup;
 import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(of = {"id"})
 @Entity
+@ToString
 @Table(name = "cidades", schema = "dan_food")
 public class Cidade implements Serializable {
     @Serial
@@ -33,6 +32,7 @@ public class Cidade implements Serializable {
 
     @Valid
     @NotNull
+    @ToString.Exclude
     @ConvertGroup(to = EstadoId.class)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id", nullable = false,
@@ -60,5 +60,17 @@ public class Cidade implements Serializable {
 
     private boolean isSiglaEstadoValido() {
         return estado != null && !estado.getSigla().isBlank();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Cidade cidade)) return false;
+        return Objects.equals(getId(), cidade.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }

@@ -2,8 +2,6 @@ package com.dan.esr.api.controllers.cidade;
 
 import com.dan.esr.api.helper.ResourceUriHelper;
 import com.dan.esr.api.models.input.cidade.CidadeInput;
-import com.dan.esr.api.models.output.cidade.CidadeEstadoOutput;
-import com.dan.esr.api.models.output.cidade.CidadeNomeOutput;
 import com.dan.esr.api.models.output.cidade.CidadeOutput;
 import com.dan.esr.api.openapi.documentation.cidade.CidadeDocumentation;
 import com.dan.esr.core.assemblers.CidadeAssembler;
@@ -11,11 +9,14 @@ import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.services.cidade.CidadeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -27,26 +28,28 @@ public class CidadeController implements CidadeDocumentation {
 
     @Override
     @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public CidadeOutput cidade(@PathVariable Long id) {
+    public EntityModel<CidadeOutput> cidade(@PathVariable Long id) {
         Cidade cidade = this.cidadeService.buscarPor(id);
-        return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
+        return EntityModel.of(
+                this.cidadeAssembler.toModel(cidade)
+        );
     }
 
     @Override
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public List<CidadeOutput> cidades() {
+    public CollectionModel<CidadeOutput> cidades() {
         List<Cidade> cidades = this.cidadeService.buscarTodos();
-        return this.cidadeAssembler.toModelList(cidades, CidadeNomeOutput.class);
+        return this.cidadeAssembler.toCollectionModel(cidades);
     }
 
     @Override
-    @PostMapping(produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     public CidadeOutput novaCidade(@RequestBody @Valid CidadeInput cidadeInput) {
         Cidade cidade = this.cidadeAssembler.toDomain(cidadeInput);
         cidade = this.cidadeService.salvarOuAtualizar(cidade);
         ResourceUriHelper.addUriInResponseHeader(cidade.getId());
-        return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
+        return this.cidadeAssembler.toModel(cidade);
     }
 
     @Override
@@ -55,7 +58,7 @@ public class CidadeController implements CidadeDocumentation {
         Cidade cidade = this.cidadeService.buscarPor(id);
         this.cidadeAssembler.copyToCidadeDomain(cidadeInput, cidade);
         cidade = this.cidadeService.salvarOuAtualizar(cidade);
-        return this.cidadeAssembler.toModel(cidade, CidadeEstadoOutput.class);
+        return this.cidadeAssembler.toModel(cidade);
     }
 
     @Override

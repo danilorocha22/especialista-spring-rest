@@ -4,7 +4,6 @@ import com.dan.esr.api.models.input.endereco.EnderecoInput;
 import com.dan.esr.api.models.input.itempedido.ItemPedidoInput;
 import com.dan.esr.api.models.input.pedido.PedidoInput;
 import com.dan.esr.api.models.input.produto.FotoProdutoInput;
-import com.dan.esr.api.models.output.cidade.CidadeNomeOutput;
 import com.dan.esr.api.models.output.restaurante.RestauranteOutput;
 import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
 import com.dan.esr.domain.entities.*;
@@ -26,10 +25,6 @@ public class ModelMapperConfig {
         //Configurando o mapeamento de Restaurante para RestauranteProdutosOutput
         mapper.createTypeMap(Restaurante.class, RestauranteProdutosOutput.class)
                 .addMapping(Restaurante::getProdutos, RestauranteProdutosOutput::setProdutos);
-
-        //Configurando o mapeamento de Cidade para CidadeNomeOutput
-        mapper.createTypeMap(Cidade.class, CidadeNomeOutput.class)
-                .addMappings(mapping -> mapping.map(Cidade::getCidadeEstado, CidadeNomeOutput::setNome));
 
         mapper.createTypeMap(PedidoInput.class, Pedido.class)
                 .addMappings(mapping -> mapping.skip(Pedido::setId));

@@ -18,7 +18,7 @@ import static com.dan.esr.core.util.MensagensUtil.MSG_PROPRIEDADE_NAO_PODE_SER_N
 public class EstadoService {
     private final EstadoRepository estadoRepository;
 
-    public Estado buscarPorId(Long id) {
+    public Estado buscarPor(Long id) {
         return this.estadoRepository.findById(id).orElseThrow(() ->
                 new EstadoNaoEncontradoException(id));
     }
@@ -34,7 +34,7 @@ public class EstadoService {
 
     @Transactional
     public void remover(Long id) {
-        Estado estadoRegistro = this.buscarPorId(id);
+        Estado estadoRegistro = this.buscarPor(id);
 
         try {
             this.estadoRepository.delete(estadoRegistro);

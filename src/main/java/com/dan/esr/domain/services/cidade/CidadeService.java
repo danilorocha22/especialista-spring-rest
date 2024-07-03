@@ -56,7 +56,7 @@ public class CidadeService {
 
     private void configurarCidade(Cidade cidade) {
         Long estadoId = cidade.getEstado().getId();
-        Estado estado = this.estadoService.buscarPorId(estadoId);
+        Estado estado = this.estadoService.buscarPor(estadoId);
         cidade.setEstado(estado);
     }
 

@@ -4,8 +4,8 @@ import com.dan.esr.api.exceptionhandler.Problem;
 import com.dan.esr.api.models.input.cidade.CidadeInput;
 import com.dan.esr.api.models.output.cidade.CidadeOutput;
 import io.swagger.annotations.*;
-
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 
 @Api(tags = "Cidades")
 public interface CidadeDocumentation {
@@ -15,11 +15,11 @@ public interface CidadeDocumentation {
             @ApiResponse(code = 400, message = "ID da cidade inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Cidade não encontrada", response = Problem.class)
     })
-    CidadeOutput cidade(@ApiParam(value = "ID de uma cidade", example = "1", required = true) Long id);
+    EntityModel<CidadeOutput> cidade(@ApiParam(value = "ID de uma cidade", example = "1", required = true) Long id);
 
 
     @ApiOperation("Lista as cidades")
-    List<CidadeOutput> cidades();
+    CollectionModel<CidadeOutput> cidades();
 
     @ApiOperation("Cadastra uma cidade")
     @ApiResponses(@ApiResponse(code = 200, message = "Cidade cadastrada"))
