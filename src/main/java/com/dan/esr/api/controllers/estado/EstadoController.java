@@ -10,6 +10,7 @@ import com.dan.esr.domain.services.estado.EstadoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +28,10 @@ public class EstadoController implements EstadoDocumentation {
 
     @Override
     @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public EstadoOutput estado(@PathVariable Long id) {
-        return this.estadoAssembler.toModel(
-                this.estadoService.buscarPorId(id)
+    public EntityModel<EstadoOutput> estado(@PathVariable Long id) {
+        Estado estado = this.estadoService.buscarPor(id);
+        return EntityModel.of(
+                this.estadoAssembler.toModel(estado)
         );
     }
 
@@ -54,7 +56,7 @@ public class EstadoController implements EstadoDocumentation {
     @Override
     @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public EstadoOutput atualizarEstado(@PathVariable Long id, @Valid @RequestBody EstadoInput estadoInput) {
-        Estado estado = this.estadoService.buscarPorId(id);
+        Estado estado = this.estadoService.buscarPor(id);
         BeanUtils.copyProperties(estadoInput, estado, "id");
         return this.estadoAssembler.toModel(
                 this.estadoService.salvarOuAtualizar(estado)

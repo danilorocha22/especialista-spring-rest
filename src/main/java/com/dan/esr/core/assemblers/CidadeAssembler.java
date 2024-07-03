@@ -1,34 +1,49 @@
 package com.dan.esr.core.assemblers;
 
+import com.dan.esr.api.controllers.cidade.CidadeController;
+import com.dan.esr.api.controllers.estado.EstadoController;
 import com.dan.esr.api.models.input.cidade.CidadeInput;
 import com.dan.esr.api.models.output.cidade.CidadeOutput;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.entities.Estado;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Component
-@RequiredArgsConstructor
-public class CidadeAssembler {
+public class CidadeAssembler extends RepresentationModelAssemblerSupport<Cidade, CidadeOutput> {
     private final ModelMapper mapper;
 
-    public CidadeOutput toModel(
-            Cidade cidade,
-            Class<? extends CidadeOutput> classeDestino
-    ) {
-        return this.mapper.map(cidade, classeDestino);
+    @Autowired
+    public CidadeAssembler(ModelMapper mapper) {
+        super(CidadeController.class, CidadeOutput.class);
+        this.mapper = mapper;
     }
 
-    public List<CidadeOutput> toModelList(
-            List<Cidade> cidades,
-            Class<? extends CidadeOutput> classeDestino
-    ) {
-        return cidades.stream()
-                .map(cidade -> this.toModel(cidade, classeDestino))
-                .toList();
+    @NonNull
+    @Override
+    public CidadeOutput toModel(@NonNull Cidade cidade) {
+        CidadeOutput cidadeOutput = createModelWithId(cidade.getId(), cidade);
+        this.mapper.map(cidade, cidadeOutput);
+        cidadeOutput.getEstado().add(linkTo(methodOn(EstadoController.class).estado(cidade.getEstado().getId()))
+                .withSelfRel());
+        cidadeOutput.getEstado().add(linkTo(methodOn(EstadoController.class).estados()).withSelfRel());
+        return cidadeOutput;
+    }
+
+    @NonNull
+    @Override
+    public CollectionModel<CidadeOutput> toCollectionModel(@NonNull Iterable<? extends Cidade> entities) {
+        return super.toCollectionModel(entities)
+                .add(linkTo(CidadeController.class).withSelfRel());
     }
 
     public Cidade toDomain(CidadeInput cidadeInput) {
