@@ -6,12 +6,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+
+import java.util.Objects;
 
 @Getter
 @Setter
 @ApiModel("Usuário")
 @JsonView(PedidoView.Resumo.class)
-public class UsuarioOutput {
+public class UsuarioOutput extends RepresentationModel<UsuarioOutput> {
     @ApiModelProperty(example = "1")
     private Long id;
 
@@ -20,4 +23,17 @@ public class UsuarioOutput {
 
     @ApiModelProperty(example = "paulo.gomes@email.com")
     private String email;
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof UsuarioOutput that)) return false;
+        if (!super.equals(object)) return false;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getId());
+    }
 }
