@@ -8,6 +8,8 @@ import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +27,11 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/{id}")
-    public RestauranteOutput restaurante(@PathVariable Long id) {
+    public EntityModel<RestauranteOutput> restaurante(@PathVariable Long id) {
         Restaurante restaurante = this.restauranteConsulta.buscarPor(id);
-        return this.restauranteModelAssembler.toModel(restaurante);
+        return EntityModel.of(
+                this.restauranteModelAssembler.toModel(restaurante)
+        );
     }
 
    /* @GetMapping
@@ -46,12 +50,19 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
         return this.restauranteModelAssembler.toCollectionModel(this.restauranteConsulta.buscarTodos());
     }*/
 
+    @GetMapping()
+    @JsonView(RestauranteView.Resumo.class)
+    public CollectionModel<RestauranteOutput> restaurantes() {
+        List<Restaurante> restaurantes = this.restauranteConsulta.buscarTodos();
+        return this.restauranteModelAssembler.toCollectionModel(restaurantes);
+    }
+
     @Override
-    @GetMapping
+    @GetMapping(params = "projecao=resumo")
     public MappingJacksonValue restaurante(@RequestParam(required = false) String projecao) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarTodos();
-        List<RestauranteOutput> restaurantesModel = restauranteModelAssembler.toCollectionModel(restaurantes);
-        MappingJacksonValue restaurantesWrapper = new MappingJacksonValue(restaurantesModel);
+        CollectionModel<RestauranteOutput> collectionModel = restauranteModelAssembler.toCollectionModel(restaurantes);
+        MappingJacksonValue restaurantesWrapper = new MappingJacksonValue(collectionModel);
         restaurantesWrapper.setSerializationView(RestauranteView.Resumo.class);
 
         if ("status".equals(projecao)) {
@@ -66,7 +77,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
     @Override
     @GetMapping("/por-taxa")
     @JsonView(RestauranteView.Resumo.class)
-    public List<RestauranteOutput> restaurantesComTaxaFreteEntre(BigDecimal taxaInicial, BigDecimal taxaFinal) {
+    public CollectionModel<RestauranteOutput> restaurantesComTaxaFreteEntre(BigDecimal taxaInicial, BigDecimal taxaFinal) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarFreteEntre(taxaInicial, taxaFinal);
         return this.restauranteModelAssembler.toCollectionModel(restaurantes);
     }
@@ -74,7 +85,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
     @Override
     @GetMapping("/por-nome-e-cozinha")
     @JsonView(RestauranteView.Resumo.class)
-    public List<RestauranteOutput> restaurantesComNomeSemelhanteEcozinha(String nome, Long cozinhaId) {
+    public CollectionModel<RestauranteOutput> restaurantesComNomeSemelhanteEcozinha(String nome, Long cozinhaId) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarNomeContendoEcozinhaId(nome, cozinhaId);
         return this.restauranteModelAssembler.toCollectionModel(restaurantes);
     }
@@ -82,30 +93,32 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
     @Override
     @GetMapping("/por-nome-e-frete")
     @JsonView(RestauranteView.Resumo.class)
-    public List<RestauranteOutput> restauranteComNomeSemelhanteOuTaxaFreteEntre(
+    public CollectionModel<RestauranteOutput> restauranteComNomeSemelhanteOuTaxaFreteEntre(
             String nome,
             BigDecimal freteInicial,
             BigDecimal freteFinal
     ) {
         List<Restaurante> restaurantes =
                 this.restauranteConsulta.buscarNomeContendoOuFreteEntre(nome, freteInicial, freteFinal);
-
         return this.restauranteModelAssembler.toCollectionModel(restaurantes);
     }
 
     @Override
     @GetMapping("/primeiro-por-nome")
-    public RestauranteOutput primeiroRestauranteComNomeSemelhante(String nome) {
+    public EntityModel<RestauranteOutput> primeiroRestauranteComNomeSemelhante(String nome) {
         Restaurante restaurante = this.restauranteConsulta.buscarPrimeiroNomeContendo(nome);
-        return this.restauranteModelAssembler.toModel(restaurante);
+        return EntityModel.of(
+                this.restauranteModelAssembler.toModel(restaurante)
+        );
     }
 
     @Override
     @GetMapping("/top2-por-nome")
     @JsonView(RestauranteView.Resumo.class)
-    public List<RestauranteOutput> restaurantesTop2ComNomeSemelhante(String nome) {
-        List<Restaurante> restaurantes = this.restauranteConsulta.buscarTop2NomeContendo(nome);
-        return this.restauranteModelAssembler.toCollectionModel(restaurantes);
+    public CollectionModel<RestauranteOutput> restaurantesTop2ComNomeSemelhante(String nome) {
+        return this.restauranteModelAssembler.toCollectionModel(
+                this.restauranteConsulta.buscarTop2NomeContendo(nome)
+        );
     }
 
     @Override
@@ -117,30 +130,36 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
     @Override
     @GetMapping("/com-frete-gratis")
     @JsonView(RestauranteView.Resumo.class)
-    public List<RestauranteOutput> restaurantesComNomeSemelhanteEfreteGratis(String nome) {
-        List<Restaurante> restaurantes = this.restauranteConsulta.buscarNomeContendoEfreteGratis(nome);
-        return this.restauranteModelAssembler.toCollectionModel(restaurantes);
+    public CollectionModel<RestauranteOutput> restaurantesComNomeSemelhanteEfreteGratis(String nome) {
+        return this.restauranteModelAssembler.toCollectionModel(
+                this.restauranteConsulta.buscarNomeContendoEfreteGratis(nome)
+        );
     }
 
     @Override
     @GetMapping("/com-nome-semelhante")
     @JsonView(RestauranteView.Resumo.class)
-    public List<RestauranteOutput> restaurantesComNomSemelhante(String nome) {
-        List<Restaurante> restaurantes = this.restauranteConsulta.buscarNomeContendo(nome);
-        return this.restauranteModelAssembler.toCollectionModel(restaurantes);
+    public CollectionModel<RestauranteOutput> restaurantesComNomSemelhante(String nome) {
+        return this.restauranteModelAssembler.toCollectionModel(
+                this.restauranteConsulta.buscarNomeContendo(nome)
+        );
     }
 
     @Override
     @GetMapping("/com-nome-igual")
-    public RestauranteOutput restauranteComNomeIgual(String nome) {
+    public EntityModel<RestauranteOutput> restauranteComNomeIgual(String nome) {
         Restaurante restaurante = this.restauranteConsulta.buscarPorNomeIgual(nome);
-        return this.restauranteModelAssembler.toModel(restaurante);
+        return EntityModel.of(
+                this.restauranteModelAssembler.toModel(restaurante)
+        );
     }
 
     @Override
     @GetMapping("/primeiro")
-    public RestauranteOutput buscarPrimeiroRestaurante() {
+    public EntityModel<RestauranteOutput> buscarPrimeiroRestaurante() {
         Restaurante restaurante = this.restauranteConsulta.buscarPrimeiroRestaurante();
-        return this.restauranteModelAssembler.toModel(restaurante);
+        return EntityModel.of(
+                this.restauranteModelAssembler.toModel(restaurante)
+        );
     }
 }

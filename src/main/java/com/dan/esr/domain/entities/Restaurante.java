@@ -1,5 +1,6 @@
 package com.dan.esr.domain.entities;
 
+import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.formapagamento.FormaPagamentoNaoEncontradoException;
 import jakarta.persistence.*;
@@ -255,10 +256,10 @@ public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRe
      * @return mensagem de erro formatada
      */
     private <T extends IdentificavelParaAdicionarOuRemover> String mensagemDeErro(T entidade, String acao) {
-        String nome = entidade.getClass().getSimpleName();
+        String nomeClasse = entidade.getClass().getSimpleName();
         return ("%s %s (id %s) %s no restaurante %s (id %s), verifique os dados informados e tente " +
                 "novamente. Se o problema persistir, contate o administrador.")
-                .formatted(formatarNomeClasse(nome), entidade.getNome(),
+                .formatted(formatarNomeClasse(nomeClasse), entidade.getNome(),
                         entidade.getId(), acao, getNome(), getId());
     }
 
@@ -283,7 +284,7 @@ public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRe
 
     public void validarResponsaveis() {
         if (getUsuariosResponsaveis().isEmpty()) {
-            throw new NegocioException("O restaurante %s não possui responsável cadastrado no momento."
+            throw new EntidadeNaoEncontradaException("O restaurante %s não possui responsável cadastrado no momento."
                     .formatted(getNome()));
         }
     }

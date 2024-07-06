@@ -2,13 +2,15 @@ package com.dan.esr.api.openapi.documentation.restaurante;
 
 import com.dan.esr.api.exceptionhandler.Problem;
 import com.dan.esr.api.models.output.restaurante.RestauranteResponsaveisOutput;
+import com.dan.esr.api.models.output.usuario.UsuarioOutput;
 import io.swagger.annotations.*;
+import org.springframework.hateoas.CollectionModel;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteResponsavelDocumentation {
 
     @ApiOperation("Lista os responsáveis de um restaurante pelo ID")
-    RestauranteResponsaveisOutput buscarResponsaveis(
+    CollectionModel<UsuarioOutput> buscarResponsaveis(
             @ApiParam(value = "ID de um restaurante", example = "1", required = true)
             Long restauranteId
     );
