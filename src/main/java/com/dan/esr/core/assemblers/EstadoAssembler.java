@@ -6,6 +6,7 @@ import com.dan.esr.api.models.output.estado.EstadoOutput;
 import com.dan.esr.domain.entities.Estado;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -33,11 +34,18 @@ public class EstadoAssembler extends RepresentationModelAssemblerSupport<Estado,
         return estadoOutput;
     }
 
-    public List<EstadoOutput> toModelList(List<Estado> estados) {
+    @NonNull
+    @Override
+    public CollectionModel<EstadoOutput> toCollectionModel(@NonNull Iterable<? extends Estado> entities) {
+        return super.toCollectionModel(entities)
+                .add(linkTo(methodOn(EstadoController.class).estados()).withSelfRel());
+    }
+
+    /*public List<EstadoOutput> toModelList(List<Estado> estados) {
         return estados.stream()
                 .map(this::toModel)
                 .toList();
-    }
+    }*/
 
     public Estado toDomain(EstadoInput estadoInput) {
         return this.mapper.map(estadoInput, Estado.class);

@@ -10,11 +10,10 @@ import com.dan.esr.domain.services.estado.EstadoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -37,8 +36,8 @@ public class EstadoController implements EstadoDocumentation {
 
     @Override
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public List<EstadoOutput> estados() {
-        return this.estadoAssembler.toModelList(
+    public CollectionModel<EstadoOutput> estados() {
+        return this.estadoAssembler.toCollectionModel(
                 this.estadoRepository.findAll()
         );
     }
@@ -69,12 +68,4 @@ public class EstadoController implements EstadoDocumentation {
     public void excluirEstado(@PathVariable Long id) {
         this.estadoService.remover(id);
     }
-
-    /*@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    private List<Estado> listarEstadosApi() {
-        List<Estado> estados = estadoService.estados();
-        System.out.println("Quantidade Estados "+ estados.size());
-
-        return estados;
-    }*/
 }

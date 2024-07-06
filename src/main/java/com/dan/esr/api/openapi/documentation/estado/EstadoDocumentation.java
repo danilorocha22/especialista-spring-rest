@@ -4,9 +4,8 @@ import com.dan.esr.api.exceptionhandler.Problem;
 import com.dan.esr.api.models.input.estado.EstadoInput;
 import com.dan.esr.api.models.output.estado.EstadoOutput;
 import io.swagger.annotations.*;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-
-import java.util.List;
 
 @Api("Estados")
 public interface EstadoDocumentation {
@@ -19,7 +18,7 @@ public interface EstadoDocumentation {
     EntityModel<EstadoOutput> estado(@ApiParam(value = "ID de um estado", example = "1", required = true) Long id);
 
     @ApiOperation("Lista os estados")
-    List<EstadoOutput> estados();
+    CollectionModel<EstadoOutput> estados();
 
     @ApiOperation("Cadastra um estado")
     @ApiResponses(@ApiResponse(code = 200, message = "Estado cadastrado"))
