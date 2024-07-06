@@ -38,8 +38,9 @@ public class CidadeController implements CidadeDocumentation {
     @Override
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public CollectionModel<CidadeOutput> cidades() {
-        List<Cidade> cidades = this.cidadeService.buscarTodos();
-        return this.cidadeAssembler.toCollectionModel(cidades);
+        return this.cidadeAssembler.toCollectionModel(
+                this.cidadeService.buscarTodos()
+        );
     }
 
     @Override

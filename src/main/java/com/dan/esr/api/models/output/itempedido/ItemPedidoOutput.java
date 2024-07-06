@@ -3,8 +3,11 @@ package com.dan.esr.api.models.output.itempedido;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 
@@ -14,7 +17,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @JsonInclude(NON_NULL)
 @ApiModel("Itens do Pedido")
-public class ItemPedidoOutput {
+@Relation(collectionRelation = "itens")
+@EqualsAndHashCode(of = {"produtoId", "nomeProduto", "precoUnitario"}, callSuper = false)
+public class ItemPedidoOutput extends RepresentationModel<ItemPedidoOutput> {
     @ApiModelProperty(example = "1")
     private Long produtoId;
 
