@@ -13,8 +13,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -32,16 +30,17 @@ public class UsuarioAssembler extends RepresentationModelAssemblerSupport<Usuari
     public UsuarioOutput toModel(@NonNull Usuario usuario) {
         UsuarioOutput usuarioOutput = createModelWithId(usuario.getId(), usuario);
         this.mapper.map(usuario, usuarioOutput);
-        usuarioOutput.add(linkTo(methodOn(UsuarioPesquisaController.class).usuarioGrupos(usuario.getId()))
-                .withSelfRel());
-        return usuarioOutput;
+        return usuarioOutput
+                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarioGrupos(usuario.getId())).withSelfRel())
+                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarios()).withSelfRel());
+
     }
 
     public UsuarioGruposOutput toModelUsuarioGrupos(Usuario usuario) {
-        UsuarioGruposOutput usuarioGruposOutput = this.mapper.map(usuario, UsuarioGruposOutput.class);
-        usuarioGruposOutput.add(linkTo(methodOn(UsuarioPesquisaController.class).usuario(usuario.getId()))
-                .withSelfRel());
-        return usuarioGruposOutput;
+        return this.mapper.map(usuario, UsuarioGruposOutput.class)
+                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarioGrupos(usuario.getId())).withSelfRel())
+                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuario(usuario.getId())).withSelfRel())
+                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarios()).withSelfRel());
     }
 
     @NonNull

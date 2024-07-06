@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.util.Objects;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
 @Setter
 @ApiModel("Usuário")
 @JsonView(PedidoView.Resumo.class)
+@Relation(collectionRelation = "usuarios")
 public class UsuarioOutput extends RepresentationModel<UsuarioOutput> {
     @ApiModelProperty(example = "1")
     private Long id;
