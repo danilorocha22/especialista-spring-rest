@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-import static com.dan.esr.core.helper.PageableWrapperHelper.of;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -53,7 +52,7 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
             PedidoFiltro filtro,
             @PageableDefault(size = 5) Pageable pageable
     ) {
-        Pageable pageableConfigurado = PageableWrapperHelper.of(pageable);
+        Pageable pageableConfigurado = PageableWrapperHelper.of(pageable, getCampos());
         Page<Pedido> pedidosPage = this.pedidoPesquisaService.filtrarPor(filtro, pageableConfigurado);
         //List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidosPage.getContent());
         //return new PageImpl<>(pedidosOutput, pageable, pedidosPage.getTotalElements());
@@ -78,5 +77,20 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
         }
 
         return pedidoMapping;
+    }
+
+    private static Map<String, String> getCampos() {
+        return Map.of(
+                "codigo", "codigo",
+                "codigoPedido", "codigo",
+                "nomeProduto", "produto.nome",
+                "produtoNome", "produto.nome",
+                "restaurante.nome", "restaurante.nome",
+                "restauranteNome", "restaurante.nome",
+                "nomeRestaurante", "restaurante.nome",
+                "nomeCliente", "usuario.nome",
+                "cliente.nome", "usuario.nome",
+                "nomeUsuario", "usuario.nome"
+        );
     }
 }
