@@ -7,12 +7,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 
 @Api(tags = "Cozinhas")
 public interface CozinhaPesquisaDocumentation {
@@ -22,36 +20,36 @@ public interface CozinhaPesquisaDocumentation {
             @ApiResponse(code = 400, message = "ID da cozinha inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Cozinha não encontrada", response = Problem.class)
     })
-    CozinhaOutput cozinha(Long id);
+    EntityModel<CozinhaOutput> cozinha(Long id);
 
     @ApiOperation("Busca a primeira cozinha")
     @ApiResponses(@ApiResponse(code = 404, message = "Cozinha não encontrada", response = Problem.class))
-    CozinhaOutput primeiraCozinha();
+    EntityModel<CozinhaOutput> primeiraCozinha();
 
     @ApiOperation("Busca a primeira cozinha com nome semelhante")
     @ApiResponses({
             @ApiResponse(code = 400, message = "Nome da cozinha inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Cozinha não encontrada", response = Problem.class)
     })
-    CozinhaOutput primeiraCozinhaComNomeSemelhante(String nome);
+    EntityModel<CozinhaOutput> primeiraCozinhaComNomeSemelhante(String nome);
 
     @ApiOperation("Busca a primeira cozinha com nome idêntico")
     @ApiResponses({
             @ApiResponse(code = 400, message = "Nome da cozinha inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Cozinha não encontrada", response = Problem.class)
     })
-    CozinhaOutput cozinhaComNomeIgual(String nome);
+    EntityModel<CozinhaOutput> cozinhaComNomeIgual(String nome);
 
     @ApiOperation("Lista as cozinhas com nome semelhante")
     @ApiResponses({
             @ApiResponse(code = 400, message = "Nome da cozinha inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Cozinha não encontrada", response = Problem.class)
     })
-    List<CozinhaOutput> cozinhasComNomeSemelhante(String nome);
+    CollectionModel<CozinhaOutput> cozinhasComNomeSemelhante(String nome);
 
     @ApiOperation("Lista paginada das cozinhas")
     @ApiResponses(@ApiResponse(code = 404, message = "Cozinha não encontrada", response = Problem.class))
-    Page<CozinhaOutput> cozinhas(Pageable pageable);
+    PagedModel<CozinhaOutput> cozinhas(Pageable pageable);
 
     @ApiOperation("Verifica se determinada cozinha existe com nome idêntico")
     @ApiResponses(@ApiResponse(code = 400, message = "Nome da cozinha inválido", response = Problem.class))
@@ -59,5 +57,5 @@ public interface CozinhaPesquisaDocumentation {
 
     @ApiOperation("Lista paginada das cozinhas no formato XML")
     @ApiResponses(@ApiResponse(code = 404, message = "Cozinha não encontrada", response = Problem.class))
-    CozinhasXML listarXml(Pageable pageable);
+    CollectionModel<CozinhasXML> listarXml(Pageable pageable);
 }
