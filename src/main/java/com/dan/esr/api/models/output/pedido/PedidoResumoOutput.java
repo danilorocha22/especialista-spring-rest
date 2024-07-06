@@ -1,12 +1,16 @@
 package com.dan.esr.api.models.output.pedido;
 
-import com.dan.esr.api.models.output.restaurante.RestauranteIdNomeOutput;
-import com.dan.esr.api.models.output.usuario.UsuarioOutput;
+import com.dan.esr.api.models.output.view.PedidoView;
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -15,7 +19,10 @@ import java.time.OffsetDateTime;
 @Setter
 @ApiModel("Pedido")
 @JsonFilter("pedidoFilter") //filtra os campos que serão retornados na resposta
-public class PedidoResumoOutput {
+@Relation(collectionRelation = "pedidos")
+@EqualsAndHashCode(of = "codigo", callSuper = false)
+public class PedidoResumoOutput extends RepresentationModel<PedidoResumoOutput> {
+
     @ApiModelProperty(example = "f9981ca4-5a5e-4da3-af04-933861df3e55")
     private String codigo;
 
@@ -34,10 +41,15 @@ public class PedidoResumoOutput {
     @ApiModelProperty(example = "2019-12-01T20:34:04Z")
     private OffsetDateTime dataCriacao;
 
-    @ApiModelProperty(example = "1")
-    private String restauranteId;
+    @JsonProperty("restaurante")
+    @ApiModelProperty(value = "Nome do restaurante", example = "Toca do Sabor")
+    private String restauranteNome;
 
-    private RestauranteIdNomeOutput restaurante;
+    @JsonProperty("formaPagamento")
+    @ApiModelProperty(value = "Nome da forma de pagamento", example = "Débito")
+    private String formaPagamentoNome;
 
-    private UsuarioOutput cliente;
+    @JsonProperty("cliente")
+    @ApiModelProperty(value = "Nome do cliente", example = "Joaquim da Silva")
+    private String usuarioNome;
 }

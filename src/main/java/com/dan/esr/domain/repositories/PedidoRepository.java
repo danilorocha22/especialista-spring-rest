@@ -13,11 +13,11 @@ public interface PedidoRepository extends
         JpaSpecificationExecutor<Pedido> {
 
     @Query("from Pedido p join fetch p.endereco join fetch p.formaPagamento join fetch p.restaurante r " +
-            "join fetch p.cliente left join fetch r.formasPagamento join fetch r.cozinha")
+            "join fetch p.usuario left join fetch r.formasPagamento join fetch r.cozinha")
     List<Pedido> todosPedidos();
 
-    @Query("from Pedido p join fetch p.cliente join fetch p.endereco join fetch p.formaPagamento join fetch " +
-            "p.restaurante r left join fetch r.produtos join fetch p.itens i join fetch i.produto " +
+    @Query("from Pedido p join fetch p.usuario join fetch p.endereco join fetch p.formaPagamento join fetch " +
+            "p.restaurante r left join fetch r.produtos join fetch p.itensPedido i join fetch i.produto " +
             "where p.codigo = :codigo")
     Optional<Pedido> porCodigo(@Param("codigo") String codigoPedido);
 }

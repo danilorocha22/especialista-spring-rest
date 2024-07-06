@@ -5,19 +5,21 @@ import com.dan.esr.api.models.output.pedido.PedidoResumoOutput;
 import com.dan.esr.api.models.output.view.PedidoView;
 import com.dan.esr.api.openapi.documentation.pedido.PedidoPesquisaDocumentation;
 import com.dan.esr.core.assemblers.PedidoAssembler;
+import com.dan.esr.core.assemblers.PedidoResumoAssembler;
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.filter.PedidoFiltro;
 import com.dan.esr.domain.services.pedido.PedidoPesquisaService;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-import static com.dan.esr.core.util.PaginacaoCamposHelper.novaPaginacaoCamposConfigurados;
+import static com.dan.esr.core.util.PaginacaoCamposHelper.novaPaginacaoComCamposConfigurados;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -34,6 +36,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
     private final PedidoPesquisaService pedidoPesquisaService;
     private final PedidoAssembler pedidoAssembler;
+    private final PedidoResumoAssembler pedidoResumoAssembler;
+    private final PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
 
     @Override
     @GetMapping("/{codigoPedido}")
@@ -45,26 +49,27 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
 
     @Override
     @GetMapping
-    @JsonView(PedidoView.Resumo.class)
-    public Page<PedidoOutput> pesquisaComplexa(
+    //@JsonView(PedidoView.Resumo.class)
+    public PagedModel<PedidoOutput> pesquisaComplexa(
             PedidoFiltro filtro,
             @PageableDefault(size = 5) Pageable pageable
     ) {
-        pageable = novaPaginacaoCamposConfigurados(pageable, getCampos());
+        pageable = novaPaginacaoComCamposConfigurados(pageable, getCampos());
         Page<Pedido> pedidoPage = this.pedidoPesquisaService.filtrarPor(filtro, pageable);
-        List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidoPage.getContent());
-        return new PageImpl<>(pedidosOutput, pageable, pedidoPage.getTotalElements());
+        //List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidoPage.getContent());
+        //return new PageImpl<>(pedidosOutput, pageable, pedidoPage.getTotalElements());
+        return this.pagedResourcesAssembler.toModel(pedidoPage, this.pedidoAssembler);
     }
 
     @Override
     @GetMapping("/filtrados")
     public MappingJacksonValue pedidos(@RequestParam(required = false) String campos) {
         List<Pedido> pedidos = this.pedidoPesquisaService.todos();
-        List<PedidoResumoOutput> pedidosModel = this.pedidoAssembler.toCollectionResumo(pedidos);
-
+        CollectionModel<PedidoResumoOutput> pedidosModel = this.pedidoResumoAssembler.toCollectionModel(pedidos);
         MappingJacksonValue pedidoMapping = new MappingJacksonValue(pedidosModel);
         SimpleFilterProvider filterProvider = new SimpleFilterProvider();
         String filtro = "pedidoFilter";
+
         filterProvider.addFilter(filtro, SimpleBeanPropertyFilter.serializeAll());
         pedidoMapping.setFilters(filterProvider);
 

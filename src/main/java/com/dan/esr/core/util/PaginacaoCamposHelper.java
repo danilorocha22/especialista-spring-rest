@@ -11,7 +11,7 @@ public final class PaginacaoCamposHelper {
     private PaginacaoCamposHelper() {
     }
 
-    public static Pageable novaPaginacaoCamposConfigurados(Pageable pageable, Map<String, String> campos) {
+    public static Pageable novaPaginacaoComCamposConfigurados(Pageable pageable, Map<String, String> campos) {
         return PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),

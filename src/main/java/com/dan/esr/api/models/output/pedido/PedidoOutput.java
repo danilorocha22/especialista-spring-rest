@@ -10,8 +10,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -23,7 +26,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Setter
 @JsonInclude(NON_NULL)
 @ApiModel(value = "Pedido")
-public class PedidoOutput {
+@Relation(collectionRelation = "pedidos")
+@EqualsAndHashCode(of = "codigo", callSuper = false)
+public class PedidoOutput extends RepresentationModel<PedidoOutput> {
 
     @JsonView(PedidoView.Resumo.class)
     @ApiModelProperty(example = "3b75fd6e-4a14-4721-8b19-b563c725302e")
@@ -65,11 +70,11 @@ public class PedidoOutput {
     @JsonProperty("formaPagamento")
     @JsonView(PedidoView.Resumo.class)
     @ApiModelProperty(example = "Cartão de Crédito")
-    private String nomeFormaPagamento;
+    private String formaPagamentoNome;
 
     @JsonProperty("cliente")
     @JsonView(PedidoView.Resumo.class)
-    private UsuarioOutput cliente;
+    private UsuarioOutput usuario;
 
     /*@JsonProperty("cliente")
     private String nomeUsuario;*/
@@ -77,5 +82,6 @@ public class PedidoOutput {
     @JsonProperty("enderecoEntrega")
     private EnderecoOutput endereco;
 
-    private Set<ItemPedidoOutput> itens;
+    @JsonProperty("itens")
+    private Set<ItemPedidoOutput> itensPedido;
 }

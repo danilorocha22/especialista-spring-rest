@@ -39,12 +39,12 @@ public class PedidoEmissaoService {
         restaurante.validarSeAberto();
         FormaPagamento formaPagamento = pedido.getFormaPagamento();
         restaurante.validarFormaPagamento(formaPagamento);
-        Usuario cliente = this.usuarioConsulta.buscarPor(pedido.getCliente().getId());
+        Usuario cliente = this.usuarioConsulta.buscarPor(pedido.getUsuario().getId());
         Cidade cidade = this.cidadeService.buscarPor(pedido.getEndereco().getCidade().getId());
 
         pedido.setRestaurante(restaurante);
         pedido.setFormaPagamento(formaPagamento);
-        pedido.setCliente(cliente);
+        pedido.setUsuario(cliente);
         pedido.getEndereco().setCidade(cidade);
         pedido.calcularTaxaFrete();
         pedido.calcularSubtotal();
@@ -52,7 +52,7 @@ public class PedidoEmissaoService {
     }
 
     private void validarItensPedido(Pedido pedido) {
-        pedido.getItens().forEach(item -> {
+        pedido.getItensPedido().forEach(item -> {
             Long produtoId = item.getProduto().getId();
             Long restauranteId = pedido.getRestaurante().getId();
             Produto produto = this.produtoService.buscarPor(restauranteId, produtoId);

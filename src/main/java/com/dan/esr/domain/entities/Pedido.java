@@ -5,7 +5,6 @@ import com.dan.esr.domain.events.PedidoCanceladoEvent;
 import com.dan.esr.domain.events.PedidoConfirmadoEvent;
 import com.dan.esr.domain.events.PedidoEmitidoEvent;
 import com.dan.esr.domain.exceptions.NegocioException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -81,7 +80,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
     @JoinColumn(name = "usuario_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_usuario"),
             referencedColumnName = "id")
-    private Usuario cliente;
+    private Usuario usuario;
 
     @ToString.Include
     @ManyToOne(fetch = FetchType.LAZY)
@@ -99,7 +98,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
 
     @OneToMany(mappedBy = "pedido",
             cascade = CascadeType.ALL)
-    private Set<ItemPedido> itens = new HashSet<>();
+    private Set<ItemPedido> itensPedido = new HashSet<>();
 
     /*########################################     MÉTODOS     ########################################*/
     public void calcularTaxaFrete() {
@@ -111,7 +110,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
     }
 
     public void calcularSubtotal() {
-        double subTotal = this.itens.stream()
+        double subTotal = this.itensPedido.stream()
                 .mapToDouble(ItemPedido::getValorTotalDouble)
                 .sum();
         setSubtotal(BigDecimal.valueOf(subTotal));
@@ -142,7 +141,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
     }
 
     public String nomeCliente() {
-        return this.cliente.getNome();
+        return this.usuario.getNome();
     }
 
     public String nomeRestaurante() {

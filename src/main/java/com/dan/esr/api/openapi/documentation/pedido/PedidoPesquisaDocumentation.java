@@ -4,8 +4,8 @@ import com.dan.esr.api.exceptionhandler.Problem;
 import com.dan.esr.api.models.output.pedido.PedidoOutput;
 import com.dan.esr.domain.filter.PedidoFiltro;
 import io.swagger.annotations.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.converter.json.MappingJacksonValue;
 
 @Api(tags = "Pedidos")
@@ -23,7 +23,7 @@ public interface PedidoPesquisaDocumentation {
             @ApiImplicitParam(value = "Nomes das propriedades para filtrar na resposta, separados por vírgula",
                     name = "campos", paramType = "query", type = "string")
     })
-    Page<PedidoOutput> pesquisaComplexa(PedidoFiltro filtro, Pageable pageable);
+    PagedModel<PedidoOutput> pesquisaComplexa(PedidoFiltro filtro, Pageable pageable);
 
     @ApiOperation("Pesquisa os pedidos")
     @ApiImplicitParams({@ApiImplicitParam(
