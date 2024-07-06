@@ -2,18 +2,17 @@ package com.dan.esr.api.controllers.pedido;
 
 import com.dan.esr.api.models.output.pedido.PedidoOutput;
 import com.dan.esr.api.models.output.pedido.PedidoResumoOutput;
-import com.dan.esr.api.models.output.view.PedidoView;
 import com.dan.esr.api.openapi.documentation.pedido.PedidoPesquisaDocumentation;
 import com.dan.esr.core.assemblers.PedidoAssembler;
 import com.dan.esr.core.assemblers.PedidoResumoAssembler;
+import com.dan.esr.core.helper.PageWrapperHelper;
+import com.dan.esr.core.helper.PageableWrapperHelper;
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.filter.PedidoFiltro;
 import com.dan.esr.domain.services.pedido.PedidoPesquisaService;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -27,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-import static com.dan.esr.core.util.PaginacaoCamposHelper.novaPaginacaoComCamposConfigurados;
+import static com.dan.esr.core.helper.PageableWrapperHelper.of;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -54,11 +53,12 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
             PedidoFiltro filtro,
             @PageableDefault(size = 5) Pageable pageable
     ) {
-        pageable = novaPaginacaoComCamposConfigurados(pageable, getCampos());
-        Page<Pedido> pedidoPage = this.pedidoPesquisaService.filtrarPor(filtro, pageable);
-        //List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidoPage.getContent());
-        //return new PageImpl<>(pedidosOutput, pageable, pedidoPage.getTotalElements());
-        return this.pagedResourcesAssembler.toModel(pedidoPage, this.pedidoAssembler);
+        Pageable pageableConfigurado = PageableWrapperHelper.of(pageable);
+        Page<Pedido> pedidosPage = this.pedidoPesquisaService.filtrarPor(filtro, pageableConfigurado);
+        //List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidosPage.getContent());
+        //return new PageImpl<>(pedidosOutput, pageable, pedidosPage.getTotalElements());
+        pedidosPage = PageWrapperHelper.of(pedidosPage, pageable);
+        return this.pagedResourcesAssembler.toModel(pedidosPage, this.pedidoAssembler);
     }
 
     @Override
@@ -78,20 +78,5 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
         }
 
         return pedidoMapping;
-    }
-
-    private static Map<String, String> getCampos() {
-        return Map.of(
-                "codigo", "codigo",
-                "codigoPedido", "codigo",
-                "nomeProduto", "produto.nome",
-                "produtoNome", "produto.nome",
-                "restaurante.nome", "restaurante.nome",
-                "restauranteNome", "restaurante.nome",
-                "nomeRestaurante", "restaurante.nome",
-                "nomeCliente", "usuario.nome",
-                "cliente.nome", "usuario.nome",
-                "nomeUsuario", "usuario.nome"
-        );
     }
 }
