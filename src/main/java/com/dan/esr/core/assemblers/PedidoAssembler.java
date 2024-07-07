@@ -7,16 +7,18 @@ import com.dan.esr.api.controllers.usuario.UsuarioPesquisaController;
 import com.dan.esr.api.models.input.pedido.PedidoInput;
 import com.dan.esr.api.models.output.pedido.PedidoOutput;
 import com.dan.esr.api.models.output.pedido.PedidoStatusOutput;
-import com.dan.esr.core.util.TemplateVariablesUtil;
 import com.dan.esr.domain.entities.Pedido;
 import lombok.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.*;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import static com.dan.esr.core.util.TemplateVariablesUtil.templateVariables;
+import static com.dan.esr.core.util.TemplateVariablesFactory.*;
+import static org.springframework.hateoas.TemplateVariable.VariableType.REQUEST_PARAM;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -36,9 +38,12 @@ public class PedidoAssembler extends RepresentationModelAssemblerSupport<Pedido,
         PedidoOutput pedidoOutput = createModelWithId(pedido.getCodigo(), pedido);
         this.mapper.map(pedido, pedidoOutput);
         String pedidosUrl = linkTo(PedidoPesquisaController.class).toUri().toString();
+        var pageVariables = createTemplateVariables(SORT, PAGE, SIZE);
+        var filtroVariables = createTemplateVariables(CLIENTE_ID, RESTAURANTE_ID, DATA_CRIACAO_INICIAL,
+                DATA_CRIACAO_FINAL);
 
         return pedidoOutput
-                .add(Link.of(UriTemplate.of(pedidosUrl, templateVariables()), "pedidos"))
+                .add(Link.of(UriTemplate.of(pedidosUrl, pageVariables.concat(filtroVariables)), "pedidos"))
                 .add(linkTo(methodOn(RestaurantePesquisaController.class).restaurante(pedido.getId())).withSelfRel())
                 .add((linkTo(methodOn(FormaPagamentoController.class).formaPagamento(
                         pedido.getFormaPagamento().getId(), null)).withSelfRel()))
