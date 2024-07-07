@@ -1,4 +1,4 @@
-package com.dan.esr.api.helper;
+package com.dan.esr.api.helper.uri;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.experimental.UtilityClass;
