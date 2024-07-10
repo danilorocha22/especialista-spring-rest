@@ -13,6 +13,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -65,6 +66,10 @@ public class Usuario implements Serializable, IdentificavelParaAdicionarOuRemove
         if (isNaoConfere(senha)) {
             throw new NegocioException("A senha atual não confere.");
         }
+    }
+
+    public List<Grupo> getGrupos() {
+        return List.copyOf(grupos);
     }
 
     public boolean isNaoConfere(String senha) {

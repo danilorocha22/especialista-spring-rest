@@ -9,6 +9,8 @@ import com.dan.esr.domain.repositories.FormaPagamentoRepository;
 import com.dan.esr.domain.services.formaspagamento.FormaPagamentoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,26 +35,26 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
 
     @Override
     @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<FormaPagamentoOutput> formaPagamento(@PathVariable Long id, ServletWebRequest request) {
+    public ResponseEntity<EntityModel<FormaPagamentoOutput>> formaPagamento(@PathVariable Long id, ServletWebRequest request) {
         String eTag = this.getDeepETag(request);
         FormaPagamento formaPagamento = this.formaPagamentoService.buscarPor(id);
-        FormaPagamentoOutput pagamentoOutput = this.formasDePagamentoAssembler.toModel(formaPagamento);
+        FormaPagamentoOutput formaPagamentoOutput = this.formasDePagamentoAssembler.toModel(formaPagamento);
         return ResponseEntity.ok()
                 .eTag(eTag)
                 .cacheControl(CacheControl.maxAge(5, TimeUnit.SECONDS))
-                .body(pagamentoOutput);
+                .body(EntityModel.of(formaPagamentoOutput));
     }
 
     @Override
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<FormaPagamentoOutput>> formasPagamentos(ServletWebRequest request) {
+    public ResponseEntity<CollectionModel<FormaPagamentoOutput>> formasPagamentos(ServletWebRequest request) {
         String eTag = this.getDeepETag(request);
         if (request.checkNotModified(eTag))
             return null;
 
-        List<FormaPagamento> formaPagamento = this.formaPagamentoService.buscarTodos();
-        List<FormaPagamentoOutput> formasPagamentosModel =
-                this.formasDePagamentoAssembler.toCollectionModel(formaPagamento);
+        List<FormaPagamento> formaPagamentos = this.formaPagamentoService.buscarTodos();
+        CollectionModel<FormaPagamentoOutput> collectionModel
+                = this.formasDePagamentoAssembler.toCollectionModel(formaPagamentos);
 
         return ResponseEntity.ok()
                 //.cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePrivate())
@@ -62,7 +64,7 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
                 //.header("Etag", eTag)
                 .eTag(eTag)
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
-                .body(formasPagamentosModel);
+                .body(collectionModel);
     }
 
     private String getDeepETag(ServletWebRequest request) {
@@ -76,9 +78,9 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
     @ResponseStatus(CREATED)
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public FormaPagamentoOutput novaFormaPagamento(
-            @RequestBody @Valid FormaPagamentoInput FormaPagamentoInput
+            @RequestBody @Valid FormaPagamentoInput formaPagamentoInput
     ) {
-        FormaPagamento formaPagamento = this.formasDePagamentoAssembler.toDomain(FormaPagamentoInput);
+        FormaPagamento formaPagamento = this.formasDePagamentoAssembler.toDomain(formaPagamentoInput);
         formaPagamento = this.formaPagamentoService.salvarOuAtualizar(formaPagamento);
         return this.formasDePagamentoAssembler.toModel(formaPagamento);
     }
@@ -87,10 +89,10 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
     @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public FormaPagamentoOutput atualizarFormaPagamento(
             @PathVariable Long id,
-            @RequestBody @Valid FormaPagamentoInput FormaPagamentoInput
+            @RequestBody @Valid FormaPagamentoInput formaPagamentoInput
     ) {
         FormaPagamento formaPagamento = this.formaPagamentoService.buscarPor(id);
-        this.formasDePagamentoAssembler.copyToDomain(FormaPagamentoInput, formaPagamento);
+        this.formasDePagamentoAssembler.copyToDomain(formaPagamentoInput, formaPagamento);
         formaPagamento = this.formaPagamentoService.salvarOuAtualizar(formaPagamento);
         return this.formasDePagamentoAssembler.toModel(formaPagamento);
     }

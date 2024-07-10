@@ -9,7 +9,7 @@ import org.springframework.hateoas.server.core.Relation;
 
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id", callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = "cozinhas")
 public class CozinhaOutput extends RepresentationModel<CozinhaOutput> {
 

@@ -9,8 +9,8 @@ import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id", callSuper = false)
 @ApiModel(value = "Estado")
+@EqualsAndHashCode(callSuper = true)
 public class EstadoOutput extends RepresentationModel<EstadoOutput> {
     @ApiModelProperty(example = "1")
     private Long id;

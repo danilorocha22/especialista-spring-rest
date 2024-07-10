@@ -1,27 +1,40 @@
 package com.dan.esr.core.assemblers;
 
+import com.dan.esr.api.controllers.formapagamento.FormaPagamentoController;
 import com.dan.esr.api.models.input.formapagamento.FormaPagamentoInput;
 import com.dan.esr.api.models.output.formapagamento.FormaPagamentoOutput;
 import com.dan.esr.domain.entities.FormaPagamento;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import static com.dan.esr.api.helper.links.Links.linkToFormasPagamento;
 
 @Component
-@RequiredArgsConstructor
-public class FormaPagamentoAssembler {
+public class FormaPagamentoAssembler extends RepresentationModelAssemblerSupport<FormaPagamento, FormaPagamentoOutput> {
     private final ModelMapper mapper;
 
-    public FormaPagamentoOutput toModel(FormaPagamento formaPagamento) {
-        return mapper.map(formaPagamento, FormaPagamentoOutput.class);
+    @Autowired
+    public FormaPagamentoAssembler(ModelMapper mapper) {
+        super(FormaPagamentoController.class, FormaPagamentoOutput.class);
+        this.mapper = mapper;
     }
 
-    public List<FormaPagamentoOutput> toCollectionModel(List<FormaPagamento> formaPagamento) {
-        return formaPagamento.stream()
-                .map(this::toModel)
-                .toList();
+    @NonNull
+    @Override
+    public FormaPagamentoOutput toModel(@NonNull FormaPagamento formaPagamento) {
+        FormaPagamentoOutput formaPagamentoOutput = createModelWithId(formaPagamento.getId(), formaPagamento);
+        this.mapper.map(formaPagamento, formaPagamentoOutput);
+        return formaPagamentoOutput.add(linkToFormasPagamento());
+    }
+
+    @NonNull
+    @Override
+    public CollectionModel<FormaPagamentoOutput> toCollectionModel(@NonNull Iterable<? extends FormaPagamento> entities) {
+        return super.toCollectionModel(entities).add(linkToFormasPagamento());
     }
 
     public FormaPagamento toDomain(FormaPagamentoInput formaPagamentoInput) {

@@ -13,8 +13,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.dan.esr.api.helper.links.Links.linkToGrupos;
+import static com.dan.esr.api.helper.links.Links.linkToUsuarios;
 
 @Component
 public class UsuarioAssembler extends RepresentationModelAssemblerSupport<Usuario, UsuarioOutput> {
@@ -31,23 +31,20 @@ public class UsuarioAssembler extends RepresentationModelAssemblerSupport<Usuari
         UsuarioOutput usuarioOutput = createModelWithId(usuario.getId(), usuario);
         this.mapper.map(usuario, usuarioOutput);
         return usuarioOutput
-                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarioGrupos(usuario.getId())).withSelfRel())
-                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarios()).withSelfRel());
-
+                .add(linkToGrupos(usuario.getGrupos()))
+                .add(linkToUsuarios());
     }
 
     public UsuarioGruposOutput toModelUsuarioGrupos(Usuario usuario) {
-        return this.mapper.map(usuario, UsuarioGruposOutput.class)
-                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarioGrupos(usuario.getId())).withSelfRel())
-                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuario(usuario.getId())).withSelfRel())
-                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarios()).withSelfRel());
+        UsuarioOutput usuarioOutput = this.toModel(usuario);
+        UsuarioGruposOutput usuarioGruposOutput = this.mapper.map(usuario, UsuarioGruposOutput.class);
+        return usuarioGruposOutput.add(usuarioOutput.getLinks());
     }
 
     @NonNull
     @Override
     public CollectionModel<UsuarioOutput> toCollectionModel(@NonNull Iterable<? extends Usuario> entities) {
-        return super.toCollectionModel(entities)
-                .add(linkTo(methodOn(UsuarioPesquisaController.class).usuarios()).withSelfRel());
+        return super.toCollectionModel(entities).add(linkToUsuarios());
     }
 
     public Usuario toDomain(UsuarioInput usuarioInput) {

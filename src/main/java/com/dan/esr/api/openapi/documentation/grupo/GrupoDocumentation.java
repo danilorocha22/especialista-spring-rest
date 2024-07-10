@@ -4,8 +4,8 @@ import com.dan.esr.api.exceptionhandler.Problem;
 import com.dan.esr.api.models.input.grupo.GrupoInput;
 import com.dan.esr.api.models.output.grupo.GrupoOutput;
 import io.swagger.annotations.*;
-
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 
 @Api(tags = "Grupos")
 public interface GrupoDocumentation {
@@ -15,10 +15,10 @@ public interface GrupoDocumentation {
             @ApiResponse(code = 400, message = "ID do grupo inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
     })
-    GrupoOutput grupo(@ApiParam(value = "ID de um grupo", example = "1") Long id);
+    EntityModel<GrupoOutput> grupo(@ApiParam(value = "ID de um grupo", example = "1") Long id);
 
     @ApiOperation("Lista os grupos")
-    List<GrupoOutput> grupos();
+    CollectionModel<GrupoOutput> grupos();
 
     @ApiOperation("Cadastra um grupo")
     @ApiResponses(@ApiResponse(code = 200, message = "Grupo cadastrado"))

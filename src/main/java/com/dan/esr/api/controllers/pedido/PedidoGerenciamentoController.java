@@ -10,6 +10,7 @@ import com.dan.esr.domain.services.pedido.PedidoEmissaoService;
 import com.dan.esr.domain.services.pedido.PedidoStatusService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,35 +27,39 @@ public class PedidoGerenciamentoController implements PedidoGerenciamentoDocumen
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PedidoOutput novoPedido(@RequestBody @Valid PedidoInput pedidoInput) {
+    public EntityModel<PedidoOutput> novoPedido(@RequestBody @Valid PedidoInput pedidoInput) {
         Pedido pedido = this.pedidoAssembler.toDomain(pedidoInput);
         pedido.getEndereco().setId(null);
-        return this.pedidoAssembler.toModel(
-                this.pedidoEmissaoService.emitir(pedido)
+        pedido = this.pedidoEmissaoService.emitir(pedido);
+        return EntityModel.of(
+                this.pedidoAssembler.toModel(pedido)
         );
     }
 
     @Override
     @PutMapping("/{codigoPedido}/confirmacao")
-    public PedidoStatusOutput confirmacao(@PathVariable String codigoPedido) {
-        return this.pedidoAssembler.toModelStatus(
-                this.pedidoStatusService.confirmar(codigoPedido)
+    public EntityModel<PedidoStatusOutput> confirmado(@PathVariable String codigoPedido) {
+        Pedido pedidoConfirmado = this.pedidoStatusService.confirmar(codigoPedido);
+        return EntityModel.of(
+                this.pedidoAssembler.toModelStatus(pedidoConfirmado)
         );
     }
 
     @Override
     @PutMapping("/{codigoPedido}/entrega")
-    public PedidoStatusOutput entrega(@PathVariable String codigoPedido) {
-        return this.pedidoAssembler.toModelStatus(
-                this.pedidoStatusService.entregar(codigoPedido)
+    public EntityModel<PedidoStatusOutput> entregue(@PathVariable String codigoPedido) {
+        Pedido pedidoEntregue = this.pedidoStatusService.entregar(codigoPedido);
+        return EntityModel.of(
+                this.pedidoAssembler.toModelStatus(pedidoEntregue)
         );
     }
 
     @Override
     @PutMapping("/{codigoPedido}/cancelamento")
-    public PedidoStatusOutput cancelamento(@PathVariable String codigoPedido) {
-        return this.pedidoAssembler.toModelStatus(
-                this.pedidoStatusService.cancelar(codigoPedido)
+    public EntityModel<PedidoStatusOutput> cancelado(@PathVariable String codigoPedido) {
+        Pedido pedidoCancelado = this.pedidoStatusService.cancelar(codigoPedido);
+        return EntityModel.of(
+                this.pedidoAssembler.toModelStatus(pedidoCancelado)
         );
     }
 }

@@ -20,4 +20,8 @@ public enum StatusPedido {
     public boolean isStatusNaoPermitido(StatusPedido novoStatus) {
         return !Arrays.asList(novoStatus.getDescricoes()).contains(this.name());
     }
+
+    public boolean isStatusPermitido(StatusPedido novoStatus) {
+        return !isStatusNaoPermitido(novoStatus);
+    }
 }

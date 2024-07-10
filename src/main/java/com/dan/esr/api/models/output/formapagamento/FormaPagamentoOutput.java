@@ -9,10 +9,9 @@ import org.springframework.hateoas.server.core.Relation;
 
 @Getter
 @Setter
-@Relation("formasPagamento")
-@EqualsAndHashCode(of = "id", callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@Relation(collectionRelation = "formasPagamento", itemRelation = "formaPagamento")
 public class FormaPagamentoOutput extends RepresentationModel<FormaPagamentoOutput> {
-
     @ApiModelProperty(example = "1")
     private Long id;
 

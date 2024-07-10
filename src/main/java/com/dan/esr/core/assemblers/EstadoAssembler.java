@@ -11,17 +11,14 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.dan.esr.api.helper.links.Links.linkToEstados;
 
 @Component
 public class EstadoAssembler extends RepresentationModelAssemblerSupport<Estado, EstadoOutput> {
     private final ModelMapper mapper;
 
     @Autowired
-    public EstadoAssembler( ModelMapper mapper) {
+    public EstadoAssembler(ModelMapper mapper) {
         super(EstadoController.class, EstadoOutput.class);
         this.mapper = mapper;
     }
@@ -29,23 +26,16 @@ public class EstadoAssembler extends RepresentationModelAssemblerSupport<Estado,
     @NonNull
     @Override
     public EstadoOutput toModel(@NonNull Estado estado) {
-        EstadoOutput estadoOutput = this.mapper.map(estado, EstadoOutput.class);
-        estadoOutput.add(linkTo(methodOn(EstadoController.class).estado(estado.getId())).withSelfRel());
-        return estadoOutput;
+        EstadoOutput estadoOutput = createModelWithId(estado.getId(), estado);
+        return estadoOutput.add(linkToEstados());
+
     }
 
     @NonNull
     @Override
     public CollectionModel<EstadoOutput> toCollectionModel(@NonNull Iterable<? extends Estado> entities) {
-        return super.toCollectionModel(entities)
-                .add(linkTo(methodOn(EstadoController.class).estados()).withSelfRel());
+        return super.toCollectionModel(entities).add(linkToEstados());
     }
-
-    /*public List<EstadoOutput> toModelList(List<Estado> estados) {
-        return estados.stream()
-                .map(this::toModel)
-                .toList();
-    }*/
 
     public Estado toDomain(EstadoInput estadoInput) {
         return this.mapper.map(estadoInput, Estado.class);

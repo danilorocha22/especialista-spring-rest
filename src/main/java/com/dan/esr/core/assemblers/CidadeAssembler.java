@@ -1,7 +1,6 @@
 package com.dan.esr.core.assemblers;
 
 import com.dan.esr.api.controllers.cidade.CidadeController;
-import com.dan.esr.api.controllers.estado.EstadoController;
 import com.dan.esr.api.models.input.cidade.CidadeInput;
 import com.dan.esr.api.models.output.cidade.CidadeOutput;
 import com.dan.esr.domain.entities.Cidade;
@@ -13,8 +12,7 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.dan.esr.api.helper.links.Links.*;
 
 @Component
 public class CidadeAssembler extends RepresentationModelAssemblerSupport<Cidade, CidadeOutput> {
@@ -31,9 +29,9 @@ public class CidadeAssembler extends RepresentationModelAssemblerSupport<Cidade,
     public CidadeOutput toModel(@NonNull Cidade cidade) {
         CidadeOutput cidadeOutput = createModelWithId(cidade.getId(), cidade);
         this.mapper.map(cidade, cidadeOutput);
-        cidadeOutput.getEstado().add(linkTo(methodOn(EstadoController.class).estado(cidade.getEstado().getId()))
-                .withSelfRel());
-        cidadeOutput.getEstado().add(linkTo(methodOn(EstadoController.class).estados()).withSelfRel());
+        cidadeOutput.getEstado()
+                .add(linkToEstado(cidade.getEstado().getId()))
+                .add(linkToEstados());
         return cidadeOutput;
     }
 
@@ -41,7 +39,7 @@ public class CidadeAssembler extends RepresentationModelAssemblerSupport<Cidade,
     @Override
     public CollectionModel<CidadeOutput> toCollectionModel(@NonNull Iterable<? extends Cidade> entities) {
         return super.toCollectionModel(entities)
-                .add(linkTo(CidadeController.class).withSelfRel());
+                .add(linkToCidades());
     }
 
     public Cidade toDomain(CidadeInput cidadeInput) {

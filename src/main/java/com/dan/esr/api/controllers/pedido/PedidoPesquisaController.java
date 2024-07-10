@@ -13,6 +13,8 @@ import com.dan.esr.domain.services.pedido.PedidoPesquisaService;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,6 +34,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 @RequestMapping(value = "/pedidos", produces = APPLICATION_JSON_VALUE)
 public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
+    private static final Logger logger = LoggerFactory.getLogger(PedidoPesquisaController.class);
     private final PedidoPesquisaService pedidoPesquisaService;
     private final PedidoAssembler pedidoAssembler;
     private final PedidoResumoAssembler pedidoResumoAssembler;
@@ -52,12 +55,18 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
             PedidoFiltro filtro,
             @PageableDefault(size = 5) Pageable pageable
     ) {
-        Pageable pageableConfigurado = PageableWrapperHelper.of(pageable, getCampos());
-        Page<Pedido> pedidosPage = this.pedidoPesquisaService.filtrarPor(filtro, pageableConfigurado);
-        //List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidosPage.getContent());
-        //return new PageImpl<>(pedidosOutput, pageable, pedidosPage.getTotalElements());
-        pedidosPage = PageWrapperHelper.of(pedidosPage, pageable);
-        return this.pagedResourcesAssembler.toModel(pedidosPage, this.pedidoAssembler);
+        try {
+            Pageable pageableConfigurado = PageableWrapperHelper.of(pageable, getCampos());
+            Page<Pedido> pedidosPage = this.pedidoPesquisaService.filtrarPor(filtro, pageableConfigurado);
+            //List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidosPage.getContent());
+            //return new PageImpl<>(pedidosOutput, pageable, pedidosPage.getTotalElements());
+            pedidosPage = PageWrapperHelper.of(pedidosPage, pageable);
+            return this.pagedResourcesAssembler.toModel(pedidosPage, this.pedidoAssembler);
+        } catch (Exception ex)  {
+            //ex.printStackTrace();
+            logger.error("Erro ao pesquisar pedidos: {}", ex.getMessage(), ex);
+            throw new RuntimeException(ex.getMessage());
+        }
     }
 
     @Override

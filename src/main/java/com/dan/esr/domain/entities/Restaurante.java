@@ -173,11 +173,21 @@ public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRe
         return !isAberto();
     }
 
-    public List<String> getFormasDePagamento() {
-        return formasPagamento
+    public List<String> getNomesFormasDePagamento() {
+        return getFormasPagamento()
                 .stream()
                 .map(FormaPagamento::getNome)
                 .toList();
+    }
+
+    public List<FormaPagamento> getFormasDePagamento() {
+        return getFormasPagamento()
+                .stream()
+                .toList();
+    }
+
+    private Set<FormaPagamento> getFormasPagamento() {
+        return this.formasPagamento;
     }
 
     public <T extends IdentificavelParaAdicionarOuRemover> void adicionar(T entidade) {
@@ -198,12 +208,12 @@ public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRe
 
     private <T extends IdentificavelParaAdicionarOuRemover> boolean adicionado(T entidade) {
         boolean adicionado = false;
-        if (entidade instanceof Produto) {
-            adicionado = this.produtos.add((Produto) entidade);
-        } else if (entidade instanceof FormaPagamento) {
-            adicionado = this.formasPagamento.add((FormaPagamento) entidade);
-        } else if (entidade instanceof Usuario) {
-            adicionado = this.usuariosResponsaveis.add((Usuario) entidade);
+        if (entidade instanceof Produto produto) {
+            adicionado = this.produtos.add(produto);
+        } else if (entidade instanceof FormaPagamento formaPagamento) {
+            adicionado = this.formasPagamento.add(formaPagamento);
+        } else if (entidade instanceof Usuario usuario) {
+            adicionado = this.usuariosResponsaveis.add(usuario);
         }
         return adicionado;
     }

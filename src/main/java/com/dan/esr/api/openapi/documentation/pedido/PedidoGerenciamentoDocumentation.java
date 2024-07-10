@@ -5,13 +5,14 @@ import com.dan.esr.api.models.input.pedido.PedidoInput;
 import com.dan.esr.api.models.output.pedido.PedidoOutput;
 import com.dan.esr.api.models.output.pedido.PedidoStatusOutput;
 import io.swagger.annotations.*;
+import org.springframework.hateoas.EntityModel;
 
 @Api(tags = "Pedidos")
 public interface PedidoGerenciamentoDocumentation {
 
     @ApiOperation("Registra um pedido")
     @ApiResponses(@ApiResponse(code = 201, message = "Pedido registrado"))
-    PedidoOutput novoPedido(
+    EntityModel<PedidoOutput> novoPedido(
             @ApiParam(name = "corpo", value = "Representação de um novo pedido")
             PedidoInput pedidoInput
     );
@@ -21,7 +22,7 @@ public interface PedidoGerenciamentoDocumentation {
             @ApiResponse(code = 200, message = "Pedido confirmado", response = Problem.class),
             @ApiResponse(code = 404, message = "Pedido não encontrado", response = Problem.class)
     })
-    PedidoStatusOutput confirmacao(
+    EntityModel<PedidoStatusOutput> confirmado(
             @ApiParam(value = "Código de um pedido", example = "3b75fd6e-4a14-4721-8b19-b563c725302e", required = true)
             String codigoPedido
     );
@@ -31,7 +32,7 @@ public interface PedidoGerenciamentoDocumentation {
             @ApiResponse(code = 200, message = "Pedido entregue", response = Problem.class),
             @ApiResponse(code = 404, message = "Pedido não encontrado", response = Problem.class)
     })
-    PedidoStatusOutput entrega(
+    EntityModel<PedidoStatusOutput> entregue(
             @ApiParam(value = "Código de um pedido", example = "3b75fd6e-4a14-4721-8b19-b563c725302e", required = true)
             String codigoPedido
     );
@@ -41,7 +42,7 @@ public interface PedidoGerenciamentoDocumentation {
             @ApiResponse(code = 200, message = "Pedido cancelado", response = Problem.class),
             @ApiResponse(code = 404, message = "Pedido não encontrado", response = Problem.class)
     })
-    PedidoStatusOutput cancelamento(
+    EntityModel<PedidoStatusOutput> cancelado(
             @ApiParam(value = "Código de um pedido", example = "3b75fd6e-4a14-4721-8b19-b563c725302e", required = true)
             String codigoPedido
     );

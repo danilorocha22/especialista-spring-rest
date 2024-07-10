@@ -2,13 +2,16 @@ package com.dan.esr.api.models.output.produto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
 @ApiModel("Foto do produto")
-public class FotoProdutoOutput {
+@EqualsAndHashCode(callSuper = true)
+public class FotoProdutoOutput extends RepresentationModel<FotoProdutoOutput> {
     @ApiModelProperty(example = "arquivo.png ou arquivo.jpg", required = true)
     private String nomeArquivo;
 

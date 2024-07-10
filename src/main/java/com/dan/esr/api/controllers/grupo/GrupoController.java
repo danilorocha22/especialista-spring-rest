@@ -8,10 +8,10 @@ import com.dan.esr.domain.entities.Grupo;
 import com.dan.esr.domain.services.grupo.GrupoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -24,25 +24,28 @@ public class GrupoController implements GrupoDocumentation {
 
     @Override
     @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public GrupoOutput grupo(@PathVariable Long id) {
+    public EntityModel<GrupoOutput> grupo(@PathVariable Long id) {
         Grupo grupo = this.grupoService.buscarPor(id);
-        return this.grupoAssembler.toModel(grupo);
+        return EntityModel.of(
+                this.grupoAssembler.toModel(grupo)
+        );
     }
 
     @Override
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public List<GrupoOutput> grupos() {
-        List<Grupo> Grupo = this.grupoService.buscarTodos();
-        return this.grupoAssembler.toCollectionModel(Grupo);
+    public CollectionModel<GrupoOutput> grupos() {
+        return this.grupoAssembler.toCollectionModel(
+                this.grupoService.buscarTodos()
+        );
     }
 
     @Override
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public GrupoOutput novoGrupo(@RequestBody @Valid GrupoInput GrupoInput) {
-        Grupo Grupo = this.grupoAssembler.toDomain(GrupoInput);
+    public GrupoOutput novoGrupo(@RequestBody @Valid GrupoInput grupoInput) {
+        Grupo grupo = this.grupoAssembler.toDomain(grupoInput);
         return this.grupoAssembler.toModel(
-                this.grupoService.salvarOuAtualizar(Grupo)
+                this.grupoService.salvarOuAtualizar(grupo)
         );
     }
 

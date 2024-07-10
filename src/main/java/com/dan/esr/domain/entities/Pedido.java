@@ -18,11 +18,16 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.dan.esr.domain.entities.enums.StatusPedido.*;
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Getter
 @Setter
@@ -36,7 +41,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
 
     @Id
     @ToString.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     private String codigo;
@@ -65,47 +70,47 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
 
     //@JsonIgnore
     @ToString.Include
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = ALL, fetch = LAZY)
     @JoinColumn(name = "endereco_id",
             foreignKey = @ForeignKey(name = "fk_pedido_endereco"),
             referencedColumnName = "id")
     private Endereco endereco;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(name = "status", nullable = false, length = 10)
     private StatusPedido status = CRIADO;
 
     @ToString.Include
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "usuario_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_usuario"),
             referencedColumnName = "id")
     private Usuario usuario;
 
     @ToString.Include
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "restaurante_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_restaurante"),
             referencedColumnName = "id")
     private Restaurante restaurante;
 
     @ToString.Include
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "formas_pagamento_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_pedido_formas_pagamento"),
             referencedColumnName = "id")
     private FormaPagamento formaPagamento;
 
     @OneToMany(mappedBy = "pedido",
-            cascade = CascadeType.ALL)
+            cascade = ALL)
     private Set<ItemPedido> itensPedido = new HashSet<>();
 
     /*########################################     MÉTODOS     ########################################*/
     public void calcularTaxaFrete() {
-        if (isTaxaFreteValida()) {
-            setTaxaFrete(this.restaurante.getTaxaFrete());
+        if (this.isTaxaFreteValida()) {
+            this.setTaxaFrete(this.getTaxaFreteRestaurante());
         } else {
-            setTaxaFrete(BigDecimal.ZERO);
+            this.setTaxaFrete(BigDecimal.ZERO);
         }
     }
 
@@ -113,31 +118,43 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
         double subTotal = this.itensPedido.stream()
                 .mapToDouble(ItemPedido::getValorTotalDouble)
                 .sum();
-        setSubtotal(BigDecimal.valueOf(subTotal));
+        this.setSubtotal(BigDecimal.valueOf(subTotal));
     }
 
     public void calcularTotal() {
-        if (this.getSubtotal() != null && this.getTaxaFrete() != null) {
-            BigDecimal total = getSubtotal().add(getTaxaFrete());
-            setValorTotal(total);
+        if (nonNull(this.getSubtotal()) && nonNull(this.getTaxaFrete())) {
+            BigDecimal total = this.getSubtotal().add(getTaxaFrete());
+            this.setValorTotal(total);
         }
     }
 
     public void confirmar() {
-        setStatus(CONFIRMADO);
-        setDataConfirmacao(OffsetDateTime.now());
-        registerEvent(new PedidoConfirmadoEvent(this));
+        this.setStatus(CONFIRMADO);
+        this.setDataConfirmacao(OffsetDateTime.now());
+        this.registerEvent(new PedidoConfirmadoEvent(this));
     }
 
     public void entregar() {
-        setStatus(ENTREGUE);
-        setDataEntrega(OffsetDateTime.now());
+        this.setStatus(ENTREGUE);
+        this.setDataEntrega(OffsetDateTime.now());
     }
 
     public void cancelar() {
-        setStatus(CANCELADO);
-        setDataCancelamento(OffsetDateTime.now());
-        registerEvent(new PedidoCanceladoEvent(this));
+        this.setStatus(CANCELADO);
+        this.setDataCancelamento(OffsetDateTime.now());
+        this.registerEvent(new PedidoCanceladoEvent(this));
+    }
+
+    public boolean podeSerConfirmado() {
+        return this.getStatus().isStatusPermitido(CONFIRMADO);
+    }
+
+    public boolean podeSerEntregue() {
+        return this.getStatus().isStatusPermitido(ENTREGUE);
+    }
+
+    public boolean podeSerCancelado() {
+        return this.getStatus().isStatusPermitido(CANCELADO);
     }
 
     public String nomeCliente() {
@@ -153,7 +170,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
     }
 
     private void setStatus(StatusPedido novoStatus) {
-        if (getStatus().isStatusNaoPermitido(novoStatus)) {
+        if (this.getStatus().isStatusNaoPermitido(novoStatus)) {
             throw new NegocioException("O status do pedido nº %s não pode ser alterado de %s para %s."
                     .formatted(getCodigo(), getStatus().name(), novoStatus.name()));
         }
@@ -162,12 +179,16 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
 
     @PrePersist
     private void gerarCodigoPedido() {
-        setCodigo(UUID.randomUUID().toString());
-        registerEvent(new PedidoEmitidoEvent(this));
+        this.setCodigo(UUID.randomUUID().toString());
+        this.registerEvent(new PedidoEmitidoEvent(this));
     }
 
     private boolean isTaxaFreteValida() {
-        return !(Objects.isNull(this.restaurante) || this.restaurante.getTaxaFrete() == null);
+        return !(isNull(this.getRestaurante()) || isNull(this.getTaxaFreteRestaurante()));
+    }
+
+    private BigDecimal getTaxaFreteRestaurante() {
+        return this.getRestaurante().getTaxaFrete();
     }
 
     private void setCodigo(String codigo) {

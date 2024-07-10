@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ApiModel("Grupos do Usuário")
-@EqualsAndHashCode(of = "nome", callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class UsuarioGruposOutput extends RepresentationModel<UsuarioGruposOutput> {
     @ApiModelProperty(value = "Nome do usuário")
     private String nome;

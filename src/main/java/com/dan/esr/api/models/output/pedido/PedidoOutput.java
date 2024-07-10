@@ -84,4 +84,6 @@ public class PedidoOutput extends RepresentationModel<PedidoOutput> {
 
     @JsonProperty("itens")
     private Set<ItemPedidoOutput> itensPedido;
+
+
 }

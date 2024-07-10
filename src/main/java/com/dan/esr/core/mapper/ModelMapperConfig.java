@@ -20,7 +20,7 @@ public class ModelMapperConfig {
 
         //Configurando o mapeamento de Restaurante para RestauranteFormasDePagamentosOutput
         mapper.createTypeMap(Restaurante.class, RestauranteOutput.class)
-                .addMapping(Restaurante::getFormasDePagamento, RestauranteOutput::setDescricaoFormasPagamento);
+                .addMapping(Restaurante::getNomesFormasDePagamento, RestauranteOutput::setNomeFormasPagamento);
 
         //Configurando o mapeamento de Restaurante para RestauranteProdutosOutput
         mapper.createTypeMap(Restaurante.class, RestauranteProdutosOutput.class)

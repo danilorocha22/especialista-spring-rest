@@ -19,8 +19,8 @@ import java.util.List;
 @Getter
 @Setter
 @ApiModel("Restaurante")
-@Relation(collectionRelation = "restaurantes")
-@EqualsAndHashCode(of = "id", callSuper = false)
+@EqualsAndHashCode(callSuper = true)
+@Relation(collectionRelation = "restaurantes", itemRelation = "restaurante")
 public class RestauranteOutput extends RepresentationModel<RestauranteOutput> {
 
     @ApiModelProperty(example = "1")
@@ -47,13 +47,13 @@ public class RestauranteOutput extends RepresentationModel<RestauranteOutput> {
     private BigDecimal taxaFrete;
 
     @JsonProperty("cozinha")
-    @ApiModelProperty(example = "Brasileira")
     @JsonView(RestauranteView.Resumo.class)
+    @ApiModelProperty(example = "Brasileira")
     private String nomeCozinha;
 
     @JsonProperty("formasDePagamento")
     @JsonView({RestauranteView.FormaPagamento.class})
-    private List<String> descricaoFormasPagamento;
+    private List<String> nomeFormasPagamento;
 
     private EnderecoOutput endereco;
 

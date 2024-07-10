@@ -11,9 +11,10 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static com.dan.esr.api.helper.links.Links.linkToPedidos;
 
 @Component
+@SuppressWarnings("all")
 public class PedidoResumoAssembler extends RepresentationModelAssemblerSupport<Pedido, PedidoResumoOutput> {
     @Autowired
     private ModelMapper mapper;
@@ -30,14 +31,12 @@ public class PedidoResumoAssembler extends RepresentationModelAssemblerSupport<P
     public PedidoResumoOutput toModel(@NonNull Pedido pedido) {
         PedidoOutput pedidoOutput = pedidoAssembler.toModel(pedido);
         PedidoResumoOutput pedidoResumoOutput = this.mapper.map(pedidoOutput, PedidoResumoOutput.class);
-        pedidoResumoOutput.add(pedidoOutput.getLinks());
-        return pedidoResumoOutput;
+        return pedidoResumoOutput.add(pedidoOutput.getLinks());
     }
 
     @NonNull
     @Override
     public CollectionModel<PedidoResumoOutput> toCollectionModel(@NonNull Iterable<? extends Pedido> entities) {
-        return super.toCollectionModel(entities)
-                .add(linkTo(PedidoPesquisaController.class).withSelfRel());
+        return super.toCollectionModel(entities).add(linkToPedidos());
     }
 }
