@@ -1,11 +1,12 @@
 package com.dan.esr.core.mapper;
 
-import com.dan.esr.api.models.input.endereco.EnderecoInput;
-import com.dan.esr.api.models.input.itempedido.ItemPedidoInput;
-import com.dan.esr.api.models.input.pedido.PedidoInput;
-import com.dan.esr.api.models.input.produto.FotoProdutoInput;
-import com.dan.esr.api.models.output.restaurante.RestauranteOutput;
-import com.dan.esr.api.models.output.restaurante.RestauranteProdutosOutput;
+import com.dan.esr.api.v1.models.input.endereco.EnderecoInput;
+import com.dan.esr.api.v1.models.input.itempedido.ItemPedidoInput;
+import com.dan.esr.api.v1.models.input.pedido.PedidoInput;
+import com.dan.esr.api.v1.models.input.produto.FotoProdutoInput;
+import com.dan.esr.api.v1.models.output.restaurante.RestauranteOutput;
+import com.dan.esr.api.v1.models.output.restaurante.RestauranteProdutosOutput;
+import com.dan.esr.api.v2.models.input.CidadeInputV2;
 import com.dan.esr.domain.entities.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,7 @@ public class ModelMapperConfig {
 
         //Configurando o mapeamento de Restaurante para RestauranteFormasDePagamentosOutput
         mapper.createTypeMap(Restaurante.class, RestauranteOutput.class)
-                .addMapping(Restaurante::getNomesFormasDePagamento, RestauranteOutput::setNomeFormasPagamento);
+                .addMapping(Restaurante::getNomesFormasPagamento, RestauranteOutput::setNomeFormasPagamento);
 
         //Configurando o mapeamento de Restaurante para RestauranteProdutosOutput
         mapper.createTypeMap(Restaurante.class, RestauranteProdutosOutput.class)
@@ -34,6 +35,9 @@ public class ModelMapperConfig {
 
         mapper.createTypeMap(ItemPedidoInput.class, ItemPedido.class)
                 .addMappings(mapping -> mapping.skip(ItemPedido::setId));
+
+        mapper.createTypeMap(CidadeInputV2.class, Cidade.class)
+                .addMappings(mapping -> mapping.skip(Cidade::setId));
 
         mapper.createTypeMap(FotoProdutoInput.class, FotoProduto.class)
                 .addMappings(mapping -> {

@@ -6,6 +6,7 @@ import com.dan.esr.domain.entities.Restaurante;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public interface ProdutoRepository extends
     //@Query("from Produto p where p.ativo = :ativo and p.restaurante = :restaurante")
     //Set<Produto> todosPor(@Param("ativo") boolean ativo, Restaurante restaurante);
     @Query("from Produto p where (:ativo IS NULL OR p.ativo = :ativo) and p.restaurante = :restaurante")
-    Set<Produto> todosPor(@Param("ativo") Boolean ativo, @Param("restaurante") Restaurante restaurante);
+    List<Produto> todosPor(@Param("ativo") Boolean ativo, @Param("restaurante") Restaurante restaurante);
 
     @Query("select fp from FotoProduto fp join fp.produto p where p.restaurante.id = :restauranteId and " +
             "fp.produto.id = :produtoId")

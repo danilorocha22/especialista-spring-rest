@@ -150,44 +150,44 @@ public class Restaurante implements Serializable, IdentificavelParaAdicionarOuRe
 
     private void validarRestaurantePodeAbrir() {
         if (isAberto()) {
-            throw new NegocioException("O restaurante não pode ser aberto novamente.");
+            throw new NegocioException("O restaurante já está aberto e não pode ser aberto novamente.");
         }
 
         if (isInativo()) {
-            throw new NegocioException("O restaurante não pode ser aberto enquanto estiver inativo.");
+            throw new NegocioException("O restaurante não pode ser aberto enquanto estiver inativado.");
         }
     }
 
-    private boolean isInativo() {
+    public boolean isInativo() {
         return !isAtivo();
     }
 
     public void fechar() {
-        if (isFechado()) {
-            throw new NegocioException("O Restaurante não pode ser fechado novamente.");
+        if (this.isFechado()) {
+            throw new NegocioException("O Restaurante já está fechado e não pode ser fechado novamente.");
         }
-        setAberto(false);
+        this.setAberto(false);
     }
 
-    private boolean isFechado() {
+    public void setProdutos(List<Produto> produtos) {
+        this.produtos = new HashSet<>(produtos);
+    }
+
+    public boolean isFechado() {
         return !isAberto();
     }
 
-    public List<String> getNomesFormasDePagamento() {
-        return getFormasPagamento()
+    public List<String> getNomesFormasPagamento() {
+        return this.formasPagamento
                 .stream()
                 .map(FormaPagamento::getNome)
                 .toList();
     }
 
-    public List<FormaPagamento> getFormasDePagamento() {
-        return getFormasPagamento()
+    public List<FormaPagamento> getFormasPagamento() {
+        return this.formasPagamento
                 .stream()
                 .toList();
-    }
-
-    private Set<FormaPagamento> getFormasPagamento() {
-        return this.formasPagamento;
     }
 
     public <T extends IdentificavelParaAdicionarOuRemover> void adicionar(T entidade) {

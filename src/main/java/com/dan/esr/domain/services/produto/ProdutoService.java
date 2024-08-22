@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -30,7 +31,7 @@ public class ProdutoService {
                         .formatted(produtoId, restauranteId)));
     }
 
-    public Set<Produto> buscarTodosPor(Boolean ativo, Restaurante restaurante) {
+    public List<Produto> buscarTodosPor(Boolean ativo, Restaurante restaurante) {
         return this.produtoRepository.todosPor(ativo, restaurante);
     }
 }

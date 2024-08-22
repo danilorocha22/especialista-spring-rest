@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -101,8 +102,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
             referencedColumnName = "id")
     private FormaPagamento formaPagamento;
 
-    @OneToMany(mappedBy = "pedido",
-            cascade = ALL)
+    @OneToMany(mappedBy = "pedido",cascade = ALL)
     private Set<ItemPedido> itensPedido = new HashSet<>();
 
     /*########################################     MÉTODOS     ########################################*/
@@ -167,6 +167,10 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
 
     public String nomeFormaPagamento() {
         return this.formaPagamento.getNome();
+    }
+
+    public List<ItemPedido> getItensPedido() {
+        return this.itensPedido.stream().toList();
     }
 
     private void setStatus(StatusPedido novoStatus) {

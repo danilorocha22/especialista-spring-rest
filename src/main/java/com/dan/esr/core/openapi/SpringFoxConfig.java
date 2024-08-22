@@ -1,11 +1,13 @@
 package com.dan.esr.core.openapi;
 
 import com.dan.esr.api.exceptionhandler.Problem;
-import com.dan.esr.api.models.output.cozinha.CozinhaOutput;
-import com.dan.esr.api.models.output.pedido.PedidoOutput;
-import com.dan.esr.api.models.output.pedido.PedidoResumoOutput;
-import com.dan.esr.api.openapi.models.PageModelOpenApi;
-import com.dan.esr.api.openapi.models.PageableModelOpenApi;
+import com.dan.esr.api.v1.links.Links;
+import com.dan.esr.api.v1.models.output.cozinha.CozinhaOutput;
+import com.dan.esr.api.v1.models.output.pedido.PedidoOutput;
+import com.dan.esr.api.v1.models.output.pedido.PedidoResumoOutput;
+import com.dan.esr.api.v1.openapi.models.LinksModelOpenApi;
+import com.dan.esr.api.v1.openapi.models.PageModelOpenApi;
+import com.dan.esr.api.v1.openapi.models.PageableModelOpenApi;
 import com.fasterxml.classmate.TypeResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,14 +45,15 @@ import static springfox.documentation.spi.DocumentationType.OAS_30;
 public class SpringFoxConfig /*implements WebMvcConfigurer*/ {
     TypeResolver typeResolver = new TypeResolver();
 
-    @Bean
-    public Docket apiDocket() {
+    //@Bean
+    public Docket apiDocketV1() {
         return new Docket(OAS_30)
+                .groupName("V1")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.dan.esr.api"))
-                .paths(PathSelectors.any())
-                //.paths(PathSelectors.ant("/restaurantes/*"))
                 //.apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.ant("/v1/**"))
+                //.paths(PathSelectors.any())
                 .build()
                 .useDefaultResponseMessages(false)
                 .globalResponses(GET, globalGetResponseMessages())
@@ -61,11 +64,41 @@ public class SpringFoxConfig /*implements WebMvcConfigurer*/ {
                 .ignoredParameterTypes(getModelosIgnorados())
                 .additionalModels(typeResolver.resolve(Problem.class))
                 .directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
+                .directModelSubstitute(Links.class, LinksModelOpenApi.class)
                 .alternateTypeRules(getClasseAlternativa(CozinhaOutput.class))
                 .alternateTypeRules(getClasseAlternativa(PedidoOutput.class))
                 .alternateTypeRules(getClasseAlternativa(PedidoResumoOutput.class))
-                .apiInfo(apiInfo())
+                .alternateTypeRules()
+                .apiInfo(apiInfoV1())
                 .tags(tags()[0], tags());
+    }
+
+    @Bean
+    public Docket apiDocketV2() {
+        return new Docket(OAS_30)
+                .groupName("V2")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.dan.esr.api"))
+                //.apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.ant("/v2/**"))
+                //.paths(PathSelectors.any())
+                .build()
+                .useDefaultResponseMessages(false)
+                .globalResponses(GET, globalGetResponseMessages())
+                .globalResponses(POST, globalPostPutResponseMessages())
+                .globalResponses(PUT, globalPostPutResponseMessages())
+                .globalResponses(DELETE, globalDeleteResponseMessages())
+                //.globalRequestParameters(getParametrosOperacao())
+                .ignoredParameterTypes(getModelosIgnorados())
+                .additionalModels(typeResolver.resolve(Problem.class))
+                .directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
+                .directModelSubstitute(Links.class, LinksModelOpenApi.class)
+                /*.alternateTypeRules(getClasseAlternativa(CozinhaOutput.class))
+                .alternateTypeRules(getClasseAlternativa(PedidoOutput.class))
+                .alternateTypeRules(getClasseAlternativa(PedidoResumoOutput.class))*/
+                .alternateTypeRules()
+                .apiInfo(apiInfoV2())
+                /*.tags(tags()[0], tags())*/;
     }
 
     private Class<?>[] getModelosIgnorados() {
@@ -148,11 +181,21 @@ public class SpringFoxConfig /*implements WebMvcConfigurer*/ {
                                 ))));
     }
 
-    private ApiInfo apiInfo() {
+    private ApiInfo apiInfoV1() {
+        return new ApiInfoBuilder()
+                .title("DanFood API (Depreciada)")
+                .description("API aberta para clientes e restaurantes. </br></strong> Essa versão da API está depreciada " +
+                        "e deixará de existir a partir de 01/01/2025. Use a versão atual da API.</strong>")
+                .version("1")
+                .contact(new Contact("Danilo Rocha", "https://www.danfood.com", "danfood@danfood.com"))
+                .build();
+    }
+
+    private ApiInfo apiInfoV2() {
         return new ApiInfoBuilder()
                 .title("DanFood API")
                 .description("API aberta para clientes e restaurantes")
-                .version("1")
+                .version("2")
                 .contact(new Contact("Danilo Rocha", "https://www.danfood.com", "danfood@danfood.com"))
                 .build();
     }
