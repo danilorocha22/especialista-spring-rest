@@ -1,17 +1,18 @@
 package com.dan.esr.domain.services.cidade;
 
-import com.dan.esr.core.helper.LoggerHelper;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.entities.Estado;
-import com.dan.esr.domain.exceptions.*;
+import com.dan.esr.domain.exceptions.EntidadeEmUsoException;
+import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.cidade.CidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.cidade.CidadeNaoPersistidaException;
 import com.dan.esr.domain.exceptions.estado.EstadoNaoEncontradoException;
 import com.dan.esr.domain.repositories.CidadeRepository;
 import com.dan.esr.domain.services.estado.EstadoService;
-import com.dan.esr.domain.services.restaurante.RestauranteCadastroService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ import static com.dan.esr.core.util.MensagensUtil.*;
 @Service
 @RequiredArgsConstructor
 public class CidadeService {
-    private static final LoggerHelper logger = new LoggerHelper(RestauranteCadastroService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CidadeService.class);
     private final CidadeRepository cidadeRepository;
     private final EstadoService estadoService;
 

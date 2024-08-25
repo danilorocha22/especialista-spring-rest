@@ -29,6 +29,7 @@
         <aws-java-sdk-s3.version>1.12.750</aws-java-sdk-s3.version>
         <freemarker.version>2.3.33</freemarker.version>
         <springfox.version>3.0.0</springfox.version>
+        <logback-loggly.version>0.1.5</logback-loggly.version>
         <!--<springfox-swagger2>2.9.2</springfox-swagger2>-->
     </properties>
 
@@ -231,6 +232,12 @@
             <version>${springfox.version}</version>
         </dependency>-->
 
+        <!--Logback-->
+        <dependency>
+            <groupId>org.logback-extensions</groupId>
+            <artifactId>logback-ext-loggly</artifactId>
+            <version>${logback-loggly.version}</version>
+        </dependency>
 
         <!--Testes da API-->
         <dependency>
