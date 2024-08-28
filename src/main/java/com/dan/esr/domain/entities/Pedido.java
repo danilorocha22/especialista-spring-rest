@@ -5,7 +5,6 @@ import com.dan.esr.domain.events.PedidoCanceladoEvent;
 import com.dan.esr.domain.events.PedidoConfirmadoEvent;
 import com.dan.esr.domain.events.PedidoEmitidoEvent;
 import com.dan.esr.domain.exceptions.NegocioException;
-import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +12,7 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
+import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,12 +23,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.dan.esr.domain.entities.enums.StatusPedido.*;
-import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.EnumType.STRING;
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
 @Setter

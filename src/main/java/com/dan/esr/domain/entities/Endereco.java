@@ -1,6 +1,6 @@
 package com.dan.esr.domain.entities;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.io.Serial;

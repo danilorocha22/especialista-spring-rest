@@ -7,7 +7,7 @@ import com.dan.esr.api.v1.assemblers.CozinhaAssembler;
 import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.services.cozinha.CozinhaCadastroService;
 import com.dan.esr.domain.services.cozinha.CozinhaConsultaService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

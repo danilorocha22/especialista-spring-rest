@@ -1,12 +1,12 @@
 package com.dan.esr.domain.entities;
 
 import com.dan.esr.domain.exceptions.NegocioException;
-import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;

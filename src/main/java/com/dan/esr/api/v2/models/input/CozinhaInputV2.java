@@ -2,7 +2,7 @@ package com.dan.esr.api.v2.models.input;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.swagger.annotations.ApiModelProperty;
-import jakarta.validation.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -8,7 +8,7 @@ import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.usuario.UsuarioNaoEncontradoException;
 import com.dan.esr.domain.repositories.UsuarioRepository;
 import com.dan.esr.domain.services.grupo.GrupoService;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;

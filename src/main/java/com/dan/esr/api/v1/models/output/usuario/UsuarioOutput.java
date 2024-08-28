@@ -29,9 +29,9 @@ public class UsuarioOutput extends RepresentationModel<UsuarioOutput> {
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
-        if (!(object instanceof UsuarioOutput that)) return false;
+        if (!(object instanceof UsuarioOutput)) return false;
         if (!super.equals(object)) return false;
-        return Objects.equals(getId(), that.getId());
+        return getId().equals(((UsuarioOutput) object).getId());
     }
 
     @Override

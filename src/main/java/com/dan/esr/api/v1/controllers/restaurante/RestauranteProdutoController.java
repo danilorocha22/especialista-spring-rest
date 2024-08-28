@@ -9,7 +9,7 @@ import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.produto.ProdutoService;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;

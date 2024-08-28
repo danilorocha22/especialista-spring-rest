@@ -9,7 +9,7 @@ import com.dan.esr.api.v1.assemblers.UsuarioAssembler;
 import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.services.usuario.UsuarioCadastroService;
 import com.dan.esr.domain.services.usuario.UsuarioConsultaService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

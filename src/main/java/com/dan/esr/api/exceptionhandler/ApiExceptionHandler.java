@@ -15,7 +15,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
@@ -50,7 +50,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             EntidadeNaoEncontradaException ex,
             WebRequest req
     ) {
-        HttpStatusCode status = NOT_FOUND;
+        HttpStatus status = NOT_FOUND;
         Problem problem = createProblemBuilder(RECURSO_NAO_ENCONTRADO, status, ex.getMessage())
                 .userMessage(ex.getMessage())
                 .build();
@@ -64,7 +64,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             EntidadeNaoEncontradaException ex,
             WebRequest req
     ) {
-        HttpStatusCode status = UNPROCESSABLE_ENTITY;
+        HttpStatus status = UNPROCESSABLE_ENTITY;
         Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, ex.getMessage())
                 .userMessage(ex.getMessage())
                 .build();
@@ -78,7 +78,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             EntidadeEmUsoException ex,
             WebRequest req
     ) {
-        HttpStatusCode status = CONFLICT;
+        HttpStatus status = CONFLICT;
         Problem problem = createProblemBuilder(ENTIDADE_EM_USO, status, ex.getMessage())
                 .userMessage(ex.getMessage())
                 .build();
@@ -92,7 +92,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             ValidacaoException ex,
             WebRequest req
     ) {
-        /*HttpStatusCode status = BAD_REQUEST;
+        /*HttpStatus status = BAD_REQUEST;
         Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, MSG_PROPRIEDADE_INVALIDA)
                 .userMessage(MSG_PROPRIEDADE_INVALIDA)
                 .objects(getProblemObjects(ex.getBindingResult().getAllErrors(), this.messageSource))
@@ -107,7 +107,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             PropriedadeIlegalException ex,
             WebRequest req
     ) {
-        HttpStatusCode status = BAD_REQUEST;
+        HttpStatus status = BAD_REQUEST;
         Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, ex.getMessage())
                 .userMessage(ex.getMessage())
                 .build();
@@ -121,7 +121,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             EntidadeExistenteException ex,
             WebRequest req
     ) {
-        HttpStatusCode status = CONFLICT;
+        HttpStatus status = CONFLICT;
         Problem problem = createProblemBuilder(RECURSO_EXISTENTE, status, ex.getMessage())
                 .userMessage(ex.getMessage())
                 .build();
@@ -135,7 +135,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             PersistenciaException ex,
             WebRequest req
     ) {
-        HttpStatusCode status = INTERNAL_SERVER_ERROR;
+        HttpStatus status = INTERNAL_SERVER_ERROR;
         Problem problem = createProblemBuilder(ERRO_INTERNO_DO_SISTEMA, status, MSG_ERRO_BANCO_DE_DADOS)
                 .userMessage(ex.getMessage())
                 .build();
@@ -150,7 +150,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest req
     ) {
         String detail = "O argumento informado é inválido.";
-        HttpStatusCode status = BAD_REQUEST;
+        HttpStatus status = BAD_REQUEST;
         Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, detail)
                 .userMessage(detail)
                 .build();
@@ -161,7 +161,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NegocioException.class)
     public ResponseEntity<Object> handleNegocioException(NegocioException ex, WebRequest req) {
-        HttpStatusCode status = BAD_REQUEST;
+        HttpStatus status = BAD_REQUEST;
         Problem problem = createProblemBuilder(ERRO_NA_REQUISICAO, status, ex.getMessage())
                 .userMessage(ex.getMessage())
                 .build();
@@ -172,7 +172,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handlerException(Exception ex, WebRequest req) {
-        HttpStatusCode status = INTERNAL_SERVER_ERROR;
+        HttpStatus status = INTERNAL_SERVER_ERROR;
         Problem problem = createProblemBuilder(ERRO_INTERNO_DO_SISTEMA, status, ex.getMessage())
                 .userMessage(MSG_ERRO_GENERICO_SERVIDOR)
                 .build();
@@ -185,7 +185,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(
             @NonNull HttpMediaTypeNotAcceptableException ex,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
+            @NonNull HttpStatus status,
             @NonNull WebRequest request
     ) {
         return ResponseEntity.status(status).headers(headers).build();
@@ -195,7 +195,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             @NonNull MethodArgumentNotValidException ex,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
+            @NonNull HttpStatus status,
             @NonNull WebRequest req
     ) {
         /*Problem problem = createProblemBuilder(PROPRIEDADE_INVALIDA, status, MSG_PROPRIEDADE_INVALIDA)
@@ -211,18 +211,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleServletRequestBindingException(
             @NonNull ServletRequestBindingException ex,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
+            @NonNull HttpStatus status,
             @NonNull WebRequest req
     ) {
         log.error("handleServletRequestBindingException() -> Erro: {}", ex.getLocalizedMessage(), ex);
-        return handleExceptionInternal(ex, ex.getBody(), headers, status, req);
+        return handleExceptionInternal(ex, ex.getCause(), headers, status, req);
     }
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(
             @NonNull NoHandlerFoundException ex,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
+            @NonNull HttpStatus status,
             @NonNull WebRequest req
     ) {
         String detail = "O recurso solicitado '%s', não existe".formatted(ex.getRequestURL());
@@ -238,7 +238,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleTypeMismatch(
             @NonNull TypeMismatchException ex,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
+            @NonNull HttpStatus status,
             @NonNull WebRequest req
     ) {
         if (ex instanceof MethodArgumentTypeMismatchException) {
@@ -252,7 +252,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleMethodArgumentTypeMismatch(
             TypeMismatchException ex,
             HttpHeaders headers,
-            HttpStatusCode status,
+            HttpStatus status,
             WebRequest req
     ) {
         String nomeEntidade = Objects.requireNonNull(ex.getRequiredType()).getSimpleName();
@@ -271,7 +271,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             @NonNull HttpMessageNotReadableException ex,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
+            @NonNull HttpStatus status,
             @NonNull WebRequest req
     ) {
         Throwable cause = ExceptionUtils.getRootCause(ex);
@@ -302,7 +302,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleInvalidFormatException(
             InvalidFormatException ex,
             HttpHeaders headers,
-            HttpStatusCode status,
+            HttpStatus status,
             WebRequest req
     ) {
         String detail = "A propriedade '%s' recebeu o valor '%s', que é um tipo inválido. "
@@ -320,7 +320,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleIgnoredPropertyException(
             IgnoredPropertyException ex,
             HttpHeaders headers,
-            HttpStatusCode status,
+            HttpStatus status,
             WebRequest req
     ) {
         String nomeEntidade = getEntityName(ex);
@@ -337,7 +337,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleUnrecognizedPropertyException(
             UnrecognizedPropertyException ex,
             HttpHeaders headers,
-            HttpStatusCode status,
+            HttpStatus status,
             WebRequest req
     ) {
         String detail = "A propriedade '%s' não existe na entidade %s."
@@ -353,7 +353,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleWstxUnexpectedCharException(
             WstxUnexpectedCharException ex,
             HttpHeaders headers,
-            HttpStatusCode status,
+            HttpStatus status,
             WebRequest req
     ) {
         Problem problem = createProblemBuilder(ERRO_NA_REQUISICAO, status, ex.getLocalizedMessage())
@@ -367,7 +367,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleJsonParseException(
             JsonParseException ex,
             HttpHeaders headers,
-            HttpStatusCode status,
+            HttpStatus status,
             WebRequest req
     ) {
         String detail = "Erro na desserialização do JSON. Possível erro de sintaxe: %s."
@@ -384,7 +384,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleMismatchedInputException(
             MismatchedInputException ex,
             HttpHeaders headers,
-            HttpStatusCode status,
+            HttpStatus status,
             WebRequest req
     ) {
         String detail = "Erro ao tentar desserializar os dados JSON em um objeto Java, " +
@@ -402,7 +402,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleValidationInternal(
             @NonNull Exception ex,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
+            @NonNull HttpStatus status,
             @NonNull WebRequest req,
             @NonNull BindingResult bindingResult
     ) {
@@ -418,7 +418,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             @NonNull Exception ex,
             Object body,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
+            @NonNull HttpStatus status,
             @NonNull WebRequest req
     ) {
         if (body == null) {

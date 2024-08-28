@@ -5,9 +5,9 @@ import com.dan.esr.api.v1.models.input.endereco.EnderecoInput;
 import com.dan.esr.core.validation.TaxaFrete;
 import com.dan.esr.core.validation.ValorZeroIncluiDescricao;
 import io.swagger.annotations.ApiModelProperty;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -2,7 +2,7 @@ package com.dan.esr.domain.entities;
 
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.grupo.GrupoNaoEncontradoException;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

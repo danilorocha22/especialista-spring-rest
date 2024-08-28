@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.dan.esr.core.util.MensagensUtil.formatarNomeEntidadeInput;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static java.util.stream.Collectors.toList;
 
 @Getter
 @Builder
@@ -47,7 +48,7 @@ public final class Problem {
     private List<Object> objects;
 
     /* Métodos da classe Problem */
-    public static Problem novoProblema(String msg, HttpStatusCode status) {
+    public static Problem novoProblema(String msg, HttpStatus status) {
         return Problem.builder()
                 .title(msg)
                 .status(status.value())
@@ -57,7 +58,7 @@ public final class Problem {
 
     public static ProblemBuilder createProblemBuilder(
             ProblemType problemType,
-            HttpStatusCode status,
+            HttpStatus status,
             String detail
     ) {
         return Problem.builder()
@@ -98,7 +99,7 @@ public final class Problem {
                                 .nome(name)
                                 .userMessage(msg)
                                 .build();
-                    }).toList();
+                    }).collect(toList());
         }
     }
 }

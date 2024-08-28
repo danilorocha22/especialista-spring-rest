@@ -4,9 +4,9 @@ import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.entities.dto.VendaDiaria;
 import com.dan.esr.domain.filter.VendaDiariaFiltro;
 import com.dan.esr.domain.services.VendaDiariaQueryService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;

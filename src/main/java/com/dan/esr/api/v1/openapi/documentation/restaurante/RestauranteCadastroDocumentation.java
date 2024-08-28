@@ -4,7 +4,7 @@ import com.dan.esr.api.exceptionhandler.Problem;
 import com.dan.esr.api.v1.models.input.restaurante.RestauranteInput;
 import com.dan.esr.api.v1.models.output.restaurante.RestauranteOutput;
 import io.swagger.annotations.*;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.EntityModel;
 
 import java.util.Map;

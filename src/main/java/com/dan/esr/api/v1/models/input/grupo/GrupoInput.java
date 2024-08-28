@@ -1,7 +1,7 @@
 package com.dan.esr.api.v1.models.input.grupo;
 
 import io.swagger.annotations.ApiModelProperty;
-import jakarta.validation.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 

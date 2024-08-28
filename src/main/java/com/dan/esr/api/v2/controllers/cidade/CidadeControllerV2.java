@@ -6,7 +6,7 @@ import com.dan.esr.api.v2.models.input.CidadeInputV2;
 import com.dan.esr.api.v2.models.output.CidadeOutputV2;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.services.cidade.CidadeService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;

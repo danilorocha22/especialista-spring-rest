@@ -7,7 +7,7 @@ import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 import com.dan.esr.domain.exceptions.grupo.GrupoNaoEncontradoException;
 import com.dan.esr.domain.repositories.GrupoRepository;
 import com.dan.esr.domain.services.permissao.PermissaoService;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;

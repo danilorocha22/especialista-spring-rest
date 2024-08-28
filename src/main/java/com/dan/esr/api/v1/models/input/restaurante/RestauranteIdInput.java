@@ -1,7 +1,7 @@
 package com.dan.esr.api.v1.models.input.restaurante;
 
 import io.swagger.annotations.ApiModelProperty;
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

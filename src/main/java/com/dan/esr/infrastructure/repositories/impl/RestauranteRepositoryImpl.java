@@ -7,10 +7,10 @@ import com.dan.esr.domain.exceptions.restaurante.RestauranteNaoEncontradoExcepti
 import com.dan.esr.domain.repositories.RestauranteQueries;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import com.dan.esr.infrastructure.repositories.spec.RestauranteSpecs;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.*;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;

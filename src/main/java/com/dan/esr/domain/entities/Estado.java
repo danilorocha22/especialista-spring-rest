@@ -2,8 +2,8 @@ package com.dan.esr.domain.entities;
 
 import com.dan.esr.core.validation.Groups.EstadoId;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import lombok.*;
 
 import java.io.Serial;

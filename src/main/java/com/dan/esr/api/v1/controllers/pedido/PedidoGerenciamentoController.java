@@ -8,7 +8,7 @@ import com.dan.esr.api.v1.assemblers.PedidoAssembler;
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.services.pedido.PedidoEmissaoService;
 import com.dan.esr.domain.services.pedido.PedidoStatusService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;

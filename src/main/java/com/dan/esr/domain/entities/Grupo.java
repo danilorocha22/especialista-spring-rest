@@ -3,22 +3,21 @@ package com.dan.esr.domain.entities;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.permissao.PermissaoNaoEncontradoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
+@Entity
 @ToString
-@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@EqualsAndHashCode(of = "id")
 @Table(name = "grupos", schema = "dan_food")
 public class Grupo implements Serializable {
     @Serial

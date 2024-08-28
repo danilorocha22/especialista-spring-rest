@@ -2,9 +2,9 @@ package com.dan.esr.infrastructure.repositories.spec;
 
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.filter.PedidoFiltro;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;

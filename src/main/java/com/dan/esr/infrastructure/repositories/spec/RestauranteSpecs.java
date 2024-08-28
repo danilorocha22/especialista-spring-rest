@@ -2,7 +2,7 @@ package com.dan.esr.infrastructure.repositories.spec;
 
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
-import jakarta.persistence.criteria.*;
+import javax.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;

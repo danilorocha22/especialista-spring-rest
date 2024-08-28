@@ -1,8 +1,8 @@
 package com.dan.esr.infrastructure.services.email;
 
 import com.dan.esr.core.email.EmailProperties;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 

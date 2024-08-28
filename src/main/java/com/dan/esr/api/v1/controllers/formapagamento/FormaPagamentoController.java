@@ -7,7 +7,7 @@ import com.dan.esr.api.v1.assemblers.FormaPagamentoAssembler;
 import com.dan.esr.domain.entities.FormaPagamento;
 import com.dan.esr.domain.repositories.FormaPagamentoRepository;
 import com.dan.esr.domain.services.formaspagamento.FormaPagamentoService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;

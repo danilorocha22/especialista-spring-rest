@@ -1,8 +1,8 @@
 package com.dan.esr.infrastructure.repositories.impl;
 
 import com.dan.esr.domain.repositories.CustomBaseJpaRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 

@@ -6,7 +6,7 @@ import com.dan.esr.api.v1.openapi.documentation.grupo.GrupoDocumentation;
 import com.dan.esr.api.v1.assemblers.GrupoAssembler;
 import com.dan.esr.domain.entities.Grupo;
 import com.dan.esr.domain.services.grupo.GrupoService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;

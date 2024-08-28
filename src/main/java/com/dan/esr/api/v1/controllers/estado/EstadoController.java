@@ -7,7 +7,7 @@ import com.dan.esr.api.v1.assemblers.EstadoAssembler;
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.repositories.EstadoRepository;
 import com.dan.esr.domain.services.estado.EstadoService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.CollectionModel;

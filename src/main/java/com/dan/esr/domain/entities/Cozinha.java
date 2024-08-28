@@ -1,7 +1,7 @@
 package com.dan.esr.domain.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.io.Serial;
@@ -12,10 +12,10 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@Entity
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "cozinhas", schema = "dan_food")
 public class Cozinha implements Serializable {
     @Serial
