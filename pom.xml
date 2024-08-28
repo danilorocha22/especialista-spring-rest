@@ -30,6 +30,8 @@
         <freemarker.version>2.3.33</freemarker.version>
         <springfox.version>3.0.0</springfox.version>
         <logback-loggly.version>0.1.5</logback-loggly.version>
+        <oauth2-oidc-sdk.version>6.21.2</oauth2-oidc-sdk.version>
+        <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
         <!--<springfox-swagger2>2.9.2</springfox-swagger2>-->
     </properties>
 
@@ -79,7 +81,7 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.0.33</version>
+            <version>${mysql-connector-j.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -233,6 +235,12 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-bean-validators</artifactId>
             <version>${springfox.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>oauth2-oidc-sdk</artifactId>
+            <version>${oauth2-oidc-sdk.version}</version>
         </dependency>
 
         <!--Springfox Swagger2 para documentação automatizada-->
