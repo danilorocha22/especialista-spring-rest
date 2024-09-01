@@ -13,8 +13,10 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .anyRequest().authenticated()
+                    .anyRequest().authenticated()
                 .and()
-                .oauth2ResourceServer().opaqueToken();
+                    .cors() //configurando cors a nível de spring security para permitir verbo http Options
+                .and()
+                    .oauth2ResourceServer().opaqueToken();
     }
 }
