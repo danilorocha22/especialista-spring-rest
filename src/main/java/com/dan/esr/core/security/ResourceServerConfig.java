@@ -25,9 +25,10 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
                     .oauth2ResourceServer().jwt(); //.opaqueToken();
     }
 
-    @Bean
+    //Configurando o JwtDecoder para chave simétrica
+    /*@Bean
     public JwtDecoder jwtDecoder() {
         var secretKey = new SecretKeySpec("ds41f60as587f1afs1d3.SF748A13-1GD1A31GKa3s184q9".getBytes(), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
-    }
+    }*/
 }
