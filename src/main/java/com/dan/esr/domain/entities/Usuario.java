@@ -62,22 +62,8 @@ public class Usuario implements Serializable, IdentificavelParaAdicionarOuRemove
         return getId() == null;
     }
 
-    public void validarSenhaAtual(String senha) {
-        if (isNaoConfere(senha)) {
-            throw new NegocioException("A senha atual não confere.");
-        }
-    }
-
     public List<Grupo> getGrupos() {
         return List.copyOf(grupos);
-    }
-
-    public boolean isNaoConfere(String senha) {
-        return !isConfere(senha);
-    }
-
-    public boolean isConfere(String senha) {
-        return getSenha().equals(senha);
     }
 
     public boolean isDiferente(Usuario usuario) {

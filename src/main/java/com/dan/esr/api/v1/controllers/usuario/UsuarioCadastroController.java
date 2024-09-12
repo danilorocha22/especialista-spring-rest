@@ -29,7 +29,6 @@ public class UsuarioCadastroController implements UsuarioCadastroDocumentation {
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public UsuarioOutput novoUsuario(@RequestBody @Valid UsuarioInput usuarioInput) {
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioInput);
-        this.usuarioCadastro.validarUsuarioComEmailJaCadastrado(usuario);
         return this.usuarioAssembler.toModel(
                 this.usuarioCadastro.salvarOuAtualizar(usuario)
         );
@@ -60,6 +59,8 @@ public class UsuarioCadastroController implements UsuarioCadastroDocumentation {
             @PathVariable("id") Long usuarioId,
             @RequestBody @Valid UsuarioSenhaInput usuarioNovaSenha
     ) {
+        String senhaAtual = usuarioNovaSenha.getSenha();
+        System.out.printf("Senha atual bruta: %s%n", senhaAtual);
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioNovaSenha);
         usuario.setId(usuarioId);
         this.usuarioCadastro.atualizarSenha(usuario);

@@ -11,6 +11,7 @@ import com.dan.esr.domain.services.grupo.GrupoService;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,9 +20,14 @@ public class UsuarioCadastroService {
     private final UsuarioConsultaService usuarioConsulta;
     private final UsuarioRepository usuarioRepository;
     private final GrupoService grupoService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Usuario salvarOuAtualizar(Usuario usuario) {
+        if (usuario.isNovo()) {
+            this.validarUsuarioComEmailJaCadastrado(usuario);
+            usuario.setSenha(this.passwordEncoder.encode(usuario.getSenha()));
+        }
         return this.usuarioRepository.salvarOuAtualizar(usuario)
                 .orElseThrow(() -> {
                     String nome = usuario.getNome();
@@ -50,8 +56,10 @@ public class UsuarioCadastroService {
     @Transactional
     public void atualizarSenha(Usuario usuarioNovaSenha) {
         Usuario usuarioRegistro = this.usuarioConsulta.buscarPor(usuarioNovaSenha.getId());
-        usuarioRegistro.validarSenhaAtual(usuarioNovaSenha.getSenha());
-        usuarioRegistro.setSenha(usuarioNovaSenha.getNovaSenha());
+        if (!this.passwordEncoder.matches(usuarioNovaSenha.getSenha(), usuarioRegistro.getSenha())) {
+            throw new NegocioException("A senha atual informada  não confere.");
+        }
+        usuarioRegistro.setSenha(this.passwordEncoder.encode(usuarioNovaSenha.getNovaSenha()));
     }
 
     public void validarUsuarioComEmailJaCadastrado(Usuario usuario) {
