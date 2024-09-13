@@ -37,13 +37,21 @@ alter table pedidos auto_increment = 1;
 alter table itens_pedido auto_increment= 1;
 
 insert into estados(sigla)
-values ('TO'), ('MA'), ('GO');
+values ('TO'),
+       ('MA'),
+       ('GO');
 
 insert into cidades(nome, estado_id)
-values ('Itaguatins', 1), ('Palmas', 1), ('Imperatriz', 2), ('Goiânia', 3);
+values ('Itaguatins', 1),
+       ('Palmas', 1),
+       ('Imperatriz', 2),
+       ('Goiânia', 3);
 
 insert ignore into cozinhas(nome)
-values ('Brasileira'), ('Tailandesa'), ('Indiana'), ('Argentina');
+values ('Brasileira'),
+       ('Tailandesa'),
+       ('Indiana'),
+       ('Argentina');
 
 insert into enderecos(logradouro, numero, bairro, cep, cidade_id)
 values ('Rua Cel. Augusto Bastos', '1000', 'Centro', '77920-000', 1),
@@ -60,33 +68,66 @@ values ('Toca do Sabor', 10, 1, 1, utc_timestamp, utc_timestamp),
        ('Bar da Maria', 6, 4, null, utc_timestamp, utc_timestamp);
 
 insert into formas_de_pagamento(nome, data_atualizacao)
-values ('Dinheiro', utc_timestamp), ('Pix', utc_timestamp), ('Débito', utc_timestamp), ('Crédito', utc_timestamp);
+values ('Dinheiro', utc_timestamp),
+       ('Pix', utc_timestamp),
+       ('Débito', utc_timestamp),
+       ('Crédito', utc_timestamp);
 
 insert into permissoes(nome, descricao)
-values ('CONSULTAR_COZINHAS', 'Permite consultar cozinhas'), ('EDITAR_COZINHAS', 'Permite editar cozinhas');
+values ('CONSULTAR_COZINHAS', 'Permite consultar cozinhas'),
+       ('EDITAR_COZINHAS', 'Permite editar cozinhas'),
+       ('CONSULTAR_FORMAS_PAGAMENTO', 'Permite consultar formas de pagamento'),
+       ('EDITAR_FORMAS_PAGAMENTO', 'Permite criar ou editar formas de pagamento'),
+       ('CONSULTAR_CIDADES', 'Permite consultar cidades'),
+       ('EDITAR_CIDADES', 'Permite criar ou editar cidades'),
+       ('CONSULTAR_ESTADOS', 'Permite consultar estados'),
+       ('EDITAR_ESTADOS', 'Permite criar ou editar estados'),
+       ('CONSULTAR_USUARIOS', 'Permite consultar usuários'),
+       ('EDITAR_USUARIOS', 'Permite criar ou editar usuários'),
+       ('CONSULTAR_RESTAURANTES', 'Permite consultar restaurantes'),
+       ('EDITAR_RESTAURANTES', 'Permite criar, editar ou gerenciar restaurantes'),
+       ('CONSULTAR_PRODUTOS', 'Permite consultar produtos'),
+       ('EDITAR_PRODUTOS', 'Permite criar ou editar produtos'),
+       ('CONSULTAR_PEDIDOS', 'Permite consultar pedidos'),
+       ('GERENCIAR_PEDIDOS', 'Permite gerenciar pedidos'),
+       ('GERAR_RELATORIOS', 'Permite gerar relatórios');
 
 insert into restaurantes_formas_de_pagamento(restaurante_id, formas_de_pagamento_id)
-values (1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3), (4, 1), (4, 2), (5, 1), (5, 2), (6, 3);
+values (1, 1),
+       (1, 2),
+       (1, 3),
+       (2, 3),
+       (3, 2),
+       (3, 3),
+       (4, 1),
+       (4, 2),
+       (5, 1),
+       (5, 2),
+       (6, 3);
 
 insert into produtos(nome, descricao, preco, ativo, restaurante_id)
 values ('Porco com molho agridoce', 'Deliciosa carne suína ao molho especial', 78.90, 1, 1),
        ('Camarão tailandês', '16 camarões grandes ao molho picante', 110, 0, 1),
-       ('Salada picante com carne grelhada', 'Salada de folhas com cortes finos de carne bovina grelhada e nosso
-        molho especial de pimenta vermelha', 87.20, 1, 2),
+       ('Salada picante com carne grelhada', 'Salada de folhas com cortes finos de carne bovina grelhada e nosso molho especial de pimenta vermelha', 87.20, 1, 2),
        ('Garlic Naan', 'Pão tradicional indiano com cobertura de alho', 21, 0, 3),
        ('Murg Curry', 'Cubos de frango preparados com molho curry e especiarias', 43, 1, 3),
-       ('Bife Ancho', 'Corte macio e suculento, com dois dedos de espessura, retirado da parte dianteira do
-        contrafilé', 79, 1, 4),
-       ('T-Bone',  'Corte muito saboroso, com um osso em formato de T, sendo de um lado o contrafilé e do outro o
-        filé mignon', 89, 1, 4),
+       ('Bife Ancho', 'Corte macio e suculento, com dois dedos de espessura, retirado da parte dianteira do contrafilé', 79, 1, 4),
+       ('T-Bone',  'Corte muito saboroso, com um osso em formato de T, sendo de um lado o contrafilé e do outro o filé mignon', 89, 1, 4),
        ('Sanduíche X-Tudo', 'Sandubão com muito queijo, hamburger bovino, bacon, ovo, salada e maionese', 19, 1, 5),
        ('Espetinho de Cupim', 'Acompanha farinha, mandioca e vinagrete', 8, 1, 6);
 
 insert into grupos (id, nome)
-values (1, 'Gerente'), (2, 'Vendedor'), (3, 'Secretária'), (4, 'Cadastrador');
+values (1, 'Gerente'),
+       (2, 'Vendedor'),
+       (3, 'Secretária'),
+       (4, 'Cadastrador');
 
 insert into grupos_permissoes (grupo_id, permissao_id)
-values (1, 1), (1, 2), (2, 1), (2, 2), (3, 1);
+values (1, 1),
+       (1, 2),
+       (2, 1),
+       (2, 2),
+       (3, 1);
 
 insert into usuarios(id, nome, email, senha, data_cadastro)
 values (1, 'João da Silva', 'danrocha858585+joao@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
@@ -95,12 +136,34 @@ values (1, 'João da Silva', 'danrocha858585+joao@gmail.com', '$2a$12$cMTXqDlfPA
        (4, 'Sebastião Martins', 'danrocha858585+sebastiao@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
        (5, 'Manoel Lima', 'danrocha858585+manoel@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
 
-insert into usuarios_grupos (usuario_id, grupo_id) values (1, 1), (1, 2), (2, 2);
+insert into usuarios_grupos (usuario_id, grupo_id)
+values (1, 1),
+       (1, 2),
+       (2, 2);
 
-insert into restaurantes_usuarios_responsaveis (restaurante_id, usuario_id) values (1, 5), (3, 5);
+# Adiciona todas as permissoes no grupo do gerente
+insert into dan_food.grupos_permissoes (grupo_id, permissao_id)
+select 1, id from permissoes;
 
-insert into pedidos (id, codigo, restaurante_id, usuario_id, formas_pagamento_id, endereco_id, status, data_criacao,
-                     data_confirmacao, data_entrega, sub_total, taxa_frete, valor_total)
+# Adiciona permissoes no grupo do vendedor
+insert into grupos_permissoes (grupo_id, permissao_id)
+select 2, id from permissoes where nome like 'CONSULTAR_%';
+
+insert into grupos_permissoes (grupo_id, permissao_id) values (2, 14);
+
+# Adiciona permissoes no grupo do auxiliar
+insert into grupos_permissoes (grupo_id, permissao_id)
+select 3, id from permissoes where nome like 'CONSULTAR_%';
+
+# Adiciona permissoes no grupo cadastrador
+insert into grupos_permissoes (grupo_id, permissao_id)
+select 4, id from permissoes where nome like '%_RESTAURANTES' or nome like '%_PRODUTOS';
+
+insert into restaurantes_usuarios_responsaveis (restaurante_id, usuario_id)
+values (1, 5),
+       (3, 5);
+
+insert into pedidos (id, codigo, restaurante_id, usuario_id, formas_pagamento_id, endereco_id, status, data_criacao,data_confirmacao, data_entrega, sub_total, taxa_frete, valor_total)
 values (1, '953b3e39-a35a-4aa9-bfbb-474192f7b825', 1, 1, 1, 1, 'CRIADO', utc_timestamp, null, null, 298.90, 10, 308.90),
        (2, '3b75fd6e-4a14-4721-8b19-b563c725302e', 4, 1, 2, 1, 'CRIADO', utc_timestamp, null, null, 79, 0, 79),
        (3, 'f9981ca4-5a5e-4da3-af04-933861df3e55', 2, 1, 1, 1, 'CONFIRMADO', DATE_ADD(utc_timestamp(), INTERVAL 1 DAY), DATE_ADD(utc_timestamp(), INTERVAL 2 DAY), null, 298.90, 10, 308.90),
