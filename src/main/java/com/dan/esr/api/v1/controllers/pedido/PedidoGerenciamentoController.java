@@ -5,7 +5,9 @@ import com.dan.esr.api.v1.models.output.pedido.PedidoOutput;
 import com.dan.esr.api.v1.models.output.pedido.PedidoStatusOutput;
 import com.dan.esr.api.v1.openapi.documentation.pedido.PedidoGerenciamentoDocumentation;
 import com.dan.esr.api.v1.assemblers.PedidoAssembler;
+import com.dan.esr.core.security.DanfoodSecurity;
 import com.dan.esr.domain.entities.Pedido;
+import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.services.pedido.PedidoEmissaoService;
 import com.dan.esr.domain.services.pedido.PedidoStatusService;
 import javax.validation.Valid;
@@ -23,16 +25,19 @@ public class PedidoGerenciamentoController implements PedidoGerenciamentoDocumen
     private final PedidoEmissaoService pedidoEmissaoService;
     private final PedidoStatusService pedidoStatusService;
     private final PedidoAssembler pedidoAssembler;
+    private final DanfoodSecurity danfoodSecurity;
 
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<PedidoOutput> novoPedido(@RequestBody @Valid PedidoInput pedidoInput) {
-        Pedido pedido = this.pedidoAssembler.toDomain(pedidoInput);
-        pedido.getEndereco().setId(null);
-        pedido = this.pedidoEmissaoService.emitir(pedido);
+        Pedido novoPedido = this.pedidoAssembler.toDomain(pedidoInput);
+        novoPedido.setUsuario(new Usuario());
+        novoPedido.getUsuario().setId(danfoodSecurity.getUsuarioId());
+        novoPedido.getEndereco().setId(null);
+        novoPedido = this.pedidoEmissaoService.emitir(novoPedido);
         return EntityModel.of(
-                this.pedidoAssembler.toModel(pedido)
+                this.pedidoAssembler.toModel(novoPedido)
         );
     }
 
