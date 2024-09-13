@@ -8,11 +8,14 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 
+@Entity
+@Getter
+@Setter
 @EqualsAndHashCode(of = "id")
-@Entity @Getter @Setter
 @Table(name = "permissoes", schema = "dan_food")
 public class Permissao implements Serializable {
-    @Serial private static final  long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
