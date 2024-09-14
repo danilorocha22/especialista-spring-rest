@@ -1,9 +1,16 @@
 package com.dan.esr.core.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Configuration
 @EnableWebSecurity
@@ -13,11 +20,35 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .anyRequest().authenticated()
+                    .antMatchers(HttpMethod.POST, "v1/cozinhas/**").hasAuthority("EDITAR_COZINHA")
+                    .antMatchers(HttpMethod.PUT, "v1/cozinhas/**").hasAuthority("EDITAR_COZINHA")
+                    .antMatchers(HttpMethod.GET, "v1/cozinhas/**").authenticated()
+                    .anyRequest().denyAll()
                 .and()
                     .cors() //configurando cors a nível de spring security para permitir verbo http Options
                 .and()
-                    .oauth2ResourceServer().jwt(); //.opaqueToken();
+                    .oauth2ResourceServer()
+                        .jwt()//.opaqueToken();
+                        .jwtAuthenticationConverter(getJwtAuthConverter());
+    }
+
+    //Configurando o JwtAuthenticationConverter para converter as permissoes de um token jwt
+    private JwtAuthenticationConverter getJwtAuthConverter() {
+        var jwtAuthenticationConverter = new JwtAuthenticationConverter();
+
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            var authorities = jwt.getClaimAsStringList("authorities");
+
+            if (authorities == null) {
+                authorities = List.of();
+            }
+
+            return authorities.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(toList());
+        });
+
+        return jwtAuthenticationConverter;
     }
 
     //Configurando o JwtDecoder para chave simétrica

@@ -73,24 +73,24 @@ values ('Dinheiro', utc_timestamp),
        ('Débito', utc_timestamp),
        ('Crédito', utc_timestamp);
 
-insert into permissoes(nome, descricao)
-values ('CONSULTAR_COZINHAS', 'Permite consultar cozinhas'),
-       ('EDITAR_COZINHAS', 'Permite editar cozinhas'),
-       ('CONSULTAR_FORMAS_PAGAMENTO', 'Permite consultar formas de pagamento'),
-       ('EDITAR_FORMAS_PAGAMENTO', 'Permite criar ou editar formas de pagamento'),
-       ('CONSULTAR_CIDADES', 'Permite consultar cidades'),
-       ('EDITAR_CIDADES', 'Permite criar ou editar cidades'),
-       ('CONSULTAR_ESTADOS', 'Permite consultar estados'),
-       ('EDITAR_ESTADOS', 'Permite criar ou editar estados'),
-       ('CONSULTAR_USUARIOS', 'Permite consultar usuários'),
-       ('EDITAR_USUARIOS', 'Permite criar ou editar usuários'),
-       ('CONSULTAR_RESTAURANTES', 'Permite consultar restaurantes'),
-       ('EDITAR_RESTAURANTES', 'Permite criar, editar ou gerenciar restaurantes'),
-       ('CONSULTAR_PRODUTOS', 'Permite consultar produtos'),
-       ('EDITAR_PRODUTOS', 'Permite criar ou editar produtos'),
-       ('CONSULTAR_PEDIDOS', 'Permite consultar pedidos'),
-       ('GERENCIAR_PEDIDOS', 'Permite gerenciar pedidos'),
-       ('GERAR_RELATORIOS', 'Permite gerar relatórios');
+insert into permissoes(id, nome, descricao)
+values (1,'CONSULTAR_COZINHAS', 'Permite consultar cozinhas'),
+       (2,'EDITAR_COZINHAS', 'Permite editar cozinhas'),
+       (3,'CONSULTAR_FORMAS_PAGAMENTO', 'Permite consultar formas de pagamento'),
+       (4,'EDITAR_FORMAS_PAGAMENTO', 'Permite criar ou editar formas de pagamento'),
+       (5,'CONSULTAR_CIDADES', 'Permite consultar cidades'),
+       (6,'EDITAR_CIDADES', 'Permite criar ou editar cidades'),
+       (7,'CONSULTAR_ESTADOS', 'Permite consultar estados'),
+       (8,'EDITAR_ESTADOS', 'Permite criar ou editar estados'),
+       (9,'CONSULTAR_USUARIOS', 'Permite consultar usuários'),
+       (10,'EDITAR_USUARIOS', 'Permite criar ou editar usuários'),
+       (11,'CONSULTAR_RESTAURANTES', 'Permite consultar restaurantes'),
+       (12,'EDITAR_RESTAURANTES', 'Permite criar, editar ou gerenciar restaurantes'),
+       (13,'CONSULTAR_PRODUTOS', 'Permite consultar produtos'),
+       (14,'EDITAR_PRODUTOS', 'Permite criar ou editar produtos'),
+       (15,'CONSULTAR_PEDIDOS', 'Permite consultar pedidos'),
+       (16,'GERENCIAR_PEDIDOS', 'Permite gerenciar pedidos'),
+       (17,'GERAR_RELATORIOS', 'Permite gerar relatórios');
 
 insert into restaurantes_formas_de_pagamento(restaurante_id, formas_de_pagamento_id)
 values (1, 1),
@@ -122,24 +122,25 @@ values (1, 'Gerente'),
        (3, 'Secretária'),
        (4, 'Cadastrador');
 
-insert into grupos_permissoes (grupo_id, permissao_id)
+/*insert into grupos_permissoes (grupo_id, permissao_id)
 values (1, 1),
        (1, 2),
        (2, 1),
        (2, 2),
-       (3, 1);
+       (3, 1);*/
 
 insert into usuarios(id, nome, email, senha, data_cadastro)
-values (1, 'João da Silva', 'danrocha858585+joao@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
-       (2, 'Maria Joaquina', 'danrocha858585+maria@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
-       (3, 'José Souza', 'danrocha858585+jose@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
-       (4, 'Sebastião Martins', 'danrocha858585+sebastiao@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
-       (5, 'Manoel Lima', 'danrocha858585+manoel@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
+values (1, 'Danilo Rocha', 'danrocha858585+ger@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
+       (2, 'José Souza', 'danrocha858585+jose_vend@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
+       (3, 'Maria Joaquina', 'danrocha858585+maria_sec@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
+       (4, 'Sebastião Martins', 'danrocha858585+sebastiao_cad@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
+       (5, 'Manoel Lima', 'danrocha858585+manoel_cliente@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
 
 insert into usuarios_grupos (usuario_id, grupo_id)
 values (1, 1),
-       (1, 2),
-       (2, 2);
+       (2, 2),
+       (3, 3),
+       (4, 4);
 
 # Adiciona todas as permissoes no grupo do gerente
 insert into dan_food.grupos_permissoes (grupo_id, permissao_id)
