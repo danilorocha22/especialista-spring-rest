@@ -4,6 +4,7 @@ import com.dan.esr.api.v1.models.output.cozinha.CozinhaOutput;
 import com.dan.esr.api.v1.models.output.cozinha.CozinhasXML;
 import com.dan.esr.api.v1.openapi.documentation.cozinha.CozinhaPesquisaDocumentation;
 import com.dan.esr.api.v1.assemblers.CozinhaAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.services.cozinha.CozinhaConsultaService;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,7 @@ public class CozinhaPesquisaController implements CozinhaPesquisaDocumentation {
     }
 
     @Override
-    @PreAuthorize("isAuthenticated()")
+    @CheckSecurity.Cozinhas.Consultar
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public PagedModel<CozinhaOutput> cozinhas(@PageableDefault(size = 5) Pageable pageable) {
         Page<Cozinha> cozinhaPage = this.cozinhaConsultaService.todosPaginados(pageable);

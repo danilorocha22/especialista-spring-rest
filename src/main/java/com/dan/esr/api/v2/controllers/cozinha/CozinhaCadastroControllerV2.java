@@ -3,6 +3,7 @@ package com.dan.esr.api.v2.controllers.cozinha;
 import com.dan.esr.api.v2.assemblers.CozinhaAssemblerV2;
 import com.dan.esr.api.v2.models.input.CozinhaInputV2;
 import com.dan.esr.api.v2.models.output.CozinhaOutputV2;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.services.cozinha.CozinhaCadastroService;
 import com.dan.esr.domain.services.cozinha.CozinhaConsultaService;
@@ -24,7 +25,7 @@ public class CozinhaCadastroControllerV2 {
     private final CozinhaAssemblerV2 cozinhaAssembler;
 
     @ResponseStatus(CREATED)
-    @PreAuthorize("hasAuthority('EDITAR_COZINHAS')")
+    @CheckSecurity.Cozinhas.Editar
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public CozinhaOutputV2 novaCozinha(@RequestBody @Valid CozinhaInputV2 cozinhaInput) {
         Cozinha cozinha = this.cozinhaAssembler.toDomain(cozinhaInput);

@@ -4,6 +4,7 @@ import com.dan.esr.api.v1.models.input.cozinha.CozinhaInput;
 import com.dan.esr.api.v1.models.output.cozinha.CozinhaOutput;
 import com.dan.esr.api.v1.openapi.documentation.cozinha.CozinhaCadastroDocumentation;
 import com.dan.esr.api.v1.assemblers.CozinhaAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Cozinha;
 import com.dan.esr.domain.services.cozinha.CozinhaCadastroService;
 import com.dan.esr.domain.services.cozinha.CozinhaConsultaService;
@@ -26,7 +27,7 @@ public class CozinhaCadastroController implements CozinhaCadastroDocumentation {
 
     @Override
     @ResponseStatus(CREATED)
-    @PreAuthorize("hasAuthority('EDITAR_COZINHAS')")
+    @CheckSecurity.Cozinhas.Editar
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public CozinhaOutput novaCozinha(@RequestBody @Valid CozinhaInput cozinhaInput) {
         Cozinha cozinha = this.cozinhaAssembler.toDomain(cozinhaInput);
