@@ -6,9 +6,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -46,9 +49,17 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
                 authorities = List.of();
             }
 
-            return authorities.stream()
+            //Converter as permissoes do token jwt para as permissoes no Resource Server
+            List<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
                     .map(SimpleGrantedAuthority::new)
-                    .collect(toList());
+                    .toList();
+
+            //Junta as permissões acima com as permissões dos escopos
+            var scopeAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+            Collection<GrantedAuthority> grantedAuthorities = scopeAuthoritiesConverter.convert(jwt);
+            grantedAuthorities.addAll(simpleGrantedAuthorities);
+
+            return grantedAuthorities;
         });
 
         return jwtAuthenticationConverter;
