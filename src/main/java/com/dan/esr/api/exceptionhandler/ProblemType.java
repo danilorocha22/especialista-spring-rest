@@ -14,7 +14,8 @@ public enum ProblemType {
     PROPRIEDADE_DESCONHECIDA("Propriedade Desconhecida", "/propriedade-desconhecida"),
     PROPRIEDADE_INVALIDA("Propriedade Inválida", "/propriedade-invalida"),
     PARAMETRO_INVALIDO("Parâmetro Inválido", "/parametro-invalido"),
-    ERRO_INTERNO_DO_SISTEMA("Erro do Sistema", "/erro-interno-do-sistema");
+    ERRO_INTERNO_DO_SISTEMA("Erro do Sistema", "/erro-interno-do-sistema"),
+    ACESSO_NEGADO("Acesso Negado", "/acesso-negado");
 
     private final String title;
     private final String uri;

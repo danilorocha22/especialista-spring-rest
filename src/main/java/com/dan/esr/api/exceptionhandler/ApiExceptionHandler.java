@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -156,6 +157,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         log.error("handleIllegalArgumentException() -> Erro: {}", ex.getLocalizedMessage(), ex);
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex, WebRequest req) {
+        HttpStatus status = FORBIDDEN;
+        Problem problem = createProblemBuilder(ACESSO_NEGADO, status, ex.getMessage())
+                .userMessage(MSG_ACESSO_NEGADO)
+                .build();
+
+        log.error("handleAccessDeniedException() -> Erro: {}", ex.getLocalizedMessage(), ex);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, req);
     }
 

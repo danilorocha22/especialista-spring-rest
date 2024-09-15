@@ -59,6 +59,9 @@ public final class MensagensUtil {
     public static final String MSG_ESTADO_EM_USO = "Estado com ID %s, está em uso com " +
             "e não pode ser excluído";
 
+    /*################### ACESSO NEGADO ###################*/
+    public static final String MSG_ACESSO_NEGADO = "Você não tem permissão para executar esta operação.";
+
     private MensagensUtil() {
     }
 
