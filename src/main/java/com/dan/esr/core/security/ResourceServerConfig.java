@@ -2,6 +2,7 @@ package com.dan.esr.core.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,18 +15,20 @@ import static java.util.stream.Collectors.toList;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
+                /*.authorizeRequests()
                     .antMatchers(HttpMethod.POST, "v1/cozinhas/**").hasAuthority("EDITAR_COZINHA")
                     .antMatchers(HttpMethod.PUT, "v1/cozinhas/**").hasAuthority("EDITAR_COZINHA")
                     .antMatchers(HttpMethod.GET, "v1/cozinhas/**").authenticated()
                     .anyRequest().denyAll()
-                .and()
-                    .cors() //configurando cors a nível de spring security para permitir verbo http Options
+                .and()*/
+                .csrf().disable()
+                .cors() //configurando cors a nível de spring security para permitir verbo http Options
                 .and()
                     .oauth2ResourceServer()
                         .jwt()//.opaqueToken();

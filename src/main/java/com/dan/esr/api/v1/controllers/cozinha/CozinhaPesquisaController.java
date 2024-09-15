@@ -14,6 +14,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,6 +83,7 @@ public class CozinhaPesquisaController implements CozinhaPesquisaDocumentation {
     }
 
     @Override
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public PagedModel<CozinhaOutput> cozinhas(@PageableDefault(size = 5) Pageable pageable) {
         Page<Cozinha> cozinhaPage = this.cozinhaConsultaService.todosPaginados(pageable);
