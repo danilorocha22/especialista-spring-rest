@@ -74,23 +74,16 @@ values ('Dinheiro', utc_timestamp),
        ('Crédito', utc_timestamp);
 
 insert into permissoes(id, nome, descricao)
-values (1,'CONSULTAR_COZINHAS', 'Permite consultar cozinhas'),
-       (2,'EDITAR_COZINHAS', 'Permite editar cozinhas'),
-       (3,'CONSULTAR_FORMAS_PAGAMENTO', 'Permite consultar formas de pagamento'),
-       (4,'EDITAR_FORMAS_PAGAMENTO', 'Permite criar ou editar formas de pagamento'),
-       (5,'CONSULTAR_CIDADES', 'Permite consultar cidades'),
-       (6,'EDITAR_CIDADES', 'Permite criar ou editar cidades'),
-       (7,'CONSULTAR_ESTADOS', 'Permite consultar estados'),
-       (8,'EDITAR_ESTADOS', 'Permite criar ou editar estados'),
-       (9,'CONSULTAR_USUARIOS', 'Permite consultar usuários'),
-       (10,'EDITAR_USUARIOS', 'Permite criar ou editar usuários'),
-       (11,'CONSULTAR_RESTAURANTES', 'Permite consultar restaurantes'),
-       (12,'EDITAR_RESTAURANTES', 'Permite criar, editar ou gerenciar restaurantes'),
-       (13,'CONSULTAR_PRODUTOS', 'Permite consultar produtos'),
-       (14,'EDITAR_PRODUTOS', 'Permite criar ou editar produtos'),
-       (15,'CONSULTAR_PEDIDOS', 'Permite consultar pedidos'),
-       (16,'GERENCIAR_PEDIDOS', 'Permite gerenciar pedidos'),
-       (17,'GERAR_RELATORIOS', 'Permite gerar relatórios');
+values (1,'EDITAR_COZINHAS', 'Permite editar cozinhas'),
+       (2,'EDITAR_FORMAS_PAGAMENTO', 'Permite criar ou editar formas de pagamento'),
+       (3,'EDITAR_CIDADES', 'Permite criar ou editar cidades'),
+       (4,'EDITAR_ESTADOS', 'Permite criar ou editar estados'),
+       (5,'CONSULTAR_USUARIOS', 'Permite consultar usuários'),
+       (6,'EDITAR_USUARIOS', 'Permite criar ou editar usuários'),
+       (7,'EDITAR_RESTAURANTES', 'Permite criar, editar ou gerenciar restaurantes'),
+       (8,'CONSULTAR_PEDIDOS', 'Permite consultar pedidos'),
+       (9,'GERENCIAR_PEDIDOS', 'Permite gerenciar pedidos'),
+       (10,'GERAR_RELATORIOS', 'Permite gerar relatórios');
 
 insert into restaurantes_formas_de_pagamento(restaurante_id, formas_de_pagamento_id)
 values (1, 1),
