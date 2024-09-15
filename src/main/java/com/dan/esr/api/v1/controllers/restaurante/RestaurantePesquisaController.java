@@ -1,9 +1,10 @@
 package com.dan.esr.api.v1.controllers.restaurante;
 
+import com.dan.esr.api.v1.assemblers.RestauranteModelAssembler;
 import com.dan.esr.api.v1.models.output.restaurante.RestauranteOutput;
 import com.dan.esr.api.v1.models.output.view.RestauranteView;
 import com.dan.esr.api.v1.openapi.documentation.restaurante.RestaurantePesquisaDocumentation;
-import com.dan.esr.api.v1.assemblers.RestauranteModelAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -27,6 +28,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/{id}")
+    @CheckSecurity.Restaurantes.Consultar
     public EntityModel<RestauranteOutput> restaurante(@PathVariable Long id) {
         Restaurante restaurante = this.restauranteConsulta.buscarPor(id);
         return EntityModel.of(
@@ -51,6 +53,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
     }*/
 
     @GetMapping()
+    @CheckSecurity.Restaurantes.Consultar
     @JsonView(RestauranteView.Resumo.class)
     public CollectionModel<RestauranteOutput> restaurantes() {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarTodos();
@@ -58,6 +61,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
     }
 
     @Override
+    @CheckSecurity.Restaurantes.Consultar
     @GetMapping(params = "projecao=resumo")
     public MappingJacksonValue restaurante(@RequestParam(required = false) String projecao) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarTodos();
@@ -76,6 +80,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/por-taxa")
+    @CheckSecurity.Restaurantes.Consultar
     @JsonView(RestauranteView.Resumo.class)
     public CollectionModel<RestauranteOutput> restaurantesComTaxaFreteEntre(BigDecimal taxaInicial, BigDecimal taxaFinal) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarFreteEntre(taxaInicial, taxaFinal);
@@ -84,6 +89,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/por-nome-e-cozinha")
+    @CheckSecurity.Restaurantes.Consultar
     @JsonView(RestauranteView.Resumo.class)
     public CollectionModel<RestauranteOutput> restaurantesComNomeSemelhanteEcozinha(String nome, Long cozinhaId) {
         List<Restaurante> restaurantes = this.restauranteConsulta.buscarNomeContendoEcozinhaId(nome, cozinhaId);
@@ -92,6 +98,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/por-nome-e-frete")
+    @CheckSecurity.Restaurantes.Consultar
     @JsonView(RestauranteView.Resumo.class)
     public CollectionModel<RestauranteOutput> restauranteComNomeSemelhanteOuTaxaFreteEntre(
             String nome,
@@ -105,6 +112,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/primeiro-por-nome")
+    @CheckSecurity.Restaurantes.Consultar
     public EntityModel<RestauranteOutput> primeiroRestauranteComNomeSemelhante(String nome) {
         Restaurante restaurante = this.restauranteConsulta.buscarPrimeiroNomeContendo(nome);
         return EntityModel.of(
@@ -114,6 +122,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/top2-por-nome")
+    @CheckSecurity.Restaurantes.Consultar
     @JsonView(RestauranteView.Resumo.class)
     public CollectionModel<RestauranteOutput> restaurantesTop2ComNomeSemelhante(String nome) {
         return this.restauranteModelAssembler.toCollectionModel(
@@ -123,12 +132,14 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/count-por-cozinha")
+    @CheckSecurity.Restaurantes.Consultar
     public int quantidadePorCozinha(Long cozinhaId) {
         return this.restauranteConsulta.contarPorCozinhaId(cozinhaId);
     }
 
     @Override
     @GetMapping("/com-frete-gratis")
+    @CheckSecurity.Restaurantes.Consultar
     @JsonView(RestauranteView.Resumo.class)
     public CollectionModel<RestauranteOutput> restaurantesComNomeSemelhanteEfreteGratis(String nome) {
         return this.restauranteModelAssembler.toCollectionModel(
@@ -138,6 +149,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/com-nome-semelhante")
+    @CheckSecurity.Restaurantes.Consultar
     @JsonView(RestauranteView.Resumo.class)
     public CollectionModel<RestauranteOutput> restaurantesComNomSemelhante(String nome) {
         return this.restauranteModelAssembler.toCollectionModel(
@@ -147,6 +159,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/com-nome-igual")
+    @CheckSecurity.Restaurantes.Consultar
     public EntityModel<RestauranteOutput> restauranteComNomeIgual(String nome) {
         Restaurante restaurante = this.restauranteConsulta.buscarPorNomeIgual(nome);
         return EntityModel.of(
@@ -156,6 +169,7 @@ public class RestaurantePesquisaController implements RestaurantePesquisaDocumen
 
     @Override
     @GetMapping("/primeiro")
+    @CheckSecurity.Restaurantes.Consultar
     public EntityModel<RestauranteOutput> buscarPrimeiroRestaurante() {
         Restaurante restaurante = this.restauranteConsulta.buscarPrimeiroRestaurante();
         return EntityModel.of(

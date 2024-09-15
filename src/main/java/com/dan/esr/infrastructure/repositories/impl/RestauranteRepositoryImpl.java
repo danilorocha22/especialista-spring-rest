@@ -1,21 +1,23 @@
 package com.dan.esr.infrastructure.repositories.impl;
 
-import com.dan.esr.core.helper.LoggerHelper;
-import com.dan.esr.domain.entities.*;
+import com.dan.esr.domain.entities.Cidade;
+import com.dan.esr.domain.entities.Endereco;
+import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.PersistenciaException;
 import com.dan.esr.domain.exceptions.restaurante.RestauranteNaoEncontradoException;
 import com.dan.esr.domain.repositories.RestauranteQueries;
 import com.dan.esr.domain.repositories.RestauranteRepository;
 import com.dan.esr.infrastructure.repositories.spec.RestauranteSpecs;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +28,9 @@ import static com.dan.esr.core.util.MensagensUtil.MSG_ERRO_BANCO_DE_DADOS;
 import static com.dan.esr.infrastructure.repositories.spec.RestauranteSpecs.*;
 import static java.util.Comparator.comparing;
 
+@Slf4j
 @Repository
 public class RestauranteRepositoryImpl implements RestauranteQueries {
-    private static final LoggerHelper logger = new LoggerHelper(RestauranteRepositoryImpl.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -86,7 +88,7 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
             return restauranteRepository.findAll(comNomeSemelhante(nome).and(comCozinhaId(cozinhaId)));
 
         } catch (Exception ex) {
-            logger.error("buscarNomeContendoEcozinhaId(nome, cozinhaId) -> Erro: {}", ex.getLocalizedMessage());
+            log.error("buscarNomeContendoEcozinhaId(nome, cozinhaId) -> Erro: {}", ex.getLocalizedMessage());
             throw new PersistenciaException(MSG_ERRO_BANCO_DE_DADOS);
         }
     }
@@ -110,11 +112,11 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
             return Optional.ofNullable(restaurante);
 
         } catch (NoResultException ex) {
-            logger.error("buscarComFormasPagamento(id) -> Erro: {}", ex.getLocalizedMessage());
+            log.error("buscarComFormasPagamento(id) -> Erro: {}", ex.getLocalizedMessage());
             throw new RestauranteNaoEncontradoException(id);
 
         } catch (Exception ex) {
-            logger.error("buscarComFormasPagamento(id) -> Erro: {}", ex.getLocalizedMessage());
+            log.error("buscarComFormasPagamento(id) -> Erro: {}", ex.getLocalizedMessage());
             throw new PersistenciaException(MSG_ERRO_BANCO_DE_DADOS);
         }
     }
@@ -124,7 +126,7 @@ public class RestauranteRepositoryImpl implements RestauranteQueries {
         try {
             return (int) restauranteRepository.count(RestauranteSpecs.countByCozinhaId(cozinhaId));
         } catch (Exception ex) {
-            logger.error("countByCozinhaId(cozinhaId) -> Erro: {}", ex.getLocalizedMessage());
+            log.error("countByCozinhaId(cozinhaId) -> Erro: {}", ex.getLocalizedMessage());
             throw new PersistenciaException(MSG_ERRO_BANCO_DE_DADOS);
         }
     }

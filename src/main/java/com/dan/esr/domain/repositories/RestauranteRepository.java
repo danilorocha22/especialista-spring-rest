@@ -18,6 +18,8 @@ public interface RestauranteRepository extends
 
     @Query("FROM Restaurante r LEFT JOIN FETCH r.usuariosResponsaveis u WHERE r.id = :id order by u.id asc")
     Optional<Restaurante> buscarComUsuariosResponsaveis(@Param("id") Long restauranteId);
+
+    boolean existeResponsavel(Long restauranteId, Long usuarioId);
 }
 
 

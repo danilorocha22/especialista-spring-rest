@@ -3,6 +3,7 @@ package com.dan.esr.api.v1.controllers.restaurante;
 import com.dan.esr.api.v1.models.output.restaurante.RestauranteFormasPagamentoOutput;
 import com.dan.esr.api.v1.openapi.documentation.restaurante.RestauranteFormaPagamentoDocumentation;
 import com.dan.esr.api.v1.assemblers.RestauranteModelAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import com.dan.esr.domain.services.restaurante.RestauranteFormaPagamentoService;
@@ -23,6 +24,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     private final RestauranteModelAssembler restauranteModelAssembler;
 
     @Override
+    @CheckSecurity.Restaurantes.GerenciarFuncionamento
     @PutMapping("/{formasPagamentoId}")
     //@JsonView(RestauranteView.FormaPagamento.class)
     public EntityModel<RestauranteFormasPagamentoOutput> adicionarFormaPagamento(
@@ -37,6 +39,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     }
 
     @Override
+    @CheckSecurity.Restaurantes.GerenciarFuncionamento
     @DeleteMapping("/{formaPagamentoId}")
     //@JsonView(RestauranteView.FormaPagamento.class)
     public EntityModel<RestauranteFormasPagamentoOutput> removerFormaPagamento(
@@ -52,6 +55,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
 
     @Override
     @GetMapping
+    @CheckSecurity.Restaurantes.Consultar
     //@JsonView(RestauranteView.FormaPagamento.class)
     public EntityModel<RestauranteFormasPagamentoOutput> listarFormasPagamento(@PathVariable Long restauranteId) {
         Restaurante restaurante = this.restauranteConsulta.buscarPor(restauranteId);

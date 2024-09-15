@@ -4,6 +4,7 @@ import com.dan.esr.api.v1.models.input.produto.FotoProdutoInput;
 import com.dan.esr.api.v1.models.output.produto.FotoProdutoOutput;
 import com.dan.esr.api.v1.openapi.documentation.restaurante.RestauranteFotoProdutoDocumentation;
 import com.dan.esr.api.v1.assemblers.FotoProdutoAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.FotoProduto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 import static org.springframework.http.HttpHeaders.LOCATION;
-import static org.springframework.http.HttpStatus.FOUND;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 
 @RestController
@@ -37,6 +37,7 @@ public class RestauranteFotoProdutoController implements RestauranteFotoProdutoD
     private final FotoProdutoAssembler fotoProdutoAssembler;
 
     @Override
+    @CheckSecurity.Restaurantes.Consultar
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public EntityModel<FotoProdutoOutput> buscarDadosFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         FotoProduto fotoProduto = this.albumProdutoService.buscarPor(restauranteId, produtoId);
@@ -82,12 +83,13 @@ public class RestauranteFotoProdutoController implements RestauranteFotoProdutoD
         } else {
             return ResponseEntity
                     .status(OK)
-                    .contentType(valueOf(fotoProduto.getContentType()))
+                    .contentType(MediaType.valueOf(fotoProduto.getContentType()))
                     .body(new InputStreamResource(fotoRecuperada.getInputStream()));
         }
     }
 
     @Override
+    @CheckSecurity.Restaurantes.GerenciarFuncionamento
     @PutMapping(consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public EntityModel<FotoProdutoOutput> atualizarFoto(
             @PathVariable Long restauranteId,
@@ -107,7 +109,8 @@ public class RestauranteFotoProdutoController implements RestauranteFotoProdutoD
 
     @Override
     @DeleteMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CheckSecurity.Restaurantes.GerenciarFuncionamento
+    @ResponseStatus(NO_CONTENT)
     public void removerFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         this.albumProdutoService.removerFoto(
                 this.albumProdutoService.buscarPor(restauranteId, produtoId)

@@ -5,6 +5,7 @@ import com.dan.esr.api.v1.models.output.restaurante.RestauranteOutput;
 import com.dan.esr.api.v1.openapi.documentation.restaurante.RestauranteCadastroDocumentation;
 import com.dan.esr.api.v1.assemblers.RestauranteEntityAssembler;
 import com.dan.esr.api.v1.assemblers.RestauranteModelAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.exceptions.ValidacaoException;
 import com.dan.esr.domain.services.restaurante.RestauranteCadastroService;
@@ -17,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpInputMessage;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
@@ -29,6 +29,8 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -42,7 +44,8 @@ public class RestauranteCadastroController implements RestauranteCadastroDocumen
     private final SmartValidator validator;
 
     @Override
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
+    @CheckSecurity.Restaurantes.GerenciarCadastro
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> novoRestaurante(@RequestBody @Valid RestauranteInput restauranteInput) {
         Restaurante restaurante = this.restauranteEntityAssembler.toDomain(restauranteInput);
@@ -53,6 +56,7 @@ public class RestauranteCadastroController implements RestauranteCadastroDocumen
     }
 
     @Override
+    @CheckSecurity.Restaurantes.GerenciarCadastro
     @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> atualizarRestaurante(
             @PathVariable Long id,
@@ -67,6 +71,7 @@ public class RestauranteCadastroController implements RestauranteCadastroDocumen
     }
 
     @Override
+    @CheckSecurity.Restaurantes.GerenciarCadastro
     @PatchMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> atualizarParcial(
             @PathVariable Long id,
@@ -84,7 +89,8 @@ public class RestauranteCadastroController implements RestauranteCadastroDocumen
 
     @Override
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
+    @CheckSecurity.Restaurantes.GerenciarCadastro
     public void excluir(@PathVariable Long id) {
         this.restauranteCadastro.remover(id);
     }

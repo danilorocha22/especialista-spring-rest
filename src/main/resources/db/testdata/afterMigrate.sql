@@ -127,7 +127,7 @@ values (1, 'Danilo Rocha', 'danrocha858585+ger@gmail.com', '$2a$12$cMTXqDlfPAU1j
        (2, 'José Souza', 'danrocha858585+jose_vend@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
        (3, 'Maria Joaquina', 'danrocha858585+maria_sec@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
        (4, 'Sebastião Martins', 'danrocha858585+sebastiao_cad@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
-       (5, 'Manoel Lima', 'danrocha858585+manoel_cliente@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
+       (5, 'Manoel Lima', 'danrocha858585+manoel_resp@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
 
 insert into usuarios_grupos (usuario_id, grupo_id)
 values (1, 1),
@@ -143,7 +143,7 @@ select 1, id from permissoes;
 insert into grupos_permissoes (grupo_id, permissao_id)
 select 2, id from permissoes where nome like 'CONSULTAR_%';
 
-insert into grupos_permissoes (grupo_id, permissao_id) values (2, 14);
+#insert into grupos_permissoes (grupo_id, permissao_id) values (2, 14);
 
 # Adiciona permissoes no grupo do auxiliar
 insert into grupos_permissoes (grupo_id, permissao_id)

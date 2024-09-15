@@ -5,6 +5,7 @@ import com.dan.esr.api.v1.models.output.produto.ProdutoOutput;
 import com.dan.esr.api.v1.models.output.restaurante.RestauranteProdutosOutput;
 import com.dan.esr.api.v1.openapi.documentation.restaurante.RestauranteProdutoDocumentation;
 import com.dan.esr.api.v1.assemblers.ProdutoAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.produto.ProdutoService;
@@ -12,11 +13,11 @@ import com.dan.esr.domain.services.restaurante.RestauranteConsultaService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -29,6 +30,7 @@ public class RestauranteProdutoController implements RestauranteProdutoDocumenta
 
     @Override
     @GetMapping("/{produtoId}")
+    @CheckSecurity.Restaurantes.Consultar
     public EntityModel<ProdutoOutput> produto(
             @PathVariable Long restauranteId,
             @PathVariable Long produtoId
@@ -42,6 +44,7 @@ public class RestauranteProdutoController implements RestauranteProdutoDocumenta
 
     @Override
     @GetMapping
+    @CheckSecurity.Restaurantes.Consultar
     public EntityModel<RestauranteProdutosOutput> produtos(
             @RequestParam(value = "ativos", required = false) Boolean ativos,
             @PathVariable("restauranteId") Long restauranteId) {
@@ -55,7 +58,8 @@ public class RestauranteProdutoController implements RestauranteProdutoDocumenta
 
     @Override
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
+    @CheckSecurity.Restaurantes.GerenciarFuncionamento
     public EntityModel<RestauranteProdutosOutput> novoProduto(
             @PathVariable("restauranteId") Long restauranteId,
             @RequestBody @Valid ProdutoInput produtoInput
@@ -72,6 +76,7 @@ public class RestauranteProdutoController implements RestauranteProdutoDocumenta
 
     @Override
     @PutMapping("/{produtoId}")
+    @CheckSecurity.Restaurantes.GerenciarFuncionamento
     public EntityModel<RestauranteProdutosOutput> atualizarProduto(
             @PathVariable Long restauranteId,
             @PathVariable Long produtoId,

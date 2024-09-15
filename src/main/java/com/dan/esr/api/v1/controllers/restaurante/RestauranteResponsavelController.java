@@ -5,6 +5,7 @@ import com.dan.esr.api.v1.models.output.usuario.UsuarioOutput;
 import com.dan.esr.api.v1.openapi.documentation.restaurante.RestauranteResponsavelDocumentation;
 import com.dan.esr.api.v1.assemblers.RestauranteModelAssembler;
 import com.dan.esr.api.v1.assemblers.UsuarioAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Restaurante;
 import com.dan.esr.domain.services.restaurante.RestauranteResponsavelService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class RestauranteResponsavelController implements RestauranteResponsavelD
 
     @Override
     @GetMapping
+    @CheckSecurity.Restaurantes.Consultar
     public CollectionModel<UsuarioOutput> buscarResponsaveis(@PathVariable Long restauranteId) {
         Restaurante restaurante = this.responsavelService.buscarComResponsaveis(restauranteId);
         return this.usuarioAssembler.toCollectionModel(restaurante.getUsuariosResponsaveis())
@@ -36,6 +38,7 @@ public class RestauranteResponsavelController implements RestauranteResponsavelD
 
     @Override
     @PutMapping("/{usuarioId}")
+    @CheckSecurity.Restaurantes.GerenciarCadastro
     public EntityModel<RestauranteResponsaveisOutput> adicionarResponsavel(
             @PathVariable Long restauranteId,
             @PathVariable Long usuarioId
@@ -48,6 +51,7 @@ public class RestauranteResponsavelController implements RestauranteResponsavelD
 
     @Override
     @DeleteMapping("/{usuarioId}")
+    @CheckSecurity.Restaurantes.GerenciarCadastro
     public EntityModel<RestauranteResponsaveisOutput> removerResponsavel(
             @PathVariable Long restauranteId,
             @PathVariable Long usuarioId
