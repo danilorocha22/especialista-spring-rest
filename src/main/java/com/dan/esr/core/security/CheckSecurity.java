@@ -1,5 +1,6 @@
 package com.dan.esr.core.security;
 
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.lang.annotation.Retention;
@@ -48,5 +49,16 @@ public @interface CheckSecurity {
                 "isAuthenticated()")
         @interface Consultar {
         }
+    }
+
+    @interface Pedidos{
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @PostAuthorize(
+                "hasAuthority('CONSULTAR_PEDIDOS') or " +
+                "@danfoodSecurity.getUsuarioId().equals(returnObject.usuario.id) or" +
+                "@danfoodSecurity.gerenciaRestaurante(returnObject.restaurante.id)")
+        @interface Buscar{}
     }
 }

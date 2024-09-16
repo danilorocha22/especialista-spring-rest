@@ -7,6 +7,7 @@ import com.dan.esr.api.v1.assemblers.PedidoAssembler;
 import com.dan.esr.api.v1.assemblers.PedidoResumoAssembler;
 import com.dan.esr.core.helper.PageWrapperHelper;
 import com.dan.esr.core.helper.PageableWrapperHelper;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.filter.PedidoFiltro;
 import com.dan.esr.domain.services.pedido.PedidoPesquisaService;
@@ -41,6 +42,7 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
     private final PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
 
     @Override
+    @CheckSecurity.Pedidos.Buscar
     @GetMapping("/{codigoPedido}")
     public PedidoOutput pedido(@PathVariable String codigoPedido) {
         return this.pedidoAssembler.toModel(
