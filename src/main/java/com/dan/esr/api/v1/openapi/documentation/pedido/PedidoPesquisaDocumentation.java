@@ -5,8 +5,7 @@ import com.dan.esr.api.v1.models.output.pedido.PedidoOutput;
 import com.dan.esr.domain.filter.PedidoFiltro;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.http.ResponseEntity;
 
 @Api(tags = "Pedidos")
 public interface PedidoPesquisaDocumentation {
@@ -23,7 +22,7 @@ public interface PedidoPesquisaDocumentation {
             @ApiImplicitParam(value = "Nomes das propriedades para filtrar na resposta, separados por vírgula",
                     name = "campos", paramType = "query", type = "string")
     })
-    PagedModel<PedidoOutput> pesquisaComplexa(PedidoFiltro filtro, Pageable pageable);
+    ResponseEntity<?> pesquisaComplexa(PedidoFiltro filtro, Pageable pageable);
 
     @ApiOperation("Pesquisa os pedidos")
     @ApiImplicitParams({@ApiImplicitParam(
@@ -32,5 +31,5 @@ public interface PedidoPesquisaDocumentation {
             type = "string",
             value = "Nomes das propriedades para filtrar na resposta, separados por vírgula"
     )})
-    MappingJacksonValue pedidos(String campos);
+    ResponseEntity<?> pedidos(String campos);
 }

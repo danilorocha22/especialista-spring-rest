@@ -1,13 +1,13 @@
 package com.dan.esr.domain.services.pedido;
 
-import com.dan.esr.core.helper.LoggerHelper;
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.exceptions.EntidadeNaoEncontradaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.pedido.PedidoNaoEncontrado;
-import com.dan.esr.domain.repositories.PedidoRepository;
 import com.dan.esr.domain.filter.PedidoFiltro;
+import com.dan.esr.domain.repositories.PedidoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,10 +17,10 @@ import java.util.List;
 import static com.dan.esr.core.util.ValidacaoUtil.validarSeVazio;
 import static com.dan.esr.infrastructure.repositories.spec.PedidoSpecs.filtrarPedido;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PedidoPesquisaService {
-    private static final LoggerHelper logger = new LoggerHelper(PedidoPesquisaService.class);
     private final PedidoRepository pedidoRepository;
 
     public Pedido buscarPor(String codigoPedido) {
@@ -29,23 +29,15 @@ public class PedidoPesquisaService {
     }
 
     public Page<Pedido> filtrarPor(PedidoFiltro filtro, Pageable pageable) {
-        try {
-            Page<Pedido> pedidoPage = this.pedidoRepository.findAll(filtrarPedido(filtro), pageable);
-            validarSeVazio(pedidoPage.getContent());
-            return pedidoPage;
-        } catch (EntidadeNaoEncontradaException ex) {
-            throw new NegocioException("Nenhum pedido encontrado.");
-        }
+        return this.pedidoRepository.findAll(filtrarPedido(filtro), pageable);
     }
 
     public List<Pedido> todos() {
         try {
-            List<Pedido> pedidos = this.pedidoRepository.todosPedidos();
-            validarSeVazio(pedidos);
-            return pedidos;
-        } catch (EntidadeNaoEncontradaException ex) {
-            logger.error("todos() -> Erro: {}", ex.getLocalizedMessage(), ex);
-            throw new PedidoNaoEncontrado(ex.getMessage(), ex);
+            return this.pedidoRepository.todosPedidos();
+        } catch (Exception ex) {
+            log.error("todos() -> Erro: {}", ex.getLocalizedMessage(), ex);
+            throw new NegocioException(ex.getMessage(), ex);
         }
     }
 }
