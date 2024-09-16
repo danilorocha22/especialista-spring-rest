@@ -60,5 +60,12 @@ public @interface CheckSecurity {
                 "@danfoodSecurity.getUsuarioId().equals(returnObject.usuario.id) or" +
                 "@danfoodSecurity.gerenciaRestaurante(returnObject.restaurante.id)")
         @interface Buscar{}
+
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_READ') and (hasAuthority('CONSULTAR_PEDIDOS') or "
+                + "@danfoodSecurity.getUsuarioId() == #filtro.clienteId or"
+                + "@danfoodSecurity.gerenciaRestaurante(#filtro.restauranteId))")
+        @interface PodePesquisar{}
     }
 }

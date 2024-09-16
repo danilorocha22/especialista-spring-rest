@@ -1,27 +1,27 @@
 package com.dan.esr.api.v1.controllers.pedido;
 
+import com.dan.esr.api.v1.assemblers.PedidoAssembler;
+import com.dan.esr.api.v1.assemblers.PedidoResumoAssembler;
 import com.dan.esr.api.v1.models.output.pedido.PedidoOutput;
 import com.dan.esr.api.v1.models.output.pedido.PedidoResumoOutput;
 import com.dan.esr.api.v1.openapi.documentation.pedido.PedidoPesquisaDocumentation;
-import com.dan.esr.api.v1.assemblers.PedidoAssembler;
-import com.dan.esr.api.v1.assemblers.PedidoResumoAssembler;
 import com.dan.esr.core.helper.PageWrapperHelper;
 import com.dan.esr.core.helper.PageableWrapperHelper;
 import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Pedido;
+import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.filter.PedidoFiltro;
 import com.dan.esr.domain.services.pedido.PedidoPesquisaService;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +31,11 @@ import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1/pedidos", produces = APPLICATION_JSON_VALUE)
 public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
-    private static final Logger logger = LoggerFactory.getLogger(PedidoPesquisaController.class);
     private final PedidoPesquisaService pedidoPesquisaService;
     private final PedidoAssembler pedidoAssembler;
     private final PedidoResumoAssembler pedidoResumoAssembler;
@@ -52,30 +52,39 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
 
     @Override
     @GetMapping
-    //@JsonView(PedidoView.Resumo.class)
-    public PagedModel<PedidoOutput> pesquisaComplexa(
+    @CheckSecurity.Pedidos.PodePesquisar
+    public ResponseEntity<?> pesquisaComplexa(
             PedidoFiltro filtro,
             @PageableDefault(size = 5) Pageable pageable
     ) {
         try {
             Pageable pageableConfigurado = PageableWrapperHelper.of(pageable, getCampos());
             Page<Pedido> pedidosPage = this.pedidoPesquisaService.filtrarPor(filtro, pageableConfigurado);
-            //List<PedidoOutput> pedidosOutput = this.pedidoAssembler.toCollectionModel(pedidosPage.getContent());
-            //return new PageImpl<>(pedidosOutput, pageable, pedidosPage.getTotalElements());
             pedidosPage = PageWrapperHelper.of(pedidosPage, pageable);
-            return this.pagedResourcesAssembler.toModel(pedidosPage, this.pedidoAssembler);
-        } catch (Exception ex)  {
-            //ex.printStackTrace();
-            logger.error("Erro ao pesquisar pedidos: {}", ex.getMessage(), ex);
-            throw new RuntimeException(ex.getMessage());
+
+            if (pedidosPage.isEmpty()) {
+                return ResponseEntity.ok("Nenhum pedido encontrado.");
+            }
+
+            return ResponseEntity.ok(
+                    this.pagedResourcesAssembler.toModel(pedidosPage, this.pedidoAssembler)
+            );
+        } catch (Exception ex) {
+            log.error("Erro ao pesquisar pedidos: {}", ex.getMessage(), ex);
+            throw new NegocioException(ex.getMessage());
         }
     }
 
     @Override
     @GetMapping("/filtrados")
-    public MappingJacksonValue pedidos(@RequestParam(required = false) String campos) {
+    public ResponseEntity<?> pedidos(@RequestParam(required = false) String campos) {
         List<Pedido> pedidos = this.pedidoPesquisaService.todos();
         CollectionModel<PedidoResumoOutput> pedidosModel = this.pedidoResumoAssembler.toCollectionModel(pedidos);
+
+        if (pedidosModel.getContent().isEmpty()) {
+            return ResponseEntity.ok("Nenhum pedido encontrado.");
+        }
+
         MappingJacksonValue pedidoMapping = new MappingJacksonValue(pedidosModel);
         SimpleFilterProvider filterProvider = new SimpleFilterProvider();
         String filtro = "pedidoFilter";
@@ -87,7 +96,7 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
             filterProvider.addFilter(filtro, SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
         }
 
-        return pedidoMapping;
+        return ResponseEntity.ok(pedidoMapping);
     }
 
     private static Map<String, String> getCampos() {

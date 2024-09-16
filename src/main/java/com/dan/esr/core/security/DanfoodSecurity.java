@@ -7,6 +7,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+import static java.util.Objects.isNull;
+
 @Component
 public class DanfoodSecurity {
 
@@ -24,6 +26,9 @@ public class DanfoodSecurity {
     }
 
     public boolean gerenciaRestaurante(Long restauranteId) {
+        if (isNull(restauranteId)) {
+            return false;
+        }
         return this.restauranteRepository.existeResponsavel(restauranteId, getUsuarioId());
     }
 }
