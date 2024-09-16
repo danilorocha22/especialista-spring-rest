@@ -127,7 +127,10 @@ values (1, 'Danilo Rocha', 'danrocha858585+ger@gmail.com', '$2a$12$cMTXqDlfPAU1j
        (2, 'José Souza', 'danrocha858585+jose_vend@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
        (3, 'Maria Joaquina', 'danrocha858585+maria_sec@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
        (4, 'Sebastião Martins', 'danrocha858585+sebastiao_cad@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
-       (5, 'Manoel Lima', 'danrocha858585+manoel_resp@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
+       (5, 'Manoel Lima', 'danrocha858585+manoel_responsavel@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
+       (6, 'Thiago Santos', 'danrocha858585+thiago_cliente@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
+       (7, 'Joaquim Mendes', 'danrocha858585+joaquim_cliente@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
+       (8, 'Rita Dias', 'danrocha858585+rita_cliente@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
 
 insert into usuarios_grupos (usuario_id, grupo_id)
 values (1, 1),
@@ -158,13 +161,13 @@ values (1, 5),
        (3, 5);
 
 insert into pedidos (id, codigo, restaurante_id, usuario_id, formas_pagamento_id, endereco_id, status, data_criacao,data_confirmacao, data_entrega, sub_total, taxa_frete, valor_total)
-values (1, '953b3e39-a35a-4aa9-bfbb-474192f7b825', 1, 1, 1, 1, 'CRIADO', utc_timestamp, null, null, 298.90, 10, 308.90),
-       (2, '3b75fd6e-4a14-4721-8b19-b563c725302e', 4, 1, 2, 1, 'CRIADO', utc_timestamp, null, null, 79, 0, 79),
-       (3, 'f9981ca4-5a5e-4da3-af04-933861df3e55', 2, 1, 1, 1, 'CONFIRMADO', DATE_ADD(utc_timestamp(), INTERVAL 1 DAY), DATE_ADD(utc_timestamp(), INTERVAL 2 DAY), null, 298.90, 10, 308.90),
-       (4, 'd178b637-a785-4768-a3cb-aa1ce5a8cdab', 4, 1, 2, 1, 'CONFIRMADO', DATE_ADD(utc_timestamp(), INTERVAL 3 DAY), DATE_ADD(utc_timestamp(), INTERVAL 4 DAY), null, 79, 0, 79),
-       (5, 'b5741512-8fbc-47fa-9ac1-b530354fc0ff', 1, 1, 1, 1, 'ENTREGUE', DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), 110, 10, 120),
-       (6, '5c621c9a-ba61-4454-8631-8aabefe58dc2', 3, 2, 1, 1, 'ENTREGUE', DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 9 DAY), 174.4, 5, 179.4),
-       (7, '8d774bcf-b238-42f3-aef1-5fb388754d63', 4, 3, 2, 1, 'ENTREGUE',  DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 9 DAY), 87.2, 10, 97.2);
+values (1, '953b3e39-a35a-4aa9-bfbb-474192f7b825', 1, 6, 1, 1, 'CRIADO', utc_timestamp, null, null, 298.90, 10, 308.90),
+       (2, '3b75fd6e-4a14-4721-8b19-b563c725302e', 4, 6, 2, 1, 'CRIADO', utc_timestamp, null, null, 79, 0, 79),
+       (3, 'f9981ca4-5a5e-4da3-af04-933861df3e55', 2, 6, 1, 1, 'CONFIRMADO', DATE_ADD(utc_timestamp(), INTERVAL 1 DAY), DATE_ADD(utc_timestamp(), INTERVAL 2 DAY), null, 298.90, 10, 308.90),
+       (4, 'd178b637-a785-4768-a3cb-aa1ce5a8cdab', 4, 7, 2, 1, 'CONFIRMADO', DATE_ADD(utc_timestamp(), INTERVAL 3 DAY), DATE_ADD(utc_timestamp(), INTERVAL 4 DAY), null, 79, 0, 79),
+       (5, 'b5741512-8fbc-47fa-9ac1-b530354fc0ff', 1, 7, 1, 1, 'ENTREGUE', DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), 110, 10, 120),
+       (6, '5c621c9a-ba61-4454-8631-8aabefe58dc2', 3, 8, 1, 1, 'ENTREGUE', DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 9 DAY), 174.4, 5, 179.4),
+       (7, '8d774bcf-b238-42f3-aef1-5fb388754d63', 4, 8, 2, 1, 'ENTREGUE',  DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 9 DAY), 87.2, 10, 97.2);
 
 
 insert into itens_pedido (id, pedido_id, produto_id, quantidade, preco_unit, valor_total, observacao)
