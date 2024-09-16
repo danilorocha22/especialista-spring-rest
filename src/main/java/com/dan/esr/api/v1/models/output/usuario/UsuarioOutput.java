@@ -4,18 +4,18 @@ import com.dan.esr.api.v1.models.output.view.PedidoView;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
-
-import java.util.Objects;
 
 @Getter
 @Setter
 @ApiModel("Usuário")
 @JsonView(PedidoView.Resumo.class)
 @Relation(collectionRelation = "usuarios")
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class UsuarioOutput extends RepresentationModel<UsuarioOutput> {
     @ApiModelProperty(example = "1")
     private Long id;
@@ -25,17 +25,4 @@ public class UsuarioOutput extends RepresentationModel<UsuarioOutput> {
 
     @ApiModelProperty(example = "paulo.gomes@email.com")
     private String email;
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof UsuarioOutput)) return false;
-        if (!super.equals(object)) return false;
-        return getId().equals(((UsuarioOutput) object).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getId());
-    }
 }
