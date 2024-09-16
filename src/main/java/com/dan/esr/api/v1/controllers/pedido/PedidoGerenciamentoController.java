@@ -16,6 +16,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -29,7 +30,7 @@ public class PedidoGerenciamentoController implements PedidoGerenciamentoDocumen
 
     @Override
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     public EntityModel<PedidoOutput> novoPedido(@RequestBody @Valid PedidoInput pedidoInput) {
         Pedido novoPedido = this.pedidoAssembler.toDomain(pedidoInput);
         novoPedido.setUsuario(new Usuario());
