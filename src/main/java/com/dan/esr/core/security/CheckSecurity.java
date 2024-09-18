@@ -92,6 +92,33 @@ public @interface CheckSecurity {
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_FORMAS_PAGAMENTO')")
         @interface PodeEditar {}
+    }
 
+    @interface Estados {
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @interface PodeConsultar {
+        }
+
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_ESTADOS')")
+        @interface PodeEditar {
+        }
+    }
+
+    @interface Cidades {
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @interface PodeConsultar {
+        }
+
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_CIDADES')")
+        @interface PodeEditar {
+        }
     }
 }

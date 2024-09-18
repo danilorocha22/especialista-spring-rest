@@ -5,6 +5,7 @@ import com.dan.esr.api.v1.assemblers.CidadeAssembler;
 import com.dan.esr.api.v1.models.input.cidade.CidadeInput;
 import com.dan.esr.api.v1.models.output.cidade.CidadeOutput;
 import com.dan.esr.api.v1.openapi.documentation.cidade.CidadeDocumentation;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Cidade;
 import com.dan.esr.domain.services.cidade.CidadeService;
 import javax.validation.Valid;
@@ -27,6 +28,7 @@ public class CidadeController implements CidadeDocumentation {
 
     @Override
     @GetMapping(path = "/{id}")
+    @CheckSecurity.Cidades.PodeConsultar
     public EntityModel<CidadeOutput> cidade(@PathVariable Long id) {
         Cidade cidade = this.cidadeService.buscarPor(id);
         return EntityModel.of(
@@ -37,6 +39,7 @@ public class CidadeController implements CidadeDocumentation {
     @Deprecated
     @Override
     @GetMapping
+    @CheckSecurity.Cidades.PodeConsultar
     public CollectionModel<CidadeOutput> cidades() {
         return this.cidadeAssembler.toCollectionModel(
                 this.cidadeService.buscarTodos()
@@ -46,6 +49,7 @@ public class CidadeController implements CidadeDocumentation {
     @Override
     @PostMapping
     @ResponseStatus(CREATED)
+    @CheckSecurity.Cidades.PodeEditar
     public CidadeOutput novaCidade(@RequestBody @Valid CidadeInput cidadeInput) {
         Cidade cidade = this.cidadeAssembler.toDomain(cidadeInput);
         cidade = this.cidadeService.salvarOuAtualizar(cidade);
@@ -55,6 +59,7 @@ public class CidadeController implements CidadeDocumentation {
 
     @Override
     @PutMapping(path = "/{id}")
+    @CheckSecurity.Cidades.PodeEditar
     public CidadeOutput atualizarCidade(@PathVariable Long id, @RequestBody @Valid CidadeInput cidadeInput) {
         Cidade cidade = this.cidadeService.buscarPor(id);
         this.cidadeAssembler.copyToCidadeDomain(cidadeInput, cidade);
@@ -65,6 +70,7 @@ public class CidadeController implements CidadeDocumentation {
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
+    @CheckSecurity.Cidades.PodeEditar
     public void excluirCidade(@PathVariable Long id) {
         this.cidadeService.remover(id);
     }

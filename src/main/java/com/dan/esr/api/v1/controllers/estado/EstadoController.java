@@ -4,6 +4,7 @@ import com.dan.esr.api.v1.models.input.estado.EstadoInput;
 import com.dan.esr.api.v1.models.output.estado.EstadoOutput;
 import com.dan.esr.api.v1.openapi.documentation.estado.EstadoDocumentation;
 import com.dan.esr.api.v1.assemblers.EstadoAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Estado;
 import com.dan.esr.domain.repositories.EstadoRepository;
 import com.dan.esr.domain.services.estado.EstadoService;
@@ -15,6 +16,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -26,6 +29,7 @@ public class EstadoController implements EstadoDocumentation {
     private final EstadoAssembler estadoAssembler;
 
     @Override
+    @CheckSecurity.Estados.PodeConsultar
     @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public EntityModel<EstadoOutput> estado(@PathVariable Long id) {
         Estado estado = this.estadoService.buscarPor(id);
@@ -35,6 +39,7 @@ public class EstadoController implements EstadoDocumentation {
     }
 
     @Override
+    @CheckSecurity.Estados.PodeConsultar
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public CollectionModel<EstadoOutput> estados() {
         return this.estadoAssembler.toCollectionModel(
@@ -43,8 +48,9 @@ public class EstadoController implements EstadoDocumentation {
     }
 
     @Override
+    @ResponseStatus(CREATED)
+    @CheckSecurity.Estados.PodeEditar
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
     public EstadoOutput novoEstado(@RequestBody @Valid EstadoInput estadoInput) {
         Estado estado = this.estadoAssembler.toDomain(estadoInput);
         return this.estadoAssembler.toModel(
@@ -53,6 +59,7 @@ public class EstadoController implements EstadoDocumentation {
     }
 
     @Override
+    @CheckSecurity.Estados.PodeEditar
     @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public EstadoOutput atualizarEstado(@PathVariable Long id, @Valid @RequestBody EstadoInput estadoInput) {
         Estado estado = this.estadoService.buscarPor(id);
@@ -64,7 +71,7 @@ public class EstadoController implements EstadoDocumentation {
 
     @Override
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
     public void excluirEstado(@PathVariable Long id) {
         this.estadoService.remover(id);
     }
