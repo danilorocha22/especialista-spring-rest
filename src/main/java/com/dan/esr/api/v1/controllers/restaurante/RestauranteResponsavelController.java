@@ -27,7 +27,7 @@ public class RestauranteResponsavelController implements RestauranteResponsavelD
 
     @Override
     @GetMapping
-    @CheckSecurity.Restaurantes.Consultar
+    @CheckSecurity.Restaurantes.PodeConsultar
     public CollectionModel<UsuarioOutput> buscarResponsaveis(@PathVariable Long restauranteId) {
         Restaurante restaurante = this.responsavelService.buscarComResponsaveis(restauranteId);
         return this.usuarioAssembler.toCollectionModel(restaurante.getUsuariosResponsaveis())
@@ -38,7 +38,7 @@ public class RestauranteResponsavelController implements RestauranteResponsavelD
 
     @Override
     @PutMapping("/{usuarioId}")
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     public EntityModel<RestauranteResponsaveisOutput> adicionarResponsavel(
             @PathVariable Long restauranteId,
             @PathVariable Long usuarioId
@@ -51,7 +51,7 @@ public class RestauranteResponsavelController implements RestauranteResponsavelD
 
     @Override
     @DeleteMapping("/{usuarioId}")
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     public EntityModel<RestauranteResponsaveisOutput> removerResponsavel(
             @PathVariable Long restauranteId,
             @PathVariable Long usuarioId

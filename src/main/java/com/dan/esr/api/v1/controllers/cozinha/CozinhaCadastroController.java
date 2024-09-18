@@ -11,7 +11,6 @@ import com.dan.esr.domain.services.cozinha.CozinhaConsultaService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -27,7 +26,7 @@ public class CozinhaCadastroController implements CozinhaCadastroDocumentation {
 
     @Override
     @ResponseStatus(CREATED)
-    @CheckSecurity.Cozinhas.Editar
+    @CheckSecurity.Cozinhas.PodeEditar
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public CozinhaOutput novaCozinha(@RequestBody @Valid CozinhaInput cozinhaInput) {
         Cozinha cozinha = this.cozinhaAssembler.toDomain(cozinhaInput);

@@ -14,7 +14,7 @@
         </query>
     </named-query>
 
- <named-query name="Restaurante.existeResponsavel">
+ <named-query name="Restaurante.isExisteResponsavel">
         <query>
             select case when count(1) > 0 then true else false end
             from Restaurante rest

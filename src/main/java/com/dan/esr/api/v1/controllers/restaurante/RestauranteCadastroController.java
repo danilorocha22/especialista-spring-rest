@@ -45,7 +45,7 @@ public class RestauranteCadastroController implements RestauranteCadastroDocumen
 
     @Override
     @ResponseStatus(CREATED)
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> novoRestaurante(@RequestBody @Valid RestauranteInput restauranteInput) {
         Restaurante restaurante = this.restauranteEntityAssembler.toDomain(restauranteInput);
@@ -56,7 +56,7 @@ public class RestauranteCadastroController implements RestauranteCadastroDocumen
     }
 
     @Override
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> atualizarRestaurante(
             @PathVariable Long id,
@@ -71,7 +71,7 @@ public class RestauranteCadastroController implements RestauranteCadastroDocumen
     }
 
     @Override
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @PatchMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> atualizarParcial(
             @PathVariable Long id,
@@ -90,7 +90,7 @@ public class RestauranteCadastroController implements RestauranteCadastroDocumen
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     public void excluir(@PathVariable Long id) {
         this.restauranteCadastro.remover(id);
     }

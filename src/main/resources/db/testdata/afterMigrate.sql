@@ -112,7 +112,7 @@ values ('Porco com molho agridoce', 'Deliciosa carne suína ao molho especial', 
 insert into grupos (id, nome)
 values (1, 'Gerente'),
        (2, 'Vendedor'),
-       (3, 'Secretária'),
+       (3, 'Auxiliar'),
        (4, 'Cadastrador');
 
 /*insert into grupos_permissoes (grupo_id, permissao_id)
@@ -133,10 +133,10 @@ values (1, 'Danilo Rocha', 'danrocha858585+ger@gmail.com', '$2a$12$cMTXqDlfPAU1j
        (8, 'Rita Dias', 'danrocha858585+rita_cliente@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
 
 insert into usuarios_grupos (usuario_id, grupo_id)
-values (1, 1),
-       (2, 2),
-       (3, 3),
-       (4, 4);
+values (1, 1), #gerente
+       (2, 2), #vendedor
+       (3, 3), #secretária
+       (4, 4); #cadastrador
 
 # Adiciona todas as permissoes no grupo do gerente
 insert into dan_food.grupos_permissoes (grupo_id, permissao_id)
@@ -154,7 +154,8 @@ select 3, id from permissoes where nome like 'CONSULTAR_%';
 
 # Adiciona permissoes no grupo cadastrador
 insert into grupos_permissoes (grupo_id, permissao_id)
-select 4, id from permissoes where nome like '%_RESTAURANTES' or nome like '%_PRODUTOS';
+select 4, id from permissoes
+where nome like '%_RESTAURANTES' or nome like '%_PRODUTOS';
 
 insert into restaurantes_usuarios_responsaveis (restaurante_id, usuario_id)
 values (1, 5),

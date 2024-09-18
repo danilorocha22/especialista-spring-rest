@@ -30,7 +30,7 @@ public class RestauranteProdutoController implements RestauranteProdutoDocumenta
 
     @Override
     @GetMapping("/{produtoId}")
-    @CheckSecurity.Restaurantes.Consultar
+    @CheckSecurity.Restaurantes.PodeConsultar
     public EntityModel<ProdutoOutput> produto(
             @PathVariable Long restauranteId,
             @PathVariable Long produtoId
@@ -44,7 +44,7 @@ public class RestauranteProdutoController implements RestauranteProdutoDocumenta
 
     @Override
     @GetMapping
-    @CheckSecurity.Restaurantes.Consultar
+    @CheckSecurity.Restaurantes.PodeConsultar
     public EntityModel<RestauranteProdutosOutput> produtos(
             @RequestParam(value = "ativos", required = false) Boolean ativos,
             @PathVariable("restauranteId") Long restauranteId) {
@@ -59,7 +59,7 @@ public class RestauranteProdutoController implements RestauranteProdutoDocumenta
     @Override
     @PostMapping
     @ResponseStatus(CREATED)
-    @CheckSecurity.Restaurantes.GerenciarFuncionamento
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     public EntityModel<RestauranteProdutosOutput> novoProduto(
             @PathVariable("restauranteId") Long restauranteId,
             @RequestBody @Valid ProdutoInput produtoInput
@@ -76,7 +76,7 @@ public class RestauranteProdutoController implements RestauranteProdutoDocumenta
 
     @Override
     @PutMapping("/{produtoId}")
-    @CheckSecurity.Restaurantes.GerenciarFuncionamento
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     public EntityModel<RestauranteProdutosOutput> atualizarProduto(
             @PathVariable Long restauranteId,
             @PathVariable Long produtoId,

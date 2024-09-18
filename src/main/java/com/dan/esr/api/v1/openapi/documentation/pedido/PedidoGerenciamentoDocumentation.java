@@ -6,6 +6,7 @@ import com.dan.esr.api.v1.models.output.pedido.PedidoOutput;
 import com.dan.esr.api.v1.models.output.pedido.PedidoStatusOutput;
 import io.swagger.annotations.*;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.security.access.AccessDeniedException;
 
 @Api(tags = "Pedidos")
 public interface PedidoGerenciamentoDocumentation {
@@ -15,7 +16,7 @@ public interface PedidoGerenciamentoDocumentation {
     EntityModel<PedidoOutput> novoPedido(
             @ApiParam(name = "corpo", value = "Representação de um novo pedido")
             PedidoInput pedidoInput
-    );
+    ) throws AccessDeniedException;
 
     @ApiOperation("Confirma o recebimento de um pedido pelo código")
     @ApiResponses({

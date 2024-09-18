@@ -42,7 +42,7 @@ public class PedidoPesquisaController implements PedidoPesquisaDocumentation {
     private final PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
 
     @Override
-    @CheckSecurity.Pedidos.Buscar
+    @CheckSecurity.Pedidos.PodeBuscar
     @GetMapping("/{codigoPedido}")
     public PedidoOutput pedido(@PathVariable String codigoPedido) {
         return this.pedidoAssembler.toModel(

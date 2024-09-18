@@ -1,6 +1,5 @@
 package com.dan.esr.domain.repositories;
 
-import com.dan.esr.domain.entities.FormaPagamento;
 import com.dan.esr.domain.entities.Restaurante;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +18,7 @@ public interface RestauranteRepository extends
     @Query("FROM Restaurante r LEFT JOIN FETCH r.usuariosResponsaveis u WHERE r.id = :id order by u.id asc")
     Optional<Restaurante> buscarComUsuariosResponsaveis(@Param("id") Long restauranteId);
 
-    boolean existeResponsavel(Long restauranteId, Long usuarioId);
+    boolean isExisteResponsavel(Long restauranteId, Long usuarioId);
 }
 
 

@@ -20,12 +20,17 @@ public class DanfoodSecurity {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    public Long getUsuarioId() {
-        Jwt jwt = (Jwt) getAuthentication().getPrincipal();
-        return jwt.getClaim("id_usuario");
+    public Long getUsuarioId()  {
+        try {
+            Jwt jwt = (Jwt) getAuthentication().getPrincipal();
+            return jwt.getClaim("id_usuario");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new AccessDeniedException("Acesso negado");
+        }
     }
 
-    public boolean gerenciaRestaurante(Long restauranteId) {
+    public boolean gerenciaRestaurante(Long restauranteId)  {
         if (isNull(restauranteId)) {
             return false;
         }

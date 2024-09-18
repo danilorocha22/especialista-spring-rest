@@ -24,8 +24,8 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     private final RestauranteModelAssembler restauranteModelAssembler;
 
     @Override
-    @CheckSecurity.Restaurantes.GerenciarFuncionamento
     @PutMapping("/{formasPagamentoId}")
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     //@JsonView(RestauranteView.FormaPagamento.class)
     public EntityModel<RestauranteFormasPagamentoOutput> adicionarFormaPagamento(
             @PathVariable Long restauranteId,
@@ -39,8 +39,8 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     }
 
     @Override
-    @CheckSecurity.Restaurantes.GerenciarFuncionamento
     @DeleteMapping("/{formaPagamentoId}")
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     //@JsonView(RestauranteView.FormaPagamento.class)
     public EntityModel<RestauranteFormasPagamentoOutput> removerFormaPagamento(
             @PathVariable Long restauranteId,
@@ -55,7 +55,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
 
     @Override
     @GetMapping
-    @CheckSecurity.Restaurantes.Consultar
+    @CheckSecurity.Restaurantes.PodeConsultar
     //@JsonView(RestauranteView.FormaPagamento.class)
     public EntityModel<RestauranteFormasPagamentoOutput> listarFormasPagamento(@PathVariable Long restauranteId) {
         Restaurante restaurante = this.restauranteConsulta.buscarPor(restauranteId);

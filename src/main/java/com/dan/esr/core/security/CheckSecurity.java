@@ -16,14 +16,14 @@ public @interface CheckSecurity {
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_READ') and " +
                 "isAuthenticated()")
-        @interface Consultar {
+        @interface PodeConsultar {
         }
 
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and " +
                 "hasAuthority('EDITAR_COZINHA')")
-        @interface Editar {
+        @interface PodeEditar {
         }
     }
 
@@ -32,7 +32,7 @@ public @interface CheckSecurity {
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and " +
                 "hasAuthority('EDITAR_RESTAURANTES')")
-        @interface GerenciarCadastro {
+        @interface PodeGerenciarCadastro {
         }
 
         @Target(METHOD)
@@ -40,14 +40,14 @@ public @interface CheckSecurity {
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and " +
                 "(hasAuthority('EDITAR_RESTAURANTES') or " +
                 "@danfoodSecurity.gerenciaRestaurante(#id))")
-        @interface GerenciarFuncionamento {
+        @interface PodeGerenciarFuncionamento {
         }
 
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_READ') and " +
                 "isAuthenticated()")
-        @interface Consultar {
+        @interface PodeConsultar {
         }
     }
 
@@ -59,7 +59,7 @@ public @interface CheckSecurity {
                 "hasAuthority('CONSULTAR_PEDIDOS') or " +
                 "@danfoodSecurity.getUsuarioId().equals(returnObject.usuario.id) or" +
                 "@danfoodSecurity.gerenciaRestaurante(returnObject.restaurante.id)")
-        @interface Buscar{}
+        @interface PodeBuscar {}
 
         @Target(METHOD)
         @Retention(RUNTIME)

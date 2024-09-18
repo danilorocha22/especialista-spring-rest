@@ -37,7 +37,7 @@ public class RestauranteFotoProdutoController implements RestauranteFotoProdutoD
     private final FotoProdutoAssembler fotoProdutoAssembler;
 
     @Override
-    @CheckSecurity.Restaurantes.Consultar
+    @CheckSecurity.Restaurantes.PodeConsultar
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public EntityModel<FotoProdutoOutput> buscarDadosFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         FotoProduto fotoProduto = this.albumProdutoService.buscarPor(restauranteId, produtoId);
@@ -89,7 +89,7 @@ public class RestauranteFotoProdutoController implements RestauranteFotoProdutoD
     }
 
     @Override
-    @CheckSecurity.Restaurantes.GerenciarFuncionamento
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @PutMapping(consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public EntityModel<FotoProdutoOutput> atualizarFoto(
             @PathVariable Long restauranteId,
@@ -109,7 +109,7 @@ public class RestauranteFotoProdutoController implements RestauranteFotoProdutoD
 
     @Override
     @DeleteMapping
-    @CheckSecurity.Restaurantes.GerenciarFuncionamento
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @ResponseStatus(NO_CONTENT)
     public void removerFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         this.albumProdutoService.removerFoto(

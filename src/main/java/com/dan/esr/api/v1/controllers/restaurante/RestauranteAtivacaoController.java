@@ -25,7 +25,7 @@ public class RestauranteAtivacaoController implements RestauranteAtivacaoDocumen
     private final RestauranteModelAssembler restauranteModelAssembler;
 
     @Override
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @JsonView(RestauranteView.Status.class)
     @PutMapping(path = "/{id}/ativo", produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> ativacao(@PathVariable Long id) {
@@ -36,7 +36,7 @@ public class RestauranteAtivacaoController implements RestauranteAtivacaoDocumen
     }
 
     @Override
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     @JsonView(RestauranteView.Status.class)
     @DeleteMapping(path = "/{id}/ativo", produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> inativacao(@PathVariable Long id) {
@@ -49,7 +49,7 @@ public class RestauranteAtivacaoController implements RestauranteAtivacaoDocumen
     @Override
     @ResponseStatus(NO_CONTENT)
     @PutMapping("/ativacoes")
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     public void ativacoes(@RequestBody List<Long> ids) {
         this.ativacaoService.ativacoes(ids);
     }
@@ -57,7 +57,7 @@ public class RestauranteAtivacaoController implements RestauranteAtivacaoDocumen
     @Override
     @ResponseStatus(NO_CONTENT)
     @DeleteMapping("/ativacoes")
-    @CheckSecurity.Restaurantes.GerenciarCadastro
+    @CheckSecurity.Restaurantes.PodeGerenciarCadastro
     public void desativacoes(@RequestBody List<Long> ids) {
         this.ativacaoService.desativacoes(ids);
     }
@@ -65,7 +65,7 @@ public class RestauranteAtivacaoController implements RestauranteAtivacaoDocumen
     @Override
     @ResponseStatus(NO_CONTENT)
     @JsonView({RestauranteView.Aberto.class})
-    @CheckSecurity.Restaurantes.GerenciarFuncionamento
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @PutMapping(path = "/{id}/abertura", produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> abertura(@PathVariable Long id) {
         Restaurante restaurante = this.ativacaoService.abrir(id);
@@ -77,7 +77,7 @@ public class RestauranteAtivacaoController implements RestauranteAtivacaoDocumen
     @Override
     @ResponseStatus(NO_CONTENT)
     @JsonView({RestauranteView.Aberto.class})
-    @CheckSecurity.Restaurantes.GerenciarFuncionamento
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
     @PutMapping(path = "/{id}/fechamento", produces = APPLICATION_JSON_VALUE)
     public EntityModel<RestauranteOutput> fechamento(@PathVariable Long id) {
         Restaurante restaurante = this.ativacaoService.fechar(id);
