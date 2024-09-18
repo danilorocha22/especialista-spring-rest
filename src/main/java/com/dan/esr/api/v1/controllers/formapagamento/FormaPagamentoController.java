@@ -4,6 +4,7 @@ import com.dan.esr.api.v1.models.input.formapagamento.FormaPagamentoInput;
 import com.dan.esr.api.v1.models.output.formapagamento.FormaPagamentoOutput;
 import com.dan.esr.api.v1.openapi.documentation.formapagamento.FormasPagamentoDocumentation;
 import com.dan.esr.api.v1.assemblers.FormaPagamentoAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.FormaPagamento;
 import com.dan.esr.domain.repositories.FormaPagamentoRepository;
 import com.dan.esr.domain.services.formaspagamento.FormaPagamentoService;
@@ -34,6 +35,7 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
     private final FormaPagamentoRepository formaPagamentoRepository;
 
     @Override
+    @CheckSecurity.FormasPagamentos.PodeConsultar
     @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<EntityModel<FormaPagamentoOutput>> formaPagamento(@PathVariable Long id, ServletWebRequest request) {
         String eTag = this.getDeepETag(request);
@@ -46,6 +48,7 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
     }
 
     @Override
+    @CheckSecurity.FormasPagamentos.PodeConsultar
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<CollectionModel<FormaPagamentoOutput>> formasPagamentos(ServletWebRequest request) {
         String eTag = this.getDeepETag(request);
@@ -76,6 +79,7 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
 
     @Override
     @ResponseStatus(CREATED)
+    @CheckSecurity.FormasPagamentos.PodeEditar
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public FormaPagamentoOutput novaFormaPagamento(
             @RequestBody @Valid FormaPagamentoInput formaPagamentoInput
@@ -86,6 +90,7 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
     }
 
     @Override
+    @CheckSecurity.FormasPagamentos.PodeEditar
     @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public FormaPagamentoOutput atualizarFormaPagamento(
             @PathVariable Long id,
@@ -100,6 +105,7 @@ public class FormaPagamentoController implements FormasPagamentoDocumentation {
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
+    @CheckSecurity.FormasPagamentos.PodeEditar
     public void excluirFormaPagamento(@PathVariable Long id) {
         this.formaPagamentoService.remover(id);
     }
