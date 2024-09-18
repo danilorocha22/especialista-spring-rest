@@ -67,5 +67,31 @@ public @interface CheckSecurity {
                 + "@danfoodSecurity.getUsuarioId() == #filtro.clienteId or"
                 + "@danfoodSecurity.gerenciaRestaurante(#filtro.restauranteId))")
         @interface PodePesquisar{}
+
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("jisAuthenticated()")
+        @interface PodeCriar{}
+
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and " +
+                "(hasAuthority('GERENCIAR_PEDIDOS') or " +
+                "@danfoodSecurity.gerenciaRestauranteDoPedido(#codigoPedido))")
+        @interface PodeAlterarStatus {}
+    }
+
+
+    @interface FormasPagamentos{
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @interface PodeConsultar {}
+
+        @Target(METHOD)
+        @Retention(RUNTIME)
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_FORMAS_PAGAMENTO')")
+        @interface PodeEditar {}
+
     }
 }

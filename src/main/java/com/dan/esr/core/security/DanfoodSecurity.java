@@ -1,7 +1,10 @@
 package com.dan.esr.core.security;
 
+import com.dan.esr.domain.repositories.PedidoRepository;
 import com.dan.esr.domain.repositories.RestauranteRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -9,11 +12,15 @@ import org.springframework.stereotype.Component;
 
 import static java.util.Objects.isNull;
 
+@Slf4j
 @Component
 public class DanfoodSecurity {
 
     @Autowired
     private RestauranteRepository restauranteRepository;
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     // Obtém o objeto que representa o Token da requisição a partir do contexto
     public Authentication getAuthentication() {
@@ -34,6 +41,13 @@ public class DanfoodSecurity {
         if (isNull(restauranteId)) {
             return false;
         }
-        return this.restauranteRepository.existeResponsavel(restauranteId, getUsuarioId());
+        return this.restauranteRepository.isExisteResponsavel(restauranteId, getUsuarioId());
+    }
+
+    public boolean gerenciaRestauranteDoPedido(String codigoPedido)  {
+        if (isNull(codigoPedido)) {
+            return false;
+        }
+        return this.pedidoRepository.isRestauranteDoPedido(codigoPedido, getUsuarioId());
     }
 }

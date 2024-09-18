@@ -20,4 +20,8 @@ public interface PedidoRepository extends
             "p.restaurante r left join fetch r.produtos join fetch p.itensPedido i join fetch i.produto " +
             "where p.codigo = :codigo")
     Optional<Pedido> porCodigo(@Param("codigo") String codigoPedido);
+
+    @Query("select count(p) > 0 from Pedido p join p.restaurante rest left join rest.usuariosResponsaveis resp " +
+            "where p.codigo = :codigoPedido and resp.id = :usuarioId")
+    boolean isRestauranteDoPedido(String codigoPedido, Long usuarioId);
 }
