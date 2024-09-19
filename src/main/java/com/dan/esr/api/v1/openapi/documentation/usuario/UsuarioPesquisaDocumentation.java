@@ -1,7 +1,6 @@
 package com.dan.esr.api.v1.openapi.documentation.usuario;
 
 import com.dan.esr.api.exceptionhandler.Problem;
-import com.dan.esr.api.v1.models.output.usuario.UsuarioGruposOutput;
 import com.dan.esr.api.v1.models.output.usuario.UsuarioOutput;
 import io.swagger.annotations.*;
 import org.springframework.hateoas.CollectionModel;
@@ -25,7 +24,4 @@ public interface UsuarioPesquisaDocumentation {
     @ApiResponses(@ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class))
     UsuarioOutput primeiroUsuarioComNomeSemelhante(String nome);
 
-    @ApiOperation("Lista os grupos do usuário")
-    @ApiResponses(@ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class))
-    EntityModel<UsuarioGruposOutput> usuarioGrupos(@ApiParam(value = "ID do usuário", example = "1", required = true) Long id);
 }

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import static com.dan.esr.core.util.ValidacaoUtil.validarCampoObrigatorio;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/v1/usuarios", produces = APPLICATION_JSON_VALUE)
 public class UsuarioPesquisaController implements UsuarioPesquisaDocumentation {
     private final UsuarioConsultaService usuarioConsulta;
@@ -27,15 +27,6 @@ public class UsuarioPesquisaController implements UsuarioPesquisaDocumentation {
         Usuario usuario = this.usuarioConsulta.buscarPor(id);
         return EntityModel.of(
                 this.usuarioAssembler.toModel(usuario)
-        );
-    }
-
-    @Override
-    @GetMapping("/{usuarioId}/grupos")
-    public EntityModel<UsuarioGruposOutput> usuarioGrupos(@PathVariable("usuarioId") Long id) {
-        Usuario usuario = this.usuarioConsulta.buscarPor(id);
-        return EntityModel.of(
-                this.usuarioAssembler.toModelUsuarioGrupos(usuario)
         );
     }
 

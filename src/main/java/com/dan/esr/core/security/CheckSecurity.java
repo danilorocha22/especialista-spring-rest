@@ -39,7 +39,7 @@ public @interface CheckSecurity {
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and " +
                 "(hasAuthority('EDITAR_RESTAURANTES') or " +
-                "@danfoodSecurity.gerenciaRestaurante(#id))")
+                "@securityUtils.gerenciaRestaurante(#id))")
         @interface PodeGerenciarFuncionamento {
         }
 
@@ -51,47 +51,53 @@ public @interface CheckSecurity {
         }
     }
 
-    @interface Pedidos{
+    @interface Pedidos {
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
         @PostAuthorize(
                 "hasAuthority('CONSULTAR_PEDIDOS') or " +
-                "@danfoodSecurity.getUsuarioId().equals(returnObject.usuario.id) or" +
-                "@danfoodSecurity.gerenciaRestaurante(returnObject.restaurante.id)")
-        @interface PodeBuscar {}
+                        "@securityUtils.getUsuarioId().equals(returnObject.usuario.id) or" +
+                        "@securityUtils.gerenciaRestaurante(returnObject.restaurante.id)")
+        @interface PodeBuscar {
+        }
 
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_READ') and (hasAuthority('CONSULTAR_PEDIDOS') or "
-                + "@danfoodSecurity.getUsuarioId() == #filtro.clienteId or"
-                + "@danfoodSecurity.gerenciaRestaurante(#filtro.restauranteId))")
-        @interface PodePesquisar{}
+                + "@securityUtils.getUsuarioId() == #filtro.clienteId or"
+                + "@securityUtils.gerenciaRestaurante(#filtro.restauranteId))")
+        @interface PodePesquisar {
+        }
 
         @Target(METHOD)
         @Retention(RUNTIME)
-        @PreAuthorize("jisAuthenticated()")
-        @interface PodeCriar{}
+        @PreAuthorize("isAuthenticated()")
+        @interface PodeCriar {
+        }
 
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and " +
                 "(hasAuthority('GERENCIAR_PEDIDOS') or " +
-                "@danfoodSecurity.gerenciaRestauranteDoPedido(#codigoPedido))")
-        @interface PodeAlterarStatus {}
+                "@securityUtils.gerenciaRestauranteDoPedido(#codigoPedido))")
+        @interface PodeAlterarStatus {
+        }
     }
 
 
-    @interface FormasPagamentos{
+    @interface FormasPagamentos {
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
-        @interface PodeConsultar {}
+        @interface PodeConsultar {
+        }
 
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_FORMAS_PAGAMENTO')")
-        @interface PodeEditar {}
+        @interface PodeEditar {
+        }
     }
 
     @interface Estados {

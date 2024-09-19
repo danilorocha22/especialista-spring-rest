@@ -11,7 +11,7 @@ public interface UsuarioGruposDocumentation {
             @ApiResponse(code = 200, message = "Usuário adicionado ao grupo", response = Problem.class),
             @ApiResponse(code = 404, message = "Usuário ou grupo não encontrado", response = Problem.class)
     })
-    void adicionarGrupo(
+    void adicionarUsuarioNoGrupo(
             @ApiParam(value = "ID do usuário", example = "1", required = true)
             Long usuarioId,
             @ApiParam(value = "ID do grupo", example = "1", required = true)
@@ -23,7 +23,7 @@ public interface UsuarioGruposDocumentation {
             @ApiResponse(code = 204, message = "Usuário removido do grupo", response = Problem.class),
             @ApiResponse(code = 404, message = "Usuário ou grupo não encontrado", response = Problem.class)
     })
-    void removerGrupo(
+    void removerDoGrupo(
             @ApiParam(value = "ID do usuário", example = "1", required = true)
             Long usuarioId,
             @ApiParam(value = "ID do grupo", example = "1", required = true)

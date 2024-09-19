@@ -27,7 +27,7 @@ public class PedidoGerenciamentoController implements PedidoGerenciamentoDocumen
     private final PedidoEmissaoService pedidoEmissaoService;
     private final PedidoStatusService pedidoStatusService;
     private final PedidoAssembler pedidoAssembler;
-    private final DanfoodSecurity danfoodSecurity;
+    private final SecurityUtils securityUtils;
 
     @Override
     @PostMapping
@@ -36,7 +36,7 @@ public class PedidoGerenciamentoController implements PedidoGerenciamentoDocumen
     public EntityModel<PedidoOutput> novoPedido(@RequestBody @Valid PedidoInput pedidoInput)  {
         Pedido novoPedido = this.pedidoAssembler.toDomain(pedidoInput);
         novoPedido.setUsuario(new Usuario());
-        novoPedido.getUsuario().setId(danfoodSecurity.getUsuarioId());
+        novoPedido.getUsuario().setId(securityUtils.getUsuarioId());
         novoPedido.getEndereco().setId(null);
         novoPedido = this.pedidoEmissaoService.emitir(novoPedido);
         return EntityModel.of(

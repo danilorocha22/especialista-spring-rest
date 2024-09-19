@@ -14,7 +14,7 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Component
-public class DanfoodSecurity {
+public class SecurityUtils {
 
     @Autowired
     private RestauranteRepository restauranteRepository;

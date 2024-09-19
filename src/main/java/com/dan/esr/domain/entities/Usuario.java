@@ -2,13 +2,13 @@ package com.dan.esr.domain.entities;
 
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.grupo.GrupoNaoEncontradoException;
-import javax.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;

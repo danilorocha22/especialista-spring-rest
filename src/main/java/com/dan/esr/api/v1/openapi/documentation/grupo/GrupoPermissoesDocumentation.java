@@ -12,7 +12,7 @@ public interface GrupoPermissoesDocumentation {
             @ApiResponse(code = 400, message = "ID da permissão do grupo inválido", response = Problem.class),
             @ApiResponse(code = 404, message = "Permissão de grupo não encontrada", response = Problem.class)
     })
-    GrupoPermissoesOutput permissoesGrupo(@ApiParam(value = "ID de uma permissão de grupo", example = "1") Long id);
+    GrupoPermissoesOutput permissoesDoGrupo(@ApiParam(value = "ID de uma permissão de grupo", example = "1") Long id);
 
     @ApiOperation("Adiciona uma permissão a um grupo")
     @ApiResponses({

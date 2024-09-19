@@ -5,13 +5,11 @@ import com.dan.esr.api.v1.models.input.usuario.UsuarioInput;
 import com.dan.esr.api.v1.models.input.usuario.UsuarioSenhaInput;
 import com.dan.esr.api.v1.models.output.usuario.UsuarioOutput;
 import com.dan.esr.api.v1.openapi.documentation.usuario.UsuarioCadastroDocumentation;
-import com.dan.esr.api.v1.assemblers.UsuarioAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.services.usuario.UsuarioCadastroService;
 import com.dan.esr.domain.services.usuario.UsuarioConsultaService;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -20,17 +18,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 @RequestMapping("/v1/usuarios")
 public class UsuarioCadastroController implements UsuarioCadastroDocumentation {
-    private final UsuarioCadastroService usuarioCadastro;
-    private final UsuarioConsultaService usuarioConsulta;
+    private final UsuarioCadastroService usuarioCadastroService;
+    private final UsuarioConsultaService usuarioConsultaService;
     private final UsuarioAssembler usuarioAssembler;
 
     @Override
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public UsuarioOutput novoUsuario(@RequestBody @Valid UsuarioInput usuarioInput) {
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioInput);
         return this.usuarioAssembler.toModel(
-                this.usuarioCadastro.salvarOuAtualizar(usuario)
+                this.usuarioCadastroService.salvarOuAtualizar(usuario)
         );
     }
 
@@ -42,18 +40,17 @@ public class UsuarioCadastroController implements UsuarioCadastroDocumentation {
     ) {
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioAtualizado);
         usuario.setId(usuarioId);
-        this.usuarioCadastro.validarUsuarioComEmailJaCadastrado(usuario);
-
-        Usuario usuarioRegistro = this.usuarioConsulta.buscarPor(usuarioId);
+        this.usuarioCadastroService.validarUsuarioComEmailJaCadastrado(usuario);
+        Usuario usuarioRegistro = this.usuarioConsultaService.buscarPor(usuarioId);
         this.usuarioAssembler.copyToDomain(usuarioAtualizado, usuarioRegistro);
-
         return this.usuarioAssembler.toModel(
-                this.usuarioCadastro.salvarOuAtualizar(usuarioRegistro)
+                this.usuarioCadastroService.salvarOuAtualizar(usuarioRegistro)
         );
     }
 
     @Override
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
+    @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarPropriaSenha
     @PutMapping(path = "/{id}/senha", produces = APPLICATION_JSON_VALUE)
     public void atualizarSenha(
             @PathVariable("id") Long usuarioId,
@@ -63,13 +60,14 @@ public class UsuarioCadastroController implements UsuarioCadastroDocumentation {
         System.out.printf("Senha atual bruta: %s%n", senhaAtual);
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioNovaSenha);
         usuario.setId(usuarioId);
-        this.usuarioCadastro.atualizarSenha(usuario);
+        this.usuarioCadastroService.atualizarSenha(usuario);
     }
 
     @Override
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(NO_CONTENT)
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     public void excluir(@PathVariable("id") Long usuarioId) {
-        this.usuarioCadastro.remover(usuarioId);
+        this.usuarioCadastroService.remover(usuarioId);
     }
 }

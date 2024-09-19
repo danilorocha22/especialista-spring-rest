@@ -20,7 +20,7 @@ public class GrupoPermissoesController implements GrupoPermissoesDocumentation {
 
     @Override
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public GrupoPermissoesOutput permissoesGrupo(@PathVariable("grupoId") Long id) {
+    public GrupoPermissoesOutput permissoesDoGrupo(@PathVariable("grupoId") Long id) {
         Grupo grupo = this.grupoService.buscarPor(id);
         return this.grupoAssembler.toModelGrupoPermissoes(grupo);
     }

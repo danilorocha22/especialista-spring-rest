@@ -11,7 +11,6 @@ import com.dan.esr.domain.services.grupo.GrupoService;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,13 +19,13 @@ public class UsuarioCadastroService {
     private final UsuarioConsultaService usuarioConsulta;
     private final UsuarioRepository usuarioRepository;
     private final GrupoService grupoService;
-    private final PasswordEncoder passwordEncoder;
+    private final CodificacaoSenhaService codificacaoSenhaService;
 
     @Transactional
     public Usuario salvarOuAtualizar(Usuario usuario) {
         if (usuario.isNovo()) {
             this.validarUsuarioComEmailJaCadastrado(usuario);
-            usuario.setSenha(this.passwordEncoder.encode(usuario.getSenha()));
+            usuario.setSenha(this.codificacaoSenhaService.criptografar(usuario.getSenha()));
         }
         return this.usuarioRepository.salvarOuAtualizar(usuario)
                 .orElseThrow(() -> {
@@ -54,12 +53,12 @@ public class UsuarioCadastroService {
     }
 
     @Transactional
-    public void atualizarSenha(Usuario usuarioNovaSenha) {
-        Usuario usuarioRegistro = this.usuarioConsulta.buscarPor(usuarioNovaSenha.getId());
-        if (!this.passwordEncoder.matches(usuarioNovaSenha.getSenha(), usuarioRegistro.getSenha())) {
-            throw new NegocioException("A senha atual informada  não confere.");
+    public void atualizarSenha(Usuario usuarioAtualizado) {
+        Usuario usuarioExistente = this.usuarioConsulta.buscarPor(usuarioAtualizado.getId());
+        if (this.codificacaoSenhaService.diferente(usuarioAtualizado.getSenha(), usuarioExistente.getSenha())) {
+            throw new NegocioException("A senha atual informada não confere.");
         }
-        usuarioRegistro.setSenha(this.passwordEncoder.encode(usuarioNovaSenha.getNovaSenha()));
+        usuarioExistente.setSenha(this.codificacaoSenhaService.criptografar(usuarioAtualizado.getNovaSenha()));
     }
 
     public void validarUsuarioComEmailJaCadastrado(Usuario usuario) {
@@ -73,14 +72,14 @@ public class UsuarioCadastroService {
     }
 
     @Transactional
-    public void adicionarGrupo(Long usuarioId, Long grupoId) {
+    public void adicionarNoGrupo(Long usuarioId, Long grupoId) {
         Usuario usuario = this.usuarioConsulta.buscarPor(usuarioId);
         Grupo grupo = this.grupoService.buscarPor(grupoId);
         usuario.adicionar(grupo);
     }
 
     @Transactional
-    public void removerGrupo(Long usuarioId, Long grupoId) {
+    public void removerDoGrupo(Long usuarioId, Long grupoId) {
         Usuario usuario = this.usuarioConsulta.buscarPor(usuarioId);
         Grupo grupo = this.grupoService.buscarPor(grupoId);
         usuario.remover(grupo);
