@@ -33,6 +33,7 @@ public class UsuarioCadastroController implements UsuarioCadastroDocumentation {
     }
 
     @Override
+    @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarUsuario
     @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     public UsuarioOutput atualizarUsuario(
             @PathVariable("id") Long usuarioId,

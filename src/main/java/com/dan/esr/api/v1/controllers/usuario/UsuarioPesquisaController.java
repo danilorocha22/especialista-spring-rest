@@ -1,9 +1,9 @@
 package com.dan.esr.api.v1.controllers.usuario;
 
-import com.dan.esr.api.v1.models.output.usuario.UsuarioGruposOutput;
+import com.dan.esr.api.v1.assemblers.UsuarioAssembler;
 import com.dan.esr.api.v1.models.output.usuario.UsuarioOutput;
 import com.dan.esr.api.v1.openapi.documentation.usuario.UsuarioPesquisaDocumentation;
-import com.dan.esr.api.v1.assemblers.UsuarioAssembler;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.services.usuario.UsuarioConsultaService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ public class UsuarioPesquisaController implements UsuarioPesquisaDocumentation {
 
     @Override
     @GetMapping("/{id}")
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultarUsuario
     public EntityModel<UsuarioOutput> usuario(@PathVariable Long id) {
         Usuario usuario = this.usuarioConsulta.buscarPor(id);
         return EntityModel.of(
@@ -32,6 +33,7 @@ public class UsuarioPesquisaController implements UsuarioPesquisaDocumentation {
 
     @Override
     @GetMapping("/primeiro")
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     public UsuarioOutput primeiroUsuario() {
         Usuario usuario = this.usuarioConsulta.buscarPrimeiro();
         return this.usuarioAssembler.toModel(usuario);
@@ -39,6 +41,7 @@ public class UsuarioPesquisaController implements UsuarioPesquisaDocumentation {
 
     @Override
     @GetMapping("/primeiro-com-nome-semelhante")
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     public UsuarioOutput primeiroUsuarioComNomeSemelhante(@RequestParam String nome) {
         validarCampoObrigatorio(nome, "nome");
         Usuario usuario = this.usuarioConsulta.buscarPrimeiroComNomeSemelhante(nome);
@@ -47,6 +50,7 @@ public class UsuarioPesquisaController implements UsuarioPesquisaDocumentation {
 
     @Override
     @GetMapping
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
     public CollectionModel<UsuarioOutput> usuarios() {
         return this.usuarioAssembler.toCollectionModel(
                 this.usuarioConsulta.buscarTodos()

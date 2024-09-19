@@ -15,6 +15,17 @@ public class UsuarioGruposController implements UsuarioGruposDocumentation {
     private final UsuarioAssembler usuarioAssembler;
 
     @Override
+    @GetMapping("/{usuarioId}/grupos")
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
+    public EntityModel<UsuarioGruposOutput> gruposDoUsuario(@PathVariable("usuarioId") Long id) {
+        Usuario usuario = this.usuarioConsultaService.buscarPor(id);
+        return EntityModel.of(
+                this.usuarioAssembler.toModelUsuarioGrupos(usuario)
+        );
+    }
+
+    @Override
+    @ResponseStatus(NO_CONTENT)
     @PutMapping("/{id}/grupos/{id}")
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
     public void adicionarUsuarioNoGrupo(@PathVariable("id") Long usuarioId, @PathVariable("id") Long grupoId) {
