@@ -1,7 +1,9 @@
 package com.dan.esr.api.v1.openapi.documentation.usuario;
 
 import com.dan.esr.api.exceptionhandler.Problem;
+import com.dan.esr.api.v1.models.output.usuario.UsuarioGruposOutput;
 import io.swagger.annotations.*;
+import org.springframework.hateoas.EntityModel;
 
 @Api(tags = "Usuários")
 public interface UsuarioGruposDocumentation {
@@ -29,4 +31,8 @@ public interface UsuarioGruposDocumentation {
             @ApiParam(value = "ID do grupo", example = "1", required = true)
             Long grupoId
     );
+
+    @ApiOperation("Lista os grupos do usuário")
+    @ApiResponses(@ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class))
+    EntityModel<UsuarioGruposOutput> gruposDoUsuario(@ApiParam(value = "ID do usuário", example = "1", required = true) Long id);
 }

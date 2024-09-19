@@ -6,7 +6,7 @@ import com.dan.esr.api.v1.models.output.pedido.PedidoOutput;
 import com.dan.esr.api.v1.models.output.pedido.PedidoStatusOutput;
 import com.dan.esr.api.v1.openapi.documentation.pedido.PedidoGerenciamentoDocumentation;
 import com.dan.esr.core.security.CheckSecurity;
-import com.dan.esr.core.security.DanfoodSecurity;
+import com.dan.esr.core.security.SecurityUtils;
 import com.dan.esr.domain.entities.Pedido;
 import com.dan.esr.domain.entities.Usuario;
 import com.dan.esr.domain.services.pedido.PedidoEmissaoService;

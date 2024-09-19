@@ -7,6 +7,7 @@ import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 import com.dan.esr.domain.exceptions.NegocioException;
 import com.dan.esr.domain.exceptions.usuario.UsuarioNaoEncontradoException;
 import com.dan.esr.domain.repositories.UsuarioRepository;
+import com.dan.esr.domain.services.CodificacaoSenhaService;
 import com.dan.esr.domain.services.grupo.GrupoService;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,7 @@ public class UsuarioCadastroService {
         }
         usuarioExistente.setSenha(this.codificacaoSenhaService.criptografar(usuarioAtualizado.getNovaSenha()));
     }
+
 
     public void validarUsuarioComEmailJaCadastrado(Usuario usuario) {
         this.usuarioRepository.buscarPorEmail(usuario.getEmail())

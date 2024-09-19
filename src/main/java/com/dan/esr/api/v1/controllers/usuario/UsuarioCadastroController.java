@@ -1,5 +1,6 @@
 package com.dan.esr.api.v1.controllers.usuario;
 
+import com.dan.esr.api.v1.assemblers.UsuarioAssembler;
 import com.dan.esr.api.v1.models.input.usuario.UsuarioAtualizadoInput;
 import com.dan.esr.api.v1.models.input.usuario.UsuarioInput;
 import com.dan.esr.api.v1.models.input.usuario.UsuarioSenhaInput;
@@ -12,6 +13,10 @@ import com.dan.esr.domain.services.usuario.UsuarioConsultaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -57,8 +62,6 @@ public class UsuarioCadastroController implements UsuarioCadastroDocumentation {
             @PathVariable("id") Long usuarioId,
             @RequestBody @Valid UsuarioSenhaInput usuarioNovaSenha
     ) {
-        String senhaAtual = usuarioNovaSenha.getSenha();
-        System.out.printf("Senha atual bruta: %s%n", senhaAtual);
         Usuario usuario = this.usuarioAssembler.toDomain(usuarioNovaSenha);
         usuario.setId(usuarioId);
         this.usuarioCadastroService.atualizarSenha(usuario);
