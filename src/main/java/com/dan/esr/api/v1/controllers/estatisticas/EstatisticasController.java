@@ -1,6 +1,7 @@
 package com.dan.esr.api.v1.controllers.estatisticas;
 
 import com.dan.esr.api.v1.openapi.documentation.estatisticas.EstatisticasDocumentation;
+import com.dan.esr.core.security.CheckSecurity;
 import com.dan.esr.domain.entities.dto.VendaDiaria;
 import com.dan.esr.domain.filter.VendaDiariaFiltro;
 import com.dan.esr.domain.services.VendaDiariaQueryService;
@@ -29,7 +30,8 @@ public class EstatisticasController implements EstatisticasDocumentation {
     private final VendaDiariaReportsService reportsService;
 
     @Override
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @CheckSecurity.Estatisticas.PodeConsultar
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public EstatisticasModel estatisticas() {
         var estatisticasModel = new EstatisticasModel();
         estatisticasModel.add(linkToEstatisticasVendasDiarias());
@@ -37,6 +39,7 @@ public class EstatisticasController implements EstatisticasDocumentation {
     }
 
     @Override
+    @CheckSecurity.Estatisticas.PodeConsultar
     @GetMapping(path = "/v1/vendas-diaria", produces = APPLICATION_JSON_VALUE)
     public List<VendaDiaria> consultarVendasDiaria(
             VendaDiariaFiltro filtro,
@@ -46,6 +49,7 @@ public class EstatisticasController implements EstatisticasDocumentation {
     }
 
     @Override
+    @CheckSecurity.Estatisticas.PodeConsultar
     @GetMapping(path = "/vendas-diaria", produces = APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> consultarVendasDiariaPdf(
             VendaDiariaFiltro filtro,
