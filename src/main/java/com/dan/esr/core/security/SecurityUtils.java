@@ -54,4 +54,13 @@ public class SecurityUtils {
     public boolean usuarioAutenticadoIgual(Long usuarioId) {
         return getUsuarioId() != null && usuarioId != null && getUsuarioId().equals(usuarioId);
     }
+
+    public boolean podeGerenciarPedidos(String codigoPedido) {
+        return hasAuthority("SCOPE_WRITE") && (hasAuthority("GERENCIAR_PEDIDOS") ||
+        this.gerenciaRestauranteDoPedido(codigoPedido));
+    }
+
+    private boolean hasAuthority(String authority) {
+        return getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(authority));
+    }
 }
