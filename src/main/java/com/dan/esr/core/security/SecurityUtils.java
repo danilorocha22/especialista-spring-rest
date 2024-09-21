@@ -50,4 +50,8 @@ public class SecurityUtils {
         }
         return this.pedidoRepository.isRestauranteDoPedido(codigoPedido, getUsuarioId());
     }
+
+    public boolean usuarioAutenticadoIgual(Long usuarioId) {
+        return getUsuarioId() != null && usuarioId != null && getUsuarioId().equals(usuarioId);
+    }
 }

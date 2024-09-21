@@ -20,11 +20,12 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import static com.dan.esr.domain.entities.enums.StatusPedido.*;
+import static java.math.BigDecimal.ZERO;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.UUID.randomUUID;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
@@ -102,7 +103,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
             referencedColumnName = "id")
     private FormaPagamento formaPagamento;
 
-    @OneToMany(mappedBy = "pedido",cascade = ALL)
+    @OneToMany(mappedBy = "pedido", cascade = ALL)
     private Set<ItemPedido> itensPedido = new HashSet<>();
 
     /*########################################     MÉTODOS     ########################################*/
@@ -110,7 +111,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
         if (this.isTaxaFreteValida()) {
             this.setTaxaFrete(this.getTaxaFreteRestaurante());
         } else {
-            this.setTaxaFrete(BigDecimal.ZERO);
+            this.setTaxaFrete(ZERO);
         }
     }
 
@@ -157,18 +158,6 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
         return this.getStatus().isStatusPermitido(CANCELADO);
     }
 
-    public String nomeCliente() {
-        return this.usuario.getNome();
-    }
-
-    public String nomeRestaurante() {
-        return this.restaurante.getNome();
-    }
-
-    public String nomeFormaPagamento() {
-        return this.formaPagamento.getNome();
-    }
-
     public List<ItemPedido> getItensPedido() {
         return this.itensPedido.stream().toList();
     }
@@ -183,7 +172,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> implements Serializabl
 
     @PrePersist
     private void gerarCodigoPedido() {
-        this.setCodigo(UUID.randomUUID().toString());
+        this.setCodigo(randomUUID().toString());
         this.registerEvent(new PedidoEmitidoEvent(this));
     }
 

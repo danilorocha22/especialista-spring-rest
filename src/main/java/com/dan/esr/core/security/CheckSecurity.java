@@ -57,7 +57,7 @@ public @interface CheckSecurity {
         @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
         @PostAuthorize(
                 "hasAuthority('CONSULTAR_PEDIDOS') or " +
-                        "@securityUtils.getUsuarioId().equals(returnObject.usuario.id) or" +
+                        "@securityUtils.usuarioAutenticadoIgual(returnObject.usuario.id) or" +
                         "@securityUtils.gerenciaRestaurante(returnObject.restaurante.id)")
         @interface PodeBuscar {
         }
@@ -65,7 +65,7 @@ public @interface CheckSecurity {
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_READ') and (hasAuthority('CONSULTAR_PEDIDOS') or "
-                + "@securityUtils.getUsuarioId() == #filtro.clienteId or"
+                + "@securityUtils.usuarioAutenticadoIgual(#filtro.clienteId) or"
                 + "@securityUtils.gerenciaRestaurante(#filtro.restauranteId))")
         @interface PodePesquisar {
         }
@@ -133,7 +133,7 @@ public @interface CheckSecurity {
         @Target(METHOD)
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and " +
-                "@securityUtils.getUsuarioId() == #usuarioId ")
+                "@securityUtils.usuarioAutenticadoIgual(#usuarioId) ")
         @interface PodeAlterarPropriaSenha {
         }
 
@@ -141,7 +141,7 @@ public @interface CheckSecurity {
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_WRITE') and " +
                 "(hasAuthority('EDITAR_USUARIOS_GRUPOS_PERMISSOES') or " +
-                "@securityUtils.getUsuarioId() == #usuarioId)")
+                "@securityUtils.usuarioAutenticadoIgual(#usuarioId))")
         @interface PodeAlterarUsuario {
         }
 
@@ -163,7 +163,7 @@ public @interface CheckSecurity {
         @Retention(RUNTIME)
         @PreAuthorize("hasAuthority('SCOPE_READ') and " +
                 "(hasAuthority('CONSULTAR_USUARIOS_GRUPOS_PERMISSOES')) or " +
-                "@securityUtils.getUserIdAuthenticated == #usuarioId")
+                "@securityUtils.usuarioAutenticadoIgual(#usuarioId)")
         @interface PodeConsultarUsuario {
         }
     }

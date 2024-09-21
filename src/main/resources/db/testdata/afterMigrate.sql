@@ -20,6 +20,8 @@ delete from usuarios_grupos where true;
 delete from pedidos where true;
 delete from itens_pedido where true;
 delete from album where true;
+delete from oauth_client_details where true;
+
 
 ## Cria os registros novamente
 set foreign_key_checks = 1; # Habilita as chaves estrangeiras para poder criar os registros
@@ -35,11 +37,14 @@ alter table restaurantes auto_increment = 1;
 alter table usuarios auto_increment = 1;
 alter table pedidos auto_increment = 1;
 alter table itens_pedido auto_increment= 1;
+alter table oauth_client_details auto_increment = 1;
+
 
 insert into estados(sigla)
 values ('TO'),
        ('MA'),
        ('GO');
+
 
 insert into cidades(nome, estado_id)
 values ('Itaguatins', 1),
@@ -47,17 +52,20 @@ values ('Itaguatins', 1),
        ('Imperatriz', 2),
        ('Goiânia', 3);
 
+
 insert ignore into cozinhas(nome)
 values ('Brasileira'),
        ('Tailandesa'),
        ('Indiana'),
        ('Argentina');
 
+
 insert into enderecos(logradouro, numero, bairro, cep, cidade_id)
 values ('Rua Cel. Augusto Bastos', '1000', 'Centro', '77920-000', 1),
        ('Rua 26, quadra 28', '2000', 'Centro', '77062-060', 2),
        ('Rua Getúlio Vargas', '50', 'Centro', '88999-000', 3),
        ('Rua João Pinheiro', '1000', 'Centro', '22666-000', 4);
+
 
 insert into restaurantes(nome, taxa_frete, cozinha_id, endereco_id, data_cadastro, data_atualizacao)
 values ('Toca do Sabor', 10, 1, 1, utc_timestamp, utc_timestamp),
@@ -67,11 +75,13 @@ values ('Toca do Sabor', 10, 1, 1, utc_timestamp, utc_timestamp),
        ('Lanchonete do Tio Sam', 11, 4, null, utc_timestamp, utc_timestamp),
        ('Bar da Maria', 6, 4, null, utc_timestamp, utc_timestamp);
 
+
 insert into formas_de_pagamento(nome, data_atualizacao)
 values ('Dinheiro', utc_timestamp),
        ('Pix', utc_timestamp),
        ('Débito', utc_timestamp),
        ('Crédito', utc_timestamp);
+
 
 insert into permissoes(id, nome, descricao)
 values (1,'EDITAR_COZINHAS', 'Permite editar cozinhas'),
@@ -84,6 +94,7 @@ values (1,'EDITAR_COZINHAS', 'Permite editar cozinhas'),
        (8,'CONSULTAR_PEDIDOS', 'Permite consultar pedidos'),
        (9,'GERENCIAR_PEDIDOS', 'Permite gerenciar pedidos'),
        (10,'GERAR_RELATORIOS', 'Permite gerar relatórios');
+
 
 insert into restaurantes_formas_de_pagamento(restaurante_id, formas_de_pagamento_id)
 values (1, 1),
@@ -98,6 +109,7 @@ values (1, 1),
        (5, 2),
        (6, 3);
 
+
 insert into produtos(nome, descricao, preco, ativo, restaurante_id)
 values ('Porco com molho agridoce', 'Deliciosa carne suína ao molho especial', 78.90, 1, 1),
        ('Camarão tailandês', '16 camarões grandes ao molho picante', 110, 0, 1),
@@ -109,11 +121,13 @@ values ('Porco com molho agridoce', 'Deliciosa carne suína ao molho especial', 
        ('Sanduíche X-Tudo', 'Sandubão com muito queijo, hamburger bovino, bacon, ovo, salada e maionese', 19, 1, 5),
        ('Espetinho de Cupim', 'Acompanha farinha, mandioca e vinagrete', 8, 1, 6);
 
+
 insert into grupos (id, nome)
 values (1, 'Gerente'),
        (2, 'Vendedor'),
        (3, 'Auxiliar'),
        (4, 'Cadastrador');
+
 
 /*insert into grupos_permissoes (grupo_id, permissao_id)
 values (1, 1),
@@ -121,6 +135,7 @@ values (1, 1),
        (2, 1),
        (2, 2),
        (3, 1);*/
+
 
 insert into usuarios(id, nome, email, senha, data_cadastro)
 values (1, 'Danilo Rocha', 'danrocha858585+ger@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
@@ -132,15 +147,18 @@ values (1, 'Danilo Rocha', 'danrocha858585+ger@gmail.com', '$2a$12$cMTXqDlfPAU1j
        (7, 'Joaquim Mendes', 'danrocha858585+joaquim_cliente@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp),
        (8, 'Rita Dias', 'danrocha858585+rita_cliente@gmail.com', '$2a$12$cMTXqDlfPAU1jtWUpYnDj./B0fGfYGDmLYIlpgjWc71fhgYlLjI/q', utc_timestamp);
 
+
 insert into usuarios_grupos (usuario_id, grupo_id)
 values (1, 1), #gerente
        (2, 2), #vendedor
        (3, 3), #secretária
        (4, 4); #cadastrador
 
+
 # Adiciona todas as permissoes no grupo do gerente
 insert into dan_food.grupos_permissoes (grupo_id, permissao_id)
 select 1, id from permissoes;
+
 
 # Adiciona permissoes no grupo do vendedor
 insert into grupos_permissoes (grupo_id, permissao_id)
@@ -148,18 +166,22 @@ select 2, id from permissoes where nome like 'CONSULTAR_%';
 
 #insert into grupos_permissoes (grupo_id, permissao_id) values (2, 14);
 
+
 # Adiciona permissoes no grupo do auxiliar
 insert into grupos_permissoes (grupo_id, permissao_id)
 select 3, id from permissoes where nome like 'CONSULTAR_%';
+
 
 # Adiciona permissoes no grupo cadastrador
 insert into grupos_permissoes (grupo_id, permissao_id)
 select 4, id from permissoes
 where nome like '%_RESTAURANTES' or nome like '%_PRODUTOS';
 
+
 insert into restaurantes_usuarios_responsaveis (restaurante_id, usuario_id)
 values (1, 5),
        (3, 5);
+
 
 insert into pedidos (id, codigo, restaurante_id, usuario_id, formas_pagamento_id, endereco_id, status, data_criacao,data_confirmacao, data_entrega, sub_total, taxa_frete, valor_total)
 values (1, '953b3e39-a35a-4aa9-bfbb-474192f7b825', 1, 6, 1, 1, 'CRIADO', utc_timestamp, null, null, 298.90, 10, 308.90),
@@ -181,3 +203,37 @@ values (1, 1, 1, 1, 78.9, 78.9, null),
        (7, 5, 2, 1, 110, 110, null),
        (8, 6, 3, 2, 87.2, 174.4, null),
        (9, 7, 3, 1, 87.2, 87.2, null);
+
+
+insert into oauth_client_details (
+    client_id, resource_ids, client_secret,
+    scope, authorized_grant_types, web_server_redirect_uri, authorities,
+    access_token_validity, refresh_token_validity, autoapprove
+)
+values (
+           'danfood-web', null, '$2y$12$w3igMjsfS5XoAYuowoH3C.54vRFWlcXSHLjX7MwF990Kc2KKKh72e',
+           'READ,WRITE', 'password', null, null,
+           60 * 60 * 6, 60 * 24 * 60 * 60, null
+       );
+
+insert into oauth_client_details (
+    client_id, resource_ids, client_secret,
+    scope, authorized_grant_types, web_server_redirect_uri, authorities,
+    access_token_validity, refresh_token_validity, autoapprove
+)
+values (
+           'danfood-analytics', null, '$2a$12$ZNne0a9i7/hOCrXrTs8.1uDpi6NiAyOsAqzgis/Juc1btF1VIQHuO',
+           'READ,WRITE', 'authorization_code', 'http://www.foodanalytics.local:8082', null,
+           null, null, null
+       );
+
+insert into oauth_client_details (
+    client_id, resource_ids, client_secret,
+    scope, authorized_grant_types, web_server_redirect_uri, authorities,
+    access_token_validity, refresh_token_validity, autoapprove
+)
+values (
+           'faturamento', null, '$2a$12$fj4xygJz9jcHcLdXwdsvqORJdu/.LCK.1sGVMf8m3uRoYyBIlOft.',
+           'READ,WRITE', 'client_credentials', null, 'CONSULTAR_PEDIDOS,GERAR_RELATORIOS',
+           null, null, null
+       );

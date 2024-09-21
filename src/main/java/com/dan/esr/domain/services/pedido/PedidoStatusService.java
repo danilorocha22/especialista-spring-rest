@@ -1,7 +1,6 @@
 package com.dan.esr.domain.services.pedido;
 
 import com.dan.esr.domain.entities.Pedido;
-import com.dan.esr.domain.exceptions.EntidadeNaoPersistidaException;
 import com.dan.esr.domain.repositories.PedidoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
