@@ -46,7 +46,7 @@ public class PedidoGerenciamentoController implements PedidoGerenciamentoDocumen
 
     @Override
     @PutMapping("/{codigoPedido}/confirmacao")
-    @CheckSecurity.Pedidos.PodeAlterarStatus
+    @CheckSecurity.Pedidos.PodeGerenciarPedidos
     public EntityModel<PedidoStatusOutput> confirmado(@PathVariable String codigoPedido) {
         Pedido pedidoConfirmado = this.pedidoStatusService.confirmar(codigoPedido);
         return EntityModel.of(
@@ -56,7 +56,7 @@ public class PedidoGerenciamentoController implements PedidoGerenciamentoDocumen
 
     @Override
     @PutMapping("/{codigoPedido}/entrega")
-    @CheckSecurity.Pedidos.PodeAlterarStatus
+    @CheckSecurity.Pedidos.PodeGerenciarPedidos
     public EntityModel<PedidoStatusOutput> entregue(@PathVariable String codigoPedido) {
         Pedido pedidoEntregue = this.pedidoStatusService.entregar(codigoPedido);
         return EntityModel.of(
@@ -66,7 +66,7 @@ public class PedidoGerenciamentoController implements PedidoGerenciamentoDocumen
 
     @Override
     @PutMapping("/{codigoPedido}/cancelamento")
-    @CheckSecurity.Pedidos.PodeAlterarStatus
+    @CheckSecurity.Pedidos.PodeGerenciarPedidos
     public EntityModel<PedidoStatusOutput> cancelado(@PathVariable String codigoPedido) {
         Pedido pedidoCancelado = this.pedidoStatusService.cancelar(codigoPedido);
         return EntityModel.of(
