@@ -160,6 +160,11 @@ public final class Links {
                 .withRel("produtos");
     }
 
+    public static Link linkToFotoProduto(Long restauranteId, Long produtoId, String foto) {
+        return linkTo(methodOn(RestauranteFotoProdutoController.class).buscarDadosFoto(restauranteId, produtoId))
+                .withRel(foto);
+    }
+
     public static Link linkToUsuario(Long usuarioId, String rel) {
         return linkTo(methodOn(UsuarioPesquisaController.class).usuario(usuarioId)).withRel(rel);
     }

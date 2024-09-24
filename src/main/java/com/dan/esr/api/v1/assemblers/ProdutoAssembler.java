@@ -1,14 +1,18 @@
 package com.dan.esr.api.v1.assemblers;
 
 import com.dan.esr.api.v1.controllers.restaurante.RestauranteProdutoController;
+import com.dan.esr.api.v1.links.Links;
 import com.dan.esr.api.v1.models.input.produto.ProdutoInput;
 import com.dan.esr.api.v1.models.output.produto.ProdutoOutput;
 import com.dan.esr.api.v1.models.output.restaurante.RestauranteProdutosOutput;
+import com.dan.esr.core.security.SecurityUtils;
 import com.dan.esr.domain.entities.Produto;
 import com.dan.esr.domain.entities.Restaurante;
 import lombok.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -16,20 +20,28 @@ import static com.dan.esr.api.v1.links.Links.*;
 
 @Component
 public class ProdutoAssembler extends RepresentationModelAssemblerSupport<Produto, ProdutoOutput> {
-    private final ModelMapper mapper;
 
     @Autowired
-    public ProdutoAssembler(ModelMapper mapper) {
+    private ModelMapper mapper;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    public ProdutoAssembler() {
         super(RestauranteProdutoController.class, ProdutoOutput.class);
-        this.mapper = mapper;
     }
 
     @NonNull
     @Override
     public ProdutoOutput toModel(@NonNull Produto produto) {
-        return (ProdutoOutput) this.mapper.map(produto, ProdutoOutput.class)
-                .add(linkToProduto(produto.getRestaurante().getId(), produto.getId()))
-                .add(linkToProdutos(produto.getRestaurante().getId()));
+        ProdutoOutput produtoOutput = this.mapper.map(produto, ProdutoOutput.class);
+        if (securityUtils.podeConsultarRestaurantes()) {
+            produtoOutput
+                    .add(linkToProduto(produto.getRestaurante().getId(), produto.getId()))
+                    .add(linkToProdutos(produto.getRestaurante().getId()))
+                    .add(linkToFotoProduto(produto.getRestaurante().getId(), produto.getId(), "foto"));
+        }
+        return produtoOutput;
     }
 
     public RestauranteProdutosOutput toModelProdutos(Restaurante restaurante) {
