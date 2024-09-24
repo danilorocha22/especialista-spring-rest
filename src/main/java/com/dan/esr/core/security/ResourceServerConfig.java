@@ -1,6 +1,8 @@
 package com.dan.esr.core.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,12 +29,17 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.GET, "v1/cozinhas/**").authenticated()
                     .anyRequest().denyAll()
                 .and()*/
+                .formLogin()
+                .and()
+                .authorizeRequests()
+                    .antMatchers("/oauth/**").authenticated()
+                .and()
                 .csrf().disable()
                 .cors() //configurando cors a nível de spring security para permitir verbo http Options
                 .and()
-                    .oauth2ResourceServer()
-                        .jwt()//.opaqueToken();
-                        .jwtAuthenticationConverter(getJwtAuthConverter());
+                .oauth2ResourceServer()
+                    .jwt()//.opaqueToken();
+                    .jwtAuthenticationConverter(getJwtAuthConverter());
     }
 
     //Configurando o JwtAuthenticationConverter para converter as permissoes de um token jwt
@@ -60,6 +67,13 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
         });
 
         return jwtAuthenticationConverter;
+    }
+
+    //Configurando o AuthenticationManager
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
     //Configurando o JwtDecoder para chave simétrica

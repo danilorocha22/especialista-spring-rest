@@ -16,13 +16,14 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private ApiDeprecationHandler apiDeprecationHandler;
 
-    @Override
+    //A configuração de Cors está sendo feita na classe CorsConfig
+    /*@Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")// Permite qualquer request origen
                 .allowedMethods("*"); // Permite qualquer método http
                 //.allowedOrigins("*") // Permite qualquer request origen
                 //.maxAge(30); // Tempo máximo de cache em segundos
-    }
+    }*/
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
