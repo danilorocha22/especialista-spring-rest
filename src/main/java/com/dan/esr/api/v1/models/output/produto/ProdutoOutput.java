@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ApiModel("Produto")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Relation(collectionRelation = "produtos", itemRelation = "produto")
-public class ProdutoOutput extends EntityModel<ProdutoOutput> {
+public class ProdutoOutput extends RepresentationModel<ProdutoOutput> {
     @ApiModelProperty(example = "1")
     private Long id;
 

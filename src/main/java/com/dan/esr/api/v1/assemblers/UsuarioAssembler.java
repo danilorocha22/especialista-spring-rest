@@ -9,6 +9,7 @@ import com.dan.esr.api.v1.models.output.usuario.UsuarioOutput;
 import com.dan.esr.domain.entities.Usuario;
 import lombok.NonNull;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import static com.dan.esr.api.v1.links.Links.linkToUsuarios;
 public class UsuarioAssembler extends RepresentationModelAssemblerSupport<Usuario, UsuarioOutput> {
     private final ModelMapper mapper;
 
+    @Autowired
     public UsuarioAssembler(ModelMapper mapper) {
         super(UsuarioPesquisaController.class, UsuarioOutput.class);
         this.mapper = mapper;
