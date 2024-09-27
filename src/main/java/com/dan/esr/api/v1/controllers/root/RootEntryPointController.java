@@ -24,7 +24,7 @@ public final class RootEntryPointController {
         rootEntryPointModel.add(linkToGrupos());
         rootEntryPointModel.add(linkToUsuarios());
         //rootEntryPointModel.add(linkToPermissoes());
-        rootEntryPointModel.add(linkToFormasPagamento());
+        //rootEntryPointModel.add(linkToFormasPagamento());
         rootEntryPointModel.add(linkToEstados());
         rootEntryPointModel.add(linkToCidades());
         rootEntryPointModel.add(linkToEstatisticas());

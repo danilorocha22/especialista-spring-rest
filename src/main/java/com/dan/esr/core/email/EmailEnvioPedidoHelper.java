@@ -17,7 +17,7 @@ public class EmailEnvioPedidoHelper implements NotificacaoClienteService {
     public void pedidoEmitido(Pedido pedido) {
         var mensagem = Email.builder()
                 .assunto(pedido.getRestaurante().getNome() + " - Pedido Emitido")
-                .templateMensagem("pedido-emitido.html")
+                .templateMensagem("emails/pedido-emitido.html")
                 .variavel("pedido", pedido)
                 .destinatario(pedido.getUsuario().getEmail())
                 .build();
@@ -29,7 +29,7 @@ public class EmailEnvioPedidoHelper implements NotificacaoClienteService {
     public void pedidoConfirmado(Pedido pedido) {
         var mensagem = Email.builder()
                 .assunto(pedido.getRestaurante().getNome() + " - Pedido Confirmado")
-                .templateMensagem("pedido-confirmado.html")
+                .templateMensagem("emails/pedido-confirmado.html")
                 .variavel("pedido", pedido)
                 .destinatario(pedido.getUsuario().getEmail())
                 .build();
@@ -41,7 +41,7 @@ public class EmailEnvioPedidoHelper implements NotificacaoClienteService {
     public void pedidoCancelado(Pedido pedido) {
         var mensagem = Email.builder()
                 .assunto(pedido.getRestaurante().getNome() + " - Pedido Cancelado")
-                .templateMensagem("pedido-cancelado.html")
+                .templateMensagem("email/pedido-cancelado.html")
                 .variavel("pedido", pedido)
                 .destinatario(pedido.getUsuario().getEmail())
                 .build();
