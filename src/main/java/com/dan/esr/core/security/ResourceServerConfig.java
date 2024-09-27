@@ -29,7 +29,7 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.GET, "v1/cozinhas/**").authenticated()
                     .anyRequest().denyAll()
                 .and()*/
-                .formLogin()
+                .formLogin().loginPage("/login")
                 .and()
                 .authorizeRequests()
                     .antMatchers("/oauth/**").authenticated()
