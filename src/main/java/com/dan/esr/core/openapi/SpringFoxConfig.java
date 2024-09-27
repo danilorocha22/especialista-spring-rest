@@ -21,6 +21,7 @@ import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration
 import springfox.documentation.builders.*;
 import springfox.documentation.schema.AlternateTypeRule;
 import springfox.documentation.service.*;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import java.io.File;
@@ -45,7 +46,7 @@ import static springfox.documentation.spi.DocumentationType.OAS_30;
 public class SpringFoxConfig /*implements WebMvcConfigurer*/ {
     TypeResolver typeResolver = new TypeResolver();
 
-    //@Bean
+    @Bean
     public Docket apiDocketV1() {
         return new Docket(OAS_30)
                 .groupName("V1")
@@ -69,11 +70,49 @@ public class SpringFoxConfig /*implements WebMvcConfigurer*/ {
                 .alternateTypeRules(getClasseAlternativa(PedidoOutput.class))
                 .alternateTypeRules(getClasseAlternativa(PedidoResumoOutput.class))
                 .alternateTypeRules()
+                .securitySchemes(securitySchemes())
+                .securityContexts(securityContexts())
                 .apiInfo(apiInfoV1())
                 .tags(tags()[0], tags());
     }
 
-    @Bean
+    private List<SecurityContext> securityContexts() {
+        var securityReference = SecurityReference.builder()
+                .reference("Danfood")
+                .scopes(scopes().toArray(new AuthorizationScope[0]))
+                .build();
+
+        return List.of(
+                SecurityContext.builder()
+                        .securityReferences(List.of(securityReference))
+                        //.forPaths(PathSelectors.any())
+                        .operationSelector(operationContext -> true)
+                        .build()
+        );
+    }
+
+    private List<SecurityScheme> securitySchemes() {
+        return List.of(oauth());
+    }
+
+    private SecurityScheme oauth() {
+        return new OAuthBuilder()
+                .name("Danfood")
+                .grantTypes(grantTypes())
+                .scopes(scopes())
+                .build();
+    }
+
+    private List<GrantType> grantTypes() {
+        return List.of(new ResourceOwnerPasswordCredentialsGrant("/oauth/token"));
+    }
+
+    private List<AuthorizationScope> scopes() {
+        return List.of(new AuthorizationScope("READ", "Acesso de leitura"),
+                new AuthorizationScope("WRITE", "Acesso de escrita"));
+    }
+
+    //@Bean
     public Docket apiDocketV2() {
         return new Docket(OAS_30)
                 .groupName("V2")
