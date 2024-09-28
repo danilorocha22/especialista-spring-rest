@@ -1,0 +1,2 @@
+## Carregando Base64ProtocolResolver antes da inicialização da aplicação
+org.springframework.context.ApplicationContextInitializer=com.dan.esr.core.io.Base64ProtocolResolver
