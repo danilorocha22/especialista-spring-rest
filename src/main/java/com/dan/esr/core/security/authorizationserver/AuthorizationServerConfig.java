@@ -1,5 +1,9 @@
 package com.dan.esr.core.security.authorizationserver;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.KeyUse;
+import com.nimbusds.jose.jwk.RSAKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +25,9 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 import javax.sql.DataSource;
+
+import java.security.KeyPair;
+import java.security.interfaces.RSAPublicKey;
 
 import static java.util.Arrays.asList;
 
@@ -129,12 +136,29 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         var jwtTokenConverter = new JwtAccessTokenConverter();
         //jwtTokenConverter.setSigningKey("ds41f60as587f1afs1d3.SF748A13-1GD1A31GKa3s184q9");//usando o algoritmo HS256 simétrico (assinatura simétrica)
+        /*var keyStorePass = jwtKeyStoreProperties.getPassword();
+        var keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
+        var keyStoreFactory = new KeyStoreKeyFactory(jwtKeyStoreProperties.getJksLocation(), keyStorePass.toCharArray());
+        var keyPair = keyStoreFactory.getKeyPair(keyPairAlias);*/
+        jwtTokenConverter.setKeyPair(keyPair());
+        return jwtTokenConverter;
+    }
+
+    @Bean
+    public JWKSet jwkSet() {
+        RSAKey.Builder builder = new RSAKey.Builder((RSAPublicKey) keyPair().getPublic())
+                .keyUse(KeyUse.SIGNATURE) // indica que é uma chave de assinatura
+                .algorithm(JWSAlgorithm.RS256) // algoritmo de assinatura
+                .keyID("danfood-key-id"); // identificador da chave
+
+        return new JWKSet(builder.build());
+    }
+
+    private KeyPair keyPair() {
         var keyStorePass = jwtKeyStoreProperties.getPassword();
         var keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
         var keyStoreFactory = new KeyStoreKeyFactory(jwtKeyStoreProperties.getJksLocation(), keyStorePass.toCharArray());
-        var keyPair = keyStoreFactory.getKeyPair(keyPairAlias);
-        jwtTokenConverter.setKeyPair(keyPair);
-        return jwtTokenConverter;
+        return keyStoreFactory.getKeyPair(keyPairAlias);
     }
 
     /*private TokenStore redisTokenStore() {
