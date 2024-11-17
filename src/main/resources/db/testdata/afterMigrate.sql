@@ -193,7 +193,7 @@ values (1, '953b3e39-a35a-4aa9-bfbb-474192f7b825', 1, 6, 1, 1, 'CRIADO', utc_tim
        (7, '8d774bcf-b238-42f3-aef1-5fb388754d63', 4, 8, 2, 1, 'ENTREGUE',  DATE_ADD(utc_timestamp(), INTERVAL 7 DAY), DATE_ADD(utc_timestamp(), INTERVAL 8 DAY), DATE_ADD(utc_timestamp(), INTERVAL 9 DAY), 87.2, 10, 97.2);
 
 
-insert into itens_pedido (id, pedido_id, produto_id, quantidade, preco_unit, valor_total, observacao)
+insert into itens_pedido (id, pedido_id, produto_id, quantidade, preco_unit, preco_total, observacao)
 values (1, 1, 1, 1, 78.9, 78.9, null),
        (2, 1, 2, 2, 110, 220, 'Menos picante, por favor'),
        (3, 2, 1, 1, 78.9, 78.9, null),
