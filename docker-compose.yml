@@ -1,0 +1,28 @@
+networks:
+  danfood-network-api:
+    driver: bridge
+
+services:
+  danfood-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: "danilo"
+      MYSQL_PASSWORD: "840327"
+    ports:
+      - "3306:3306"
+    networks:
+      - danfood-network-api
+
+  danfood-api:
+    build: .
+    command: ["/wait-for-it.sh", "danfood-mysql:3306", "-t", "45", "--", "java", "-jar", "api.jar"]
+    environment:
+      DB_HOST: "danfood-mysql"
+      DB_PORT: "3306"
+    ports:
+      - "8080:8080"
+    networks:
+      - danfood-network-api
+    depends_on:
+      - danfood-mysql
