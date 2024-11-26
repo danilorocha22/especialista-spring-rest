@@ -26,3 +26,5 @@ services:
       - danfood-network-api
     depends_on:
       - danfood-mysql
+#    deploy:
+#      replicas: 2
