@@ -28,3 +28,13 @@ services:
       - danfood-mysql
 #    deploy:
 #      replicas: 2
+
+  danfood-proxy:
+    build: ./nginx
+    image: danfood-proxy
+    ports:
+      - "80:80"
+    networks:
+      - danfood-network-api
+    depends_on:
+      - danfood-api
