@@ -20,8 +20,8 @@ services:
     environment:
       DB_HOST: "danfood-mysql"
       DB_PORT: "3306"
-    ports:
-      - "8080:8080"
+#    ports:
+#      - "8080:8080"
     networks:
       - danfood-network-api
     depends_on:
