@@ -3,6 +3,14 @@
 
 ## Apaga todos os registros
 set foreign_key_checks = 0; # Desabilita as chaves estrangeiras para poder apagar os registros
+
+lock tables
+    dan_food.cidades write, dan_food.cozinhas write, dan_food.estados write, dan_food.formas_de_pagamento write,
+    dan_food.grupos write, dan_food.grupos_permissoes write, dan_food.permissoes write, dan_food.produtos write,
+    dan_food.enderecos write, dan_food.restaurantes write, dan_food.restaurantes_formas_de_pagamento write,
+    dan_food.restaurantes_usuarios_responsaveis write, dan_food.usuarios write, dan_food.usuarios_grupos write,
+    dan_food.pedidos write, dan_food.itens_pedido write, dan_food.album write, dan_food.oauth_client_details write;
+
 delete from cidades where true;
 delete from cozinhas where true;
 delete from estados where true;
@@ -38,7 +46,6 @@ alter table usuarios auto_increment = 1;
 alter table pedidos auto_increment = 1;
 alter table itens_pedido auto_increment= 1;
 alter table oauth_client_details auto_increment = 1;
-
 
 insert into estados(sigla)
 values ('TO'),
@@ -237,3 +244,5 @@ values (
            'READ,WRITE', 'client_credentials', null, 'CONSULTAR_PEDIDOS,GERAR_RELATORIOS',
            null, null, null
        );
+
+unlock tables;
